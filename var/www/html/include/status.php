@@ -1,7 +1,7 @@
 <?php
-include_once $_SERVER['DOCUMENT_ROOT'].'/include/config.php';         
-include_once $_SERVER['DOCUMENT_ROOT'].'/include/tools.php';        
-include_once $_SERVER['DOCUMENT_ROOT'].'/include/functions.php';
+include_once dirname(dirname(__FILE__)).'/include/config.php';         
+include_once dirname(dirname(__FILE__)).'/include/tools.php';        
+include_once dirname(dirname(__FILE__)).'/include/functions.php';
 
 ?>
 <span style="font-weight: bold;font-size:14px;">Status</span>
