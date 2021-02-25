@@ -1,5 +1,4 @@
 <?php
-$_SERVER['DOCUMENT_ROOT'] = "/var/www/html/dashboard/";
 include_once 'include/config.php';
 include_once 'include/tools.php';
 ?>
