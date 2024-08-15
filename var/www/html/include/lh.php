@@ -1,7 +1,8 @@
 <?php
-include_once $_SERVER['DOCUMENT_ROOT'].'/include/config.php';         
-include_once $_SERVER['DOCUMENT_ROOT'].'/include/tools.php';        
-include_once $_SERVER['DOCUMENT_ROOT'].'/include/functions.php';    
+include_once dirname(dirname(__FILE__)).'/include/strftime.php';
+include_once dirname(dirname(__FILE__)).'/include/config.php';         
+include_once dirname(dirname(__FILE__)).'/include/tools.php';        
+include_once dirname(dirname(__FILE__)).'/include/functions.php';    
 ?>
 <span style="font-weight: bold;font-size:14px;">Gateway Activity</span>
 <fieldset style="box-shadow:0 0 10px #999;background-color:#e8e8e8e8; width:640px;margin-top:10px;margin-left:0px;margin-right:0px;font-size:12px;border-top-left-radius: 10px; border-top-right-radius: 10px;border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
@@ -30,7 +31,7 @@ for ($i = 0;  ($i <= 19); $i++) { //Last 20 calls
                         $local_tz = new DateTimeZone(date_default_timezone_get ());
                         $dt = new DateTime($utc_time, $utc_tz);
                         $dt->setTimeZone($local_tz);
-                        $local_time = strftime('%H:%M:%S %b %d', $dt->getTimestamp());
+                        $local_time = xstrftime('%H:%M:%S %b %d', $dt->getTimestamp());
 
 		echo"<tr>";
 		echo"<td align=\"left\">&nbsp;$local_time</td>";

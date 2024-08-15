@@ -25,10 +25,11 @@ function format_time($seconds) {
 	return $uptimeString;
 }
 
-function format_uptime($seconds) {
-    $secs = intval($seconds % 60);
-    $mins = intval($seconds / 60 % 60);
-    $hours = intval($seconds / 3600 % 24);
+function format_uptime($float_secs) {
+    $seconds = (int)$float_secs;
+    $secs = $seconds % 60;
+    $mins = ((int)($seconds / 60)) % 60;
+    $hours = ((int)($seconds / 3600)) % 24;
     $days = intval($seconds / 86400);
     $uptimeString = "";
 

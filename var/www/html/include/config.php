@@ -2,8 +2,13 @@
 // Report all errors except E_NOTICE
 error_reporting(E_ALL & ~E_NOTICE);
 
-// ABINFO = rxPort from [USRP] Analog_Bridge.ini
-define("ABINFO", "34001");
+exec('/opt/MMDVM_Bridge/dvswitch.sh pif /opt/Analog_Bridge/Analog_Bridge.ini USRP rxPort', $output, $retval);
+// echo "Returned with status $retval and output:\n";
+// print_r($output);
+
+define("ABINFO",$output);
+//echo "ABINFO=.ABINFO.";
+
 // Put remote Network or IP address from which want to see tooltip ABInfo
 // IP address has mast /32 for netoworks use /24 etc
 define("REMOTENET", "127.0.0.1/32");

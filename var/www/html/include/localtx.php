@@ -1,7 +1,8 @@
 <?php
-include_once $_SERVER['DOCUMENT_ROOT'].'/include/config.php';          
-include_once $_SERVER['DOCUMENT_ROOT'].'/include/tools.php';       
-include_once $_SERVER['DOCUMENT_ROOT'].'/include/functions.php';    
+include_once dirname(dirname(__FILE__)).'/include/strftime.php';
+include_once dirname(dirname(__FILE__)).'/include/config.php';          
+include_once dirname(dirname(__FILE__)).'/include/tools.php';       
+include_once dirname(dirname(__FILE__)).'/include/functions.php';    
 $localTXList = $lastHeard;
 ?>
 <div>
@@ -28,7 +29,7 @@ for ($i = 0; $i < count($localTXList); $i++) {
                         	$local_tz = new DateTimeZone(date_default_timezone_get ());
                         	$dt = new DateTime($utc_time, $utc_tz);
                         	$dt->setTimeZone($local_tz);
-                                $local_time = strftime('%H:%M:%S %b %d', $dt->getTimestamp());
+                                $local_time = xstrftime('%H:%M:%S %b %d', $dt->getTimestamp());
 
 			echo"<tr>";
 			echo"<td align=\"left\">&nbsp;$local_time</td>";

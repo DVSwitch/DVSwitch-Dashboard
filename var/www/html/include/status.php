@@ -1,7 +1,11 @@
 <?php
-include_once $_SERVER['DOCUMENT_ROOT'].'/include/config.php';         
-include_once $_SERVER['DOCUMENT_ROOT'].'/include/tools.php';        
-include_once $_SERVER['DOCUMENT_ROOT'].'/include/functions.php';
+// include_once $_SERVER['DOCUMENT_ROOT'].'/include/config.php';         
+// include_once $_SERVER['DOCUMENT_ROOT'].'/include/tools.php';        
+// include_once $_SERVER['DOCUMENT_ROOT'].'/include/functions.php';
+
+include_once dirname(dirname(__FILE__)).'/include/config.php';
+include_once dirname(dirname(__FILE__)).'/include/tools.php';
+include_once dirname(dirname(__FILE__)).'/include/functions.php';
 
 ?>
 <span style="font-weight: bold;font-size:14px;">Status</span>
@@ -50,8 +54,7 @@ else {
 }
 fclose($dmrMasterFile);
 
-$ip = isset($_SERVER['HTTP_CLIENT_IP'])?$_SERVER['HTTP_CLIENT_IP']:isset($_SERVER['HTTP_X_FORWARDED_FOR'])?$_SERVER['HTTP_X_FORWARDED_FOR']:$_SERVER['REMOTE_ADDR']; 
-
+$ip = Get_User_IP();
 $net1= cidr_match($ip,"192.168.0.0/16");
 $net2= cidr_match($ip,"172.16.0.0/12");
 $net3= cidr_match($ip,"127.0.0.0/8");
