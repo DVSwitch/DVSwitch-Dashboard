@@ -18,8 +18,31 @@ if (!is_array($mmdvmconfigs)) {
 $rawuptime = shell_exec('cat /proc/uptime');
 $uptime = $rawuptime ? format_uptime((float)substr($rawuptime,0,strpos($rawuptime," "))) : "Unknown";
 
-$free_mem = shell_exec('free -m | awk \'NR==2{printf "%.0f%%", $3*100/$2 }\'') ?: "Unknown";
-$disk_used = shell_exec('df -h | awk \'$NF=="/"{printf "%s",$5}\'') ?: "Unknown";
+// Get memory usage using a simpler approach
+$free_output = shell_exec('free -m');
+$free_mem = "Unknown";
+if ($free_output) {
+    $lines = explode("\n", $free_output);
+    if (isset($lines[1])) {
+        $parts = preg_split('/\s+/', trim($lines[1]));
+        if (isset($parts[1]) && isset($parts[2]) && $parts[1] > 0) {
+            $free_mem = round(($parts[2] * 100) / $parts[1]) . "%";
+        }
+    }
+}
+
+// Get disk usage using a simpler approach
+$df_output = shell_exec('df -h /');
+$disk_used = "Unknown";
+if ($df_output) {
+    $lines = explode("\n", $df_output);
+    if (isset($lines[1])) {
+        $parts = preg_split('/\s+/', trim($lines[1]));
+        if (isset($parts[4])) {
+            $disk_used = $parts[4];
+        }
+    }
+}
 
 $cpuLoad = sys_getloadavg() ?: [0, 0, 0];
 if (file_exists('/sys/class/thermal/thermal_zone0/temp')) {
