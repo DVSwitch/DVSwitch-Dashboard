@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /* This PHP script defines (if not exists) a strftime() function that is
  * deprecated and will be removed from standard PHP functions in the future.
@@ -20,7 +21,7 @@
 
 if (!function_exists('xstrftime')) {
 
-    function xstrftime($format, $timestamp=null) {
+    function xstrftime(string $format, $timestamp = null): string|false {
 
     // PARAMETER 1 CHECK
 

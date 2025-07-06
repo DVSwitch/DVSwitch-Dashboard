@@ -1,5 +1,7 @@
 <?php
-function get_string_between($string, $start, $end) {
+declare(strict_types=1);
+
+function get_string_between(string $string, string $start, string $end): string {
     $string = " ".$string;
     $ini = strpos($string,$start);
     if ($ini == 0) {
@@ -10,7 +12,7 @@ function get_string_between($string, $start, $end) {
     return substr($string,$ini,$len);
 }
 
-function getMMDVMConfig() {
+function getMMDVMConfig(): array {
 	// loads MMDVM_Bridge.ini into array for further use
 	$conf = array();
 	if ($configs = @fopen(MMDVMINIPATH."/".MMDVMINIFILENAME, 'r')) {
@@ -22,7 +24,7 @@ function getMMDVMConfig() {
 	return $conf;
 }
 
-function getYSFGatewayConfig() {
+function getYSFGatewayConfig(): array {
 	// loads YSFGateway.ini into array for further use
 	$conf = array();
 	if ($configs = @fopen(YSFGATEWAYINIPATH."/".YSFGATEWAYINIFILENAME, 'r')) {
@@ -34,7 +36,7 @@ function getYSFGatewayConfig() {
 	return $conf;
 }
 
-function getP25GatewayConfig() {
+function getP25GatewayConfig(): array {
 	// loads P25Gateway.ini into array for further use
 	$conf = array();
 	if ($configs = @fopen(P25GATEWAYINIPATH."/".P25GATEWAYINIFILENAME, 'r')) {
@@ -46,7 +48,7 @@ function getP25GatewayConfig() {
 	return $conf;
 }
 
-function getNXDNGatewayConfig() {
+function getNXDNGatewayConfig(): array {
 	// loads NXDNGateway.ini into array for further use
 	$conf = array();
 	if ($configs = @fopen(NXDNGATEWAYINIPATH."/".NXDNGATEWAYINIFILENAME, 'r')) {
@@ -58,7 +60,7 @@ function getNXDNGatewayConfig() {
 	return $conf;
 }
 
-function getDAPNETGatewayConfig() {
+function getDAPNETGatewayConfig(): array {
 	// loads /etc/dapnetgateway into array for further use
 	$conf = array();
 	if ($configs = @fopen('/etc/dapnetgateway', 'r')) {
@@ -70,7 +72,7 @@ function getDAPNETGatewayConfig() {
 	return $conf;
 }
 
-function getConfigItem($section, $key, $configs) {
+function getConfigItem(string $section, string $key, array $configs): ?string {
 	// retrieves the corresponding config-entry within a [section]
 	$sectionpos = array_search("[" . $section . "]", $configs) + 1;
 	$len = count($configs);
@@ -84,16 +86,16 @@ function getConfigItem($section, $key, $configs) {
 	return substr($configs[$sectionpos], strlen($key) + 1);
 }
 
-function getEnabled ($mode, $mmdvmconfigs) {
+function getEnabled(string $mode, array $mmdvmconfigs): ?string {
 	// returns enabled/disabled-State of mode
 	return getConfigItem($mode, "Enable", $mmdvmconfigs);
 }
 
-function showMode($mode, $mmdvmconfigs) {
+function showMode(string $mode, array $mmdvmconfigs): void {
 	// shows if mode is enabled or not.
 	if (getEnabled($mode, $mmdvmconfigs) == 1) {
 		if ($mode == "D-Star Network") {
-			if (isProcessRunning("ircddbgatewayd")) {
+			if (isProcessRunning(IRCDDBGATEWAY)) {
 				echo "<td style=\"background:#12AD2A; color:#030; width:8%;\">&nbsp;";
 			} else {
 				echo "<td style=\"background:#b00; color:#f9f9f9; width:8%;\">&nbsp;";
@@ -156,7 +158,7 @@ function showMode($mode, $mmdvmconfigs) {
     echo $mode."&nbsp;</td>\n";
 }
 
-function getMMDVMLog() {
+function getMMDVMLog(): array {
 	// Open Logfile and copy loglines into LogLines-Array()
 	$logLines = array();
 	$logLines1 = array();
@@ -178,7 +180,7 @@ function getMMDVMLog() {
 	return $logLines;
 }
 
-function getYSFGatewayLog() {
+function getYSFGatewayLog(): array {
 	// Open Logfile and copy loglines into LogLines-Array()
 	$logLines = array();
 	$logLines1 = array();
@@ -203,7 +205,7 @@ function getYSFGatewayLog() {
         return array_filter($logLines);
 }
 
-function getP25GatewayLog() {
+function getP25GatewayLog(): array {
         // Open Logfile and copy loglines into LogLines-Array()
         $logLines = array();
 	
@@ -224,7 +226,7 @@ function getP25GatewayLog() {
         return array_filter($logLines);
 }
 
-function getNXDNGatewayLog() {
+function getNXDNGatewayLog(): array {
         // Open Logfile and copy loglines into LogLines-Array()
         $logLines = array();
 	
@@ -245,7 +247,7 @@ function getNXDNGatewayLog() {
         return array_filter($logLines);
 }
 
-function getDAPNETGatewayLog() {
+function getDAPNETGatewayLog(): array {
         // Open Logfile and copy loglines into LogLines-Array()
         $logLines = array();
 	$logLines1 = array();
@@ -321,7 +323,7 @@ function getDAPNETGatewayLog() {
 
 
 
-function getHeardList($logLines) {
+function getHeardList(array $logLines): array {
 	//array_multisort($logLines,SORT_DESC);
 	$heardList = array();
 	$ts1duration	= "";
@@ -627,7 +629,7 @@ function getHeardList($logLines) {
 	return $heardList;
 }
 
-function getLastHeard($logLines) {
+function getLastHeard(array $logLines): array {
 	//returns last heard list from log
 	$lastHeard = array();
 	$heardCalls = array();
@@ -646,7 +648,7 @@ function getLastHeard($logLines) {
 	return $lastHeard;
 }
 
-function getActualMode($metaLastHeard, $mmdvmconfigs) {
+function getActualMode(array $metaLastHeard, array $mmdvmconfigs): string {
     // returns mode of repeater actual working in
         $utc_tz =  new DateTimeZone('UTC');
         $local_tz = new DateTimeZone(date_default_timezone_get ());
@@ -674,7 +676,7 @@ function getActualMode($metaLastHeard, $mmdvmconfigs) {
     }
 }
 
-function getDSTARLinks() {
+function getDSTARLinks(): string {
 	// returns link-states of all D-Star-modules
 	if (filesize(LINKLOGPATH."/Links.log") == 0) {
 		return "<span style=\"color:#b0b0b0;\"><b>Not Linked</b></span>";
@@ -727,7 +729,7 @@ function getDSTARLinks() {
 	return $out;
 }
 
-function getActualLink($logLines, $mode) {
+function getActualLink(array $logLines, string $mode): string {
 	// returns actual link state of specific mode
 	//M: 2016-05-02 07:04:10.504 D-Star link status set to "Verlinkt zu DCS002 S"
 	//M: 2016-04-03 16:16:18.638 DMR Slot 2, received network voice header from 4000 to 2625094
@@ -932,7 +934,7 @@ function getActualLink($logLines, $mode) {
 	return "<span style=\"color:#b0b0b0;\"><b>Service Not Started</b></span>";
 }
 
-function getActualReflector($logLines, $mode) {
+function getActualReflector(array $logLines, string $mode): string {
 	// 00000000001111111111222222222233333333334444444444555555555566666666667777777777888888888899999999990000000000111111111122
 	// 01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901
 	// M: 2016-05-02 07:04:10.504 D-Star link status set to "Verlinkt zu DCS002 S"
@@ -983,13 +985,13 @@ if (!in_array($_SERVER["PHP_SELF"],array('/include/bm_links.php','/include/bm_ma
 	}
 }
 
-function getABInfo($filename) {
+function getABInfo(string $filename): array {
 	$json = file_get_contents($filename);
 	$json_data = json_decode($json,true);
 	return $json_data;
 }
 
-function cidr_match($ip, $cidr) {
+function cidr_match(string $ip, string $cidr): bool {
     $outcome = false;
     $pattern = '/^(([01]?\d?\d|2[0-4]\d|25[0-5])\.){3}([01]?\d?\d|2[0-4]\d|25[0-5])\/(\d{1}|[0-2]{1}\d{1}|3[0-2])$/';
     if (preg_match($pattern, $cidr)){
@@ -1001,7 +1003,7 @@ function cidr_match($ip, $cidr) {
     return $outcome;
 }
 
-function getDMRGstat($dmrserver) {
+function getDMRGstat(string $dmrserver): ?string {
 	if (file_exists("/var/log/mmdvm/DMRGateway-".gmdate("Y-m-d").".log")) { $dmrstatus = exec('grep -a ' . escapeshellarg($dmrserver.', Logged\|'.$dmrserver.', Closing DMR\|'.$dmrserver.', Opening DMR\|'.$dmrserver.', Connection') . ' /var/log/mmdvm/DMRGateway-'.gmdate("Y-m-d").'.log | tail -1 | awk \'{print $5}\''); 
         } else { $dmrstatus = exec('grep -a ' . escapeshellarg($dmrserver.', Logged\|'.$dmrserver.', Closing DMR\|'.$dmrserver.', Opening DMR\|'.$dmrserver.', Connection') . ' /var/log/mmdvm/DMRGateway-'.gmdate("Y-m-d", time() - 86340).'.log | tail -1 | awk \'{print $5}\''); }
 	$dmrserver = str_replace('_', ' ', $dmrserver);
@@ -1013,8 +1015,7 @@ function getDMRGstat($dmrserver) {
 }
 
 
-function Get_User_IP()
-{
+function Get_User_IP(): string|false {
     $IP = false;
     if (getenv('HTTP_CLIENT_IP'))
     {

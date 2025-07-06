@@ -63,22 +63,38 @@ if ($cpuTempCRaw !="") {
 </fieldset>
 <br>
 
+<?php
+// System utility functions
 function getSystemUptime(): string {
-    // ... existing code ...
+    $rawuptime = shell_exec('cat /proc/uptime');
+    return format_uptime(substr($rawuptime, 0, strpos($rawuptime, " ")));
 }
 
 function getMemoryUsage(): string {
-    // ... existing code ...
+    return shell_exec("free -m | awk 'NR==2{printf \"%.0f%%\", $3*100/$2 }'");
 }
 
 function getDiskUsage(): string {
-    // ... existing code ...
+    return shell_exec("df -h | awk '\$NF==\"/\"{printf \"%s\",$5}'");
 }
 
 function getCpuTemp(): string {
-    // ... existing code ...
+    if (file_exists('/sys/class/thermal/thermal_zone0/temp')) {
+        $cpuTempCRaw = exec('cat /sys/class/thermal/thermal_zone0/temp');
+        if ($cpuTempCRaw != "") {
+            if ($cpuTempCRaw > 1000) { 
+                $cpuTempC = round($cpuTempCRaw / 1000); 
+            } else { 
+                $cpuTempC = round($cpuTempCRaw); 
+            }
+            return $cpuTempC . "°C";
+        }
+    }
+    return "---";
 }
 
 function getCpuUsage(): string {
-    // ... existing code ...
+    $cpuLoad = sys_getloadavg();
+    return round($cpuLoad[0], 1) . " / " . round($cpuLoad[1], 1) . " / " . round($cpuLoad[2], 1);
 }
+?>
