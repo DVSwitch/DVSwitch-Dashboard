@@ -163,18 +163,44 @@ function getMMDVMLog(): array {
 	$logLines = array();
 	$logLines1 = array();
 	$logLines2 = array();
+	
+	// PHP replacement for shell pipeline
+	function parseMMDVMLog($logPath) {
+		if (!file_exists($logPath)) {
+			return array();
+		}
+		
+		$lines = file($logPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+		$filteredLines = array();
+		
+		foreach ($lines as $line) {
+			// Check for patterns: Begin|state|frames|from|end|watchdog|lost
+			if (preg_match('/Begin|state|frames|from|end|watchdog|lost/', $line)) {
+				// Filter out CSBK, overflow, Downlink
+				if (!preg_match('/CSBK|overflow|Downlink/', $line)) {
+					// Replace I: with M:
+					$line = str_replace('I:', 'M:', $line);
+					$filteredLines[] = $line;
+				}
+			}
+		}
+		
+		// Return last 250 lines
+		return array_slice($filteredLines, -250);
+	}
+	
 	if (file_exists(LOGPATH."/".MMDVMLOGPREFIX."-".gmdate("Y-m-d").".log")) {
 		$logPath = LOGPATH."/".MMDVMLOGPREFIX."-".gmdate("Y-m-d").".log";
-		$logLines1 = explode("\n", `egrep -a -h "Begin|state|frames|from|end|watchdog|lost" ` . escapeshellarg($logPath) . ` | sed '/\(CSBK\|overflow\|Downlink\)/d' | sed 's/I:/M:/g' | tail -250`);
+		$logLines1 = parseMMDVMLog($logPath);
 	}
-	$logLines1 = array_slice($logLines1, -250);
+	
 	if (sizeof($logLines1) < 250) {
 		if (file_exists(LOGPATH."/".MMDVMLOGPREFIX."-".gmdate("Y-m-d", time() - 86340).".log")) {
 			$logPath = LOGPATH."/".MMDVMLOGPREFIX."-".gmdate("Y-m-d", time() - 86340).".log";
-			$logLines2 = explode("\n", `egrep -a -h "Begin|state|frames|from|end|watchdog|lost" ` . escapeshellarg($logPath) . ` | sed '/\(CSBK\|overflow\|Downlink\)/d' | sed 's/I:/M:/g' | tail -250`);
+			$logLines2 = parseMMDVMLog($logPath);
 		}
 	}
-	$logLines2 = array_slice($logLines2, -250);
+	
 	$logLines = $logLines1 + $logLines2;
 	$logLines = array_slice($logLines, -250);
 	return $logLines;
@@ -185,19 +211,40 @@ function getYSFGatewayLog(): array {
 	$logLines = array();
 	$logLines1 = array();
 	$logLines2 = array();
+	
+	// PHP replacement for shell pipeline
+	function parseYSFGatewayLog($logPath) {
+		if (!file_exists($logPath)) {
+			return array();
+		}
+		
+		$lines = file($logPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+		$filteredLines = array();
+		
+		foreach ($lines as $line) {
+			// Check for patterns: onnection to|onnect to|Link|isconnect|Opening YSF network
+			if (preg_match('/onnection to|onnect to|Link|isconnect|Opening YSF network/', $line)) {
+				// Filter out unwanted patterns
+				if (!preg_match('/Linked to Disconnect|Linked to MMDVM|Link successful to MMDVM|\*Link/', $line)) {
+					$filteredLines[] = $line;
+				}
+			}
+		}
+		
+		// Return last line only
+		return array_slice($filteredLines, -1);
+	}
+	
 	if (file_exists(LOGPATH."/".YSFGATEWAYLOGPREFIX."-".gmdate("Y-m-d").".log")) {
 		$logPath1 = LOGPATH."/".YSFGATEWAYLOGPREFIX."-".gmdate("Y-m-d").".log";
-		//$logLines1 = explode("\n", `egrep -a -h "repeater|Starting|Opening YSF|Disconnect|Connect|Automatic|Disconnecting|Reverting|Linked" $logPath1 | tail -250`);
-		$logLines1 = preg_split('/\r\n|\r|\n/', `grep -a -E "onnection to|onnect to|Link|isconnect|Opening YSF network" ` . escapeshellarg($logPath1) . ` | sed '/Linked to Disconnect/d' | sed '/Linked to MMDVM/d' | sed '/Link successful to MMDVM/d' | sed '/*Link/d' | tail -1`); // */
+		$logLines1 = parseYSFGatewayLog($logPath1);
 	}
 	$logLines1 = array_filter($logLines1);
-	//$logLines1 = array_slice($logLines1, -250);
-	//if (sizeof($logLines1) < 250) {
+	
 	if (sizeof($logLines1) == 0) {
 		if (file_exists(LOGPATH."/".YSFGATEWAYLOGPREFIX."-".gmdate("Y-m-d", time() - 86340).".log")) {
 			$logPath2 = LOGPATH."/".YSFGATEWAYLOGPREFIX."-".gmdate("Y-m-d", time() - 86340).".log";
-			//$logLines2 = explode("\n", `egrep -a -h "repeater|Starting|Opening YSF|Disconnect|Connect|Automatic|Disconnecting|Reverting|Linked" $logPath2 | tail -250`);
-			$logLines1 = preg_split('/\r\n|\r|\n/', `grep -a -E "onnection to|onnect to|Link|isconnect|Opening YSF network" ` . escapeshellarg($logPath2) . ` | sed '/Linked to Disconnect/d' | sed '/Linked to MMDVM/d' | sed '/Link successful to MMDVM/d' | sed '/*Link/d' | tail -1`); // */
+			$logLines1 = parseYSFGatewayLog($logPath2);
 		}
 		$logLines2 = array_filter($logLines2);
 	}
@@ -210,15 +257,40 @@ function getP25GatewayLog(): array {
         $logLines = array();
 	
 	$logLines2 = array();
+	
+	// PHP replacement for shell pipeline
+	function parseP25GatewayLog($logPath) {
+		if (!file_exists($logPath)) {
+			return array();
+		}
+		
+		$lines = file($logPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+		$filteredLines = array();
+		
+		foreach ($lines as $line) {
+			// Check for patterns: Link|Starting|Unlink|unlinking
+			if (preg_match('/Link|Starting|Unlink|unlinking/', $line)) {
+				// Extract fields 2 onwards (skip first field)
+				$fields = preg_split('/\s+/', $line);
+				if (count($fields) > 1) {
+					$filteredLines[] = implode(' ', array_slice($fields, 1));
+				}
+			}
+		}
+		
+		// Return last line only
+		return array_slice($filteredLines, -1);
+	}
+	
         if (file_exists(LOGPATH."/".P25GATEWAYLOGPREFIX."-".gmdate("Y-m-d").".log")) {
 		$logPath1 = LOGPATH."/".P25GATEWAYLOGPREFIX."-".gmdate("Y-m-d").".log";
-		$logLines1 = preg_split('/\r\n|\r|\n/', `egrep -a -h "Link|Starting|Unlink|unlinking" ` . escapeshellarg($logPath1) . ` | cut -d" " -f2- | tail -1`);
+		$logLines1 = parseP25GatewayLog($logPath1);
         }
 	$logLines1 = array_filter($logLines1);
         if (sizeof($logLines1) == 0) {
                 if (file_exists(LOGPATH."/".P25GATEWAYLOGPREFIX."-".gmdate("Y-m-d", time() - 86340).".log")) {
                         $logPath2 = LOGPATH."/".P25GATEWAYLOGPREFIX."-".gmdate("Y-m-d", time() - 86340).".log";
-			$logLines2 = preg_split('/\r\n|\r|\n/', `egrep -a -h "Link|Starting|Unlink|unlinking" ` . escapeshellarg($logPath2) . ` | cut -d" " -f2- | tail -1`);
+			$logLines2 = parseP25GatewayLog($logPath2);
                 }
 		$logLines2 = array_filter($logLines2);
         }
@@ -231,15 +303,40 @@ function getNXDNGatewayLog(): array {
         $logLines = array();
 	
 	$logLines2 = array();
+	
+	// PHP replacement for shell pipeline
+	function parseNXDNGatewayLog($logPath) {
+		if (!file_exists($logPath)) {
+			return array();
+		}
+		
+		$lines = file($logPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+		$filteredLines = array();
+		
+		foreach ($lines as $line) {
+			// Check for patterns: Link|Starting|Unlink|unlinking
+			if (preg_match('/Link|Starting|Unlink|unlinking/', $line)) {
+				// Extract fields 2 onwards (skip first field)
+				$fields = preg_split('/\s+/', $line);
+				if (count($fields) > 1) {
+					$filteredLines[] = implode(' ', array_slice($fields, 1));
+				}
+			}
+		}
+		
+		// Return last line only
+		return array_slice($filteredLines, -1);
+	}
+	
         if (file_exists(LOGPATH."/".NXDNGATEWAYLOGPREFIX."-".gmdate("Y-m-d").".log")) {
 		$logPath1 = LOGPATH."/".NXDNGATEWAYLOGPREFIX."-".gmdate("Y-m-d").".log";
-		$logLines1 = preg_split('/\r\n|\r|\n/', `egrep -a -h "Link|Starting|Unlink|unlinking" ` . escapeshellarg($logPath1) . ` | cut -d" " -f2- | tail -1`);
+		$logLines1 = parseNXDNGatewayLog($logPath1);
         }
 	$logLines1 = array_filter($logLines1);
         if (sizeof($logLines1) == 0) {
                 if (file_exists(LOGPATH."/".NXDNGATEWAYLOGPREFIX."-".gmdate("Y-m-d", time() - 86340).".log")) {
 			$logPath2 = LOGPATH."/".NXDNGATEWAYLOGPREFIX."-".gmdate("Y-m-d", time() - 86340).".log";
-			$logLines2 = preg_split('/\r\n|\r|\n/', `egrep -a -h "Link|Starting|Unlink|unlinking" ` . escapeshellarg($logPath2) . ` | cut -d" " -f2- | tail -1`);
+			$logLines2 = parseNXDNGatewayLog($logPath2);
                 }
 		$logLines2 = array_filter($logLines2);
         }
@@ -252,15 +349,40 @@ function getDAPNETGatewayLog(): array {
         $logLines = array();
 	$logLines1 = array();
 	$logLines2 = array();
+	
+	// PHP replacement for shell pipeline
+	function parseDAPNETGatewayLog($logPath) {
+		if (!file_exists($logPath)) {
+			return array();
+		}
+		
+		$lines = file($logPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+		$filteredLines = array();
+		
+		foreach ($lines as $line) {
+			// Check for pattern: Sending message
+			if (preg_match('/Sending message/', $line)) {
+				// Extract fields 2 onwards (skip first field)
+				$fields = preg_split('/\s+/', $line);
+				if (count($fields) > 1) {
+					$filteredLines[] = implode(' ', array_slice($fields, 1));
+				}
+			}
+		}
+		
+		// Return last 20 lines in reverse order (like tac)
+		return array_reverse(array_slice($filteredLines, -20));
+	}
+	
         if (file_exists("/var/log/mmdvm/DAPNETGateway-".gmdate("Y-m-d").".log")) {
 		$logPath1 = "/var/log/mmdvm/DAPNETGateway-".gmdate("Y-m-d").".log";
-		$logLines1 = preg_split('/\r\n|\r|\n/', `egrep -a -h "Sending message" ` . escapeshellarg($logPath1) . ` | cut -d" " -f2- | tail -n 20 | tac`);
+		$logLines1 = parseDAPNETGatewayLog($logPath1);
         }
 	$logLines1 = array_filter($logLines1);
         if (sizeof($logLines1) == 0) {
                 if (file_exists("/var/log/mmdvm/DAPNETGateway-".gmdate("Y-m-d", time() - 86340).".log")) {
 			$logPath2 = "/var/log/mmdvm/DAPNETGateway-".gmdate("Y-m-d", time() - 86340).".log";
-			$logLines2 = preg_split('/\r\n|\r|\n/', `egrep -a -h "Sending message" ` . escapeshellarg($logPath2) . ` | cut -d" " -f2- | tail -n 20 | tac`);
+			$logLines2 = parseDAPNETGatewayLog($logPath2);
                 }
 		$logLines2 = array_filter($logLines2);
         }
@@ -813,7 +935,16 @@ function getActualLink(array $logLines, string $mode): string {
 		  $address=trim(substr($to,0,strpos($to,":")));
 		  $port=trim(substr($to,strpos($to,":")+1));
 		  $link = $address.";".$port;
-		if (file_exists("/var/lib/mmdvm/YSFHosts.txt")) { $ysfstatus = exec('egrep -a -h ' . escapeshellarg($link) . ' /var/lib/mmdvm/YSFHosts.txt | tail -1'); }
+		if (file_exists("/var/lib/mmdvm/YSFHosts.txt")) { 
+			// PHP replacement for shell pipeline
+			$ysfstatus = "";
+			$lines = file("/var/lib/mmdvm/YSFHosts.txt", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+			foreach ($lines as $line) {
+				if (strpos($line, $link) !== false) {
+					$ysfstatus = $line;
+				}
+			}
+		}
 		    if ($ysfstatus != "") {
 		        $ysfname= explode(";",$ysfstatus);
 		        $to = $ysfname[1];}
@@ -1004,8 +1135,37 @@ function cidr_match(string $ip, string $cidr): bool {
 }
 
 function getDMRGstat(string $dmrserver): ?string {
-	if (file_exists("/var/log/mmdvm/DMRGateway-".gmdate("Y-m-d").".log")) { $dmrstatus = exec('grep -a ' . escapeshellarg($dmrserver.', Logged\|'.$dmrserver.', Closing DMR\|'.$dmrserver.', Opening DMR\|'.$dmrserver.', Connection') . ' /var/log/mmdvm/DMRGateway-'.gmdate("Y-m-d").'.log | tail -1 | awk \'{print $5}\''); 
-        } else { $dmrstatus = exec('grep -a ' . escapeshellarg($dmrserver.', Logged\|'.$dmrserver.', Closing DMR\|'.$dmrserver.', Opening DMR\|'.$dmrserver.', Connection') . ' /var/log/mmdvm/DMRGateway-'.gmdate("Y-m-d", time() - 86340).'.log | tail -1 | awk \'{print $5}\''); }
+	// PHP replacement for shell pipeline
+	function parseDMRGatewayStatus($logPath, $dmrserver) {
+		if (!file_exists($logPath)) {
+			return "";
+		}
+		
+		$lines = file($logPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+		$filteredLines = array();
+		
+		foreach ($lines as $line) {
+			// Check for patterns: $dmrserver, Logged|$dmrserver, Closing DMR|$dmrserver, Opening DMR|$dmrserver, Connection
+			if (preg_match('/' . preg_quote($dmrserver, '/') . ', Logged|' . preg_quote($dmrserver, '/') . ', Closing DMR|' . preg_quote($dmrserver, '/') . ', Opening DMR|' . preg_quote($dmrserver, '/') . ', Connection/', $line)) {
+				$fields = preg_split('/\s+/', $line);
+				if (isset($fields[4])) {
+					$filteredLines[] = $fields[4];
+				}
+			}
+		}
+		
+		// Return last line only
+		return end($filteredLines) ?: "";
+	}
+	
+	$logPath = "/var/log/mmdvm/DMRGateway-".gmdate("Y-m-d").".log";
+	$dmrstatus = parseDMRGatewayStatus($logPath, $dmrserver);
+	
+	if (empty($dmrstatus)) {
+		$logPath = "/var/log/mmdvm/DMRGateway-".gmdate("Y-m-d", time() - 86340).".log";
+		$dmrstatus = parseDMRGatewayStatus($logPath, $dmrserver);
+	}
+	
 	$dmrserver = str_replace('_', ' ', $dmrserver);
 	if (strlen($dmrserver) > 19) { $dmrserver = substr($dmrserver, 0, 17) . '..'; }
 	if (strpos($dmrstatus, 'Logged') !== false ) {
