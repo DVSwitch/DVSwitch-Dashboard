@@ -41,7 +41,7 @@ for ($i = 0; $i < count($localTXList); $i++) {
                                 $local_time = xstrftime('%H:%M:%S %b %d', $dt->getTimestamp());
 
 			echo"<tr>";
-			echo"<td align=\"left\">&nbsp;$local_time</td>";
+			echo"<td align=\"left\" class=\"dark-mode-text\">&nbsp;$local_time</td>";
 			echo"<td align=\"left\" style=\"color:green; font-weight:bold;\">&nbsp;$listElem[1]</td>";
 			    if (is_numeric($listElem[2]) || strpos($listElem[2], "openSPOT") !== FALSE) {
 				echo "<td align=\"left\" style=\"color:#464646;\"><b>&nbsp;$listElem[2]</b></td>";
@@ -63,11 +63,11 @@ for ($i = 0; $i < count($localTXList); $i++) {
 				echo "<td>$listElem[5]</td>";
 			}
 			if ($listElem[6] == null) {
-				echo "<td colspan=\"1\" style=\"background:#f33;\">TX</td>";
+				echo "<td colspan=\"1\" style=\"background:#f33;\" class=\"dark-mode-text\">TX</td>";
 			} else if ($listElem[6] == "DMR Data") {
 				echo "<td colspan=\"1\" style=\"background:#1d1;\">DMR Data</td>";
 			}  else {
-		echo"<td>$listElem[6]</td>"; //duration
+		echo"<td class=\"dark-mode-text\">$listElem[6]</td>"; //duration
 		}
 			echo"</tr>\n";
 			$counter++; }
