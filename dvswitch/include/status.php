@@ -3,6 +3,9 @@ include_once dirname(dirname(__FILE__)).'/include/tools.php';
 include_once dirname(dirname(__FILE__)).'/include/config.php';
 include_once dirname(dirname(__FILE__)).'/include/functions.php';
 
+// Initialize abinfo to null. It will be populated only if the JSON file exists and is valid.
+// This prevents undefined variable errors in later sections (like TRX Info) that use it.
+$abinfo = null;
 ?>
 <span style="font-weight: bold;font-size:14px;">Status</span>
 <fieldset style="background-color:#e8e8e8e8;width:160px;margin-top:6px;;margin-bottom:0px;margin-left:0px;margin-right:3px;font-size:12px;border-top-left-radius: 10px; border-top-right-radius: 10px;border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
@@ -13,39 +16,47 @@ if ( $testMMDVModeDMR == 1 ) { //Hide the DMR information when DMR mode not enab
 $dmrMasterFile = fopen("/var/lib/mmdvm/DMR_Hosts.txt", "r");
 $dmrMasterHost = getConfigItem("DMR Network", "Address", $mmdvmconfigs);
 $dmrMasterPort = getConfigItem("DMR Network", "Port", $mmdvmconfigs);
+
+// Initialize variables to prevent undefined variable errors if the config file can't be parsed.
+$configdmrgateway = [];
+$xlxMasterHost1 = "";
+$dmrMasterHost1 = "";
+$dmrMasterHost2 = "";
+$dmrMasterHost3 = "";
+$dmrMasterHost4 = "";
+$dmrMasterHost5 = "";
+
 if ($dmrMasterHost == '127.0.0.1' AND file_exists('/opt/DMRGateway/DMRGateway.ini')) {
     $dmrGatewayConfigFile = '/opt/DMRGateway/DMRGateway.ini';
-    if (fopen($dmrGatewayConfigFile,'r')) { $configdmrgateway = parse_ini_file($dmrGatewayConfigFile, true); }
-    if (isset($configdmrgateway['XLX Network 1']['Address'])) { $xlxMasterHost1 = $configdmrgateway['XLX Network 1']['Address']; }
-    else { $xlxMasterHost1 = ""; }
-    $dmrMasterHost1 = $configdmrgateway['DMR Network 1']['Address'];
-    $dmrMasterHost2 = $configdmrgateway['DMR Network 2']['Address'];
-    $dmrMasterHost3 = str_replace('_', ' ', $configdmrgateway['DMR Network 3']['Name']);
-    if (isset($configdmrgateway['DMR Network 4']['Name'])) {$dmrMasterHost4 = str_replace('_', ' ', $configdmrgateway['DMR Network 4']['Name']);}
-    if (isset($configdmrgateway['DMR Network 5']['Name'])) {$dmrMasterHost5 = str_replace('_', ' ', $configdmrgateway['DMR Network 5']['Name']);}
-    while (!feof($dmrMasterFile)) {
-	$dmrMasterLine = fgets($dmrMasterFile);
-                $dmrMasterHostF = preg_split('/\s+/', $dmrMasterLine);
-	if ((count($dmrMasterHostF) >= 2) && (strpos($dmrMasterHostF[0], '#') === FALSE) && ($dmrMasterHostF[0] != '')) {
-	    if ((strpos($dmrMasterHostF[0], 'XLX_') === 0) && ($xlxMasterHost1 == $dmrMasterHostF[2])) { $xlxMasterHost1 = str_replace('_', ' ', $dmrMasterHostF[0]); }
-	    if ((strpos($dmrMasterHostF[0], 'BM_') === 0) && ($dmrMasterHost1 == $dmrMasterHostF[2])) { $dmrMasterHost1 = str_replace('_', ' ', $dmrMasterHostF[0]); }
-	    if ((strpos($dmrMasterHostF[0], 'DMR+_') === 0) && ($dmrMasterHost2 == $dmrMasterHostF[2])) { $dmrMasterHost2 = str_replace('_', ' ', $dmrMasterHostF[0]); }
-	}
+    // parse_ini_file returns false on failure, so we check the result.
+    $configdmrgateway = parse_ini_file($dmrGatewayConfigFile, true);
+    if ($configdmrgateway) { // Proceed only if the INI file was parsed successfully.
+        // Use null coalescing operator (??) for safe access to array keys.
+        $xlxMasterHost1 = $configdmrgateway['XLX Network 1']['Address'] ?? "";
+        $dmrMasterHost1 = $configdmrgateway['DMR Network 1']['Address'] ?? "";
+        $dmrMasterHost2 = $configdmrgateway['DMR Network 2']['Address'] ?? "";
+        $dmrMasterHost3 = str_replace('_', ' ', $configdmrgateway['DMR Network 3']['Name'] ?? "");
+        $dmrMasterHost4 = str_replace('_', ' ', $configdmrgateway['DMR Network 4']['Name'] ?? "");
+        $dmrMasterHost5 = str_replace('_', ' ', $configdmrgateway['DMR Network 5']['Name'] ?? "");
+
+        while (!feof($dmrMasterFile)) {
+            $dmrMasterLine = fgets($dmrMasterFile);
+            $dmrMasterHostF = preg_split('/\s+/', $dmrMasterLine);
+            if ((count($dmrMasterHostF) >= 2) && (strpos($dmrMasterHostF[0], '#') === FALSE) && ($dmrMasterHostF[0] != '')) {
+                if ((strpos($dmrMasterHostF[0], 'XLX_') === 0) && ($xlxMasterHost1 == $dmrMasterHostF[2])) { $xlxMasterHost1 = str_replace('_', ' ', $dmrMasterHostF[0]); }
+                if ((strpos($dmrMasterHostF[0], 'BM_') === 0) && ($dmrMasterHost1 == $dmrMasterHostF[2])) { $dmrMasterHost1 = str_replace('_', ' ', $dmrMasterHostF[0]); }
+                if ((strpos($dmrMasterHostF[0], 'DMR+_') === 0) && ($dmrMasterHost2 == $dmrMasterHostF[2])) { $dmrMasterHost2 = str_replace('_', ' ', $dmrMasterHostF[0]); }
+            }
+        }
+        if (strlen($xlxMasterHost1) > 19) { $xlxMasterHost1 = substr($xlxMasterHost1, 0, 17) . '..'; }
     }
-    if (strlen($xlxMasterHost1) > 19) { $xlxMasterHost1 = substr($xlxMasterHost1, 0, 17) . '..'; }
-   //if (strlen($dmrMasterHost1) > 19) { $dmrMasterHost1 = substr($dmrMasterHost1, 0, 17) . '..'; }
-   //if (strlen($dmrMasterHost2) > 19) { $dmrMasterHost2 = substr($dmrMasterHost2, 0, 17) . '..'; }
-   //if (strlen($dmrMasterHost3) > 19) { $dmrMasterHost3 = substr($dmrMasterHost3, 0, 17) . '..'; }
-   //if (isset($dmrMasterHost4)) { if (strlen($dmrMasterHost4) > 19) { $dmrMasterHost4 = substr($dmrMasterHost4, 0, 17) . '..'; } }
-   //if (isset($dmrMasterHost5)) { if (strlen($dmrMasterHost5) > 19) { $dmrMasterHost5 = substr($dmrMasterHost5, 0, 17) . '..'; } }
-}
-else {
+} else {
     while (!feof($dmrMasterFile)) {
-	$dmrMasterLine = fgets($dmrMasterFile);
-                $dmrMasterHostF = preg_split('/\s+/', $dmrMasterLine);
-	if ((count($dmrMasterHostF) >= 4) && (strpos($dmrMasterHostF[0], '#') === FALSE) && ($dmrMasterHostF[0] != '')) {
-	    if (($dmrMasterHost == $dmrMasterHostF[2]) && ($dmrMasterPort == $dmrMasterHostF[4])) { $dmrMasterHost = str_replace('_', ' ', $dmrMasterHostF[0]); }
-	}
+        $dmrMasterLine = fgets($dmrMasterFile);
+        $dmrMasterHostF = preg_split('/\s+/', $dmrMasterLine);
+        if ((count($dmrMasterHostF) >= 4) && (strpos($dmrMasterHostF[0], '#') === FALSE) && ($dmrMasterHostF[0] != '')) {
+            if (($dmrMasterHost == $dmrMasterHostF[2]) && ($dmrMasterPort == $dmrMasterHostF[4])) { $dmrMasterHost = str_replace('_', ' ', $dmrMasterHostF[0]); }
+        }
     }
 }
 fclose($dmrMasterFile);
@@ -59,69 +70,82 @@ $net5= cidr_match($ip,REMOTENET);
 
 if (file_exists('/tmp/ABInfo_'.ABINFO.'.json')) {
     $abinfo = getABInfo('/tmp/ABInfo_'.ABINFO.'.json');
+}
+
+// Only display the Analog Bridge Info table if $abinfo was successfully populated.
+if ($abinfo && is_array($abinfo)) {
     echo "<table style=\"margin-top:4px;\">\n";
     echo "<tr><th colspan=\"2\">";
     if ($net1 == TRUE || $net2 == TRUE || $net3 == TRUE || $net4 == TRUE || $net5 == TRUE) {
-    echo "<div class=\"tooltip\" style=\"font-size:12px;\">Analog Bridge Info<span class=\"tooltiptext\" style=\"font-size:11px;\">";
-    echo "<br>&nbsp;decoderFallBack: ".$abinfo['use_fallback'];
-    echo "<br>&nbsp;useEmulator: ".$abinfo['use_emulator'];
-    echo "<br>&nbsp;Mute: ".$abinfo['mute'];
-    echo "<br>&nbsp;[TLV]";
-    echo "<br>&nbsp;&nbsp;&nbsp;address: ".$abinfo['tlv']['ip'];
-    echo "<br>&nbsp;&nbsp;&nbsp;txPort: ".$abinfo['tlv']['tx_port'];
-    echo "<br>&nbsp;&nbsp;&nbsp;rxPort: ".$abinfo['tlv']['rx_port'];
-    echo "<br>&nbsp;&nbsp;&nbsp;ambeMode: ".$abinfo['tlv']['ambe_mode'];
-    echo "<br>&nbsp;&nbsp;&nbsp;AMBE Size: ".$abinfo['tlv']['ambe_size'];
-    echo "<br>&nbsp;[Digital]<br/>";
-    echo "&nbsp;&nbsp;&nbsp;Callsign: ".$abinfo['digital']['call'];
-    echo "<br>&nbsp;&nbsp;&nbsp;gatewayID: ".$abinfo['digital']['gw'];
-    echo "<br>&nbsp;&nbsp;&nbsp;repeaterID: ".$abinfo['digital']['rpt'];
-    echo "<br>&nbsp;&nbsp;&nbsp;txTG: ".$abinfo['digital']['tg'];
-    if (strlen($abinfo['last_tune']) > 8) { $lasttune = "<br>&nbsp;&nbsp;&nbsp;&nbsp;".$abinfo['last_tune']; }
-    else {$lasttune = $abinfo['last_tune'];}
-    echo "<br>&nbsp;&nbsp;&nbsp;Last tune: ".$lasttune;
-    echo "<br>&nbsp;&nbsp;&nbsp;txTS: ".$abinfo['digital']['ts'];
-    echo "<br>&nbsp;&nbsp;&nbsp;colorCode: ".$abinfo['digital']['cc'];
-    echo "<br>&nbsp;[USRP]<br/>";
-    echo "&nbsp;&nbsp;&nbsp;address: ".$abinfo['usrp']['ip'];
-    echo "<br>&nbsp;&nbsp;&nbsp;txPort: ".$abinfo['usrp']['tx_port'];
-    echo "<br>&nbsp;&nbsp;&nbsp;rxPort: ".$abinfo['usrp']['rx_port'];
-    echo "<br>&nbsp;&nbsp;&nbsp;Ping: ".$abinfo['usrp']['ping'];
-    echo "<br>&nbsp;&nbsp;&nbsp;[To PCM]";;
-    echo "<br>&nbsp;&nbsp;&nbsp;&nbsp;usrpA: ".$abinfo['usrp']['to_pcm']['shape']."&nbsp;";
-    echo "<br>&nbsp;&nbsp;&nbsp;&nbsp;Gain: ".$abinfo['usrp']['to_pcm']['gain'];
-    echo "<br>&nbsp;&nbsp;&nbsp;[To AMBE]";;
-    echo "<br>&nbsp;&nbsp;&nbsp;&nbsp;tlvA: ".$abinfo['usrp']['to_ambe']['shape']."&nbsp;";
-    echo "<br>&nbsp;&nbsp;&nbsp;&nbsp;Gain: ".$abinfo['usrp']['to_ambe']['gain'];
-    echo "<br>&nbsp;[DV3000]<br/>";
-    echo "&nbsp;&nbsp;&nbsp;address: ".$abinfo['dv3000']['ip'];
-    echo "<br>&nbsp;&nbsp;&nbsp;rxPort: ".$abinfo['dv3000']['port'];
-    echo "<br>&nbsp;&nbsp;&nbsp;Serial: ".$abinfo['dv3000']['use_serial'];
-    echo "<br>&nbsp;[Analog Bridge]";
-    echo "<br>&nbsp;&nbsp;&nbsp;Version: ".$abinfo['ab']['version'];
-    echo "<br/></span></div></th></tr>\n";
-    if (!preg_match('/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/',$abinfo['digital']['call'])) { $call="";
-    } else { $call=$abinfo['digital']['call']; }
-    echo "<tr><th width=50%>Callsign</th><td style=\"background: #f9f9f9f9;color:#b44010;font-weight: bold;\">".$call."</td></tr>\n";
-    echo "<tr><th width=50%>GW ID</th><td style=\"background: #f9f9f9;\">".$abinfo['digital']['gw']."</td></tr>\n";
-    echo "<tr><th width=50%>RPT ID</th><td style=\"background: #f9f9f9;\">".$abinfo['digital']['rpt']."</td></tr>\n";
-    echo "<tr><th width=50%>Mode</th><td style=\"background: #f9f9f9;font-weight: bold;color:#b44010;\">".$abinfo['tlv']['ambe_mode']."</td></tr>\n";
-    echo "<tr><th width=50%>Tx TG</th><td style=\"background: #f9f9f9;font-weight: bold;color:#ef7215;\">".$abinfo['digital']['tg']."</td></tr>\n";
-    echo "<tr><th width=50%>AB ver</th><td style=\"background: #f9f9f9;\">".$abinfo['ab']['version']."</td></tr>\n";
-    echo "</table>\n"; }
-    else { echo "<span style=\"font-size:13px;\">Analog Bridge Info</span></th></tr>\n";
-    if (!preg_match('/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/',$abinfo['digital']['call'])) { $call="";
-    } else { $call=$abinfo['digital']['call']; }
-    echo "<tr><th width=50%>Callsign</th><td style=\"background: #f9f9f9f9;color:#b44010;font-weight: bold;\">".$call."</td></tr>\n";
-    echo "<tr><th width=50%>Mode</th><td style=\"background: #f9f9f9;font-weight: bold;color:#b44010;\">".$abinfo['tlv']['ambe_mode']."</td></tr>\n";
-    echo "<tr><th width=50%>Tx TG</th><td style=\"background: #f9f9f9;font-weight: bold;color:#ef7215;\">".$abinfo['digital']['tg']."</td></tr>\n";
-    echo "<tr><th width=50%>AB ver</th><td style=\"background: #f9f9f9;\">".$abinfo['ab']['version']."</td></tr>\n";
-    echo "</table>\n"; }
+        // Use isset() or null coalescing operator (??) for safer access to potentially missing keys.
+        echo "<div class=\"tooltip\" style=\"font-size:12px;\">Analog Bridge Info<span class=\"tooltiptext\" style=\"font-size:11px;\">";
+        echo "<br> decoderFallBack: ".($abinfo['use_fallback'] ?? 'N/A');
+        echo "<br> useEmulator: ".($abinfo['use_emulator'] ?? 'N/A');
+        echo "<br> Mute: ".($abinfo['mute'] ?? 'N/A');
+        echo "<br> [TLV]";
+        echo "<br>   address: ".($abinfo['tlv']['ip'] ?? 'N/A');
+        echo "<br>   txPort: ".($abinfo['tlv']['tx_port'] ?? 'N/A');
+        echo "<br>   rxPort: ".($abinfo['tlv']['rx_port'] ?? 'N/A');
+        echo "<br>   ambeMode: ".($abinfo['tlv']['ambe_mode'] ?? 'N/A');
+        echo "<br>   AMBE Size: ".($abinfo['tlv']['ambe_size'] ?? 'N/A');
+        echo "<br> [Digital]<br/>";
+        echo "   Callsign: ".($abinfo['digital']['call'] ?? 'N/A');
+        echo "<br>   gatewayID: ".($abinfo['digital']['gw'] ?? 'N/A');
+        echo "<br>   repeaterID: ".($abinfo['digital']['rpt'] ?? 'N/A');
+        echo "<br>   txTG: ".($abinfo['digital']['tg'] ?? 'N/A');
+        $last_tune_val = $abinfo['last_tune'] ?? '';
+        if (strlen($last_tune_val) > 8) { $lasttune = "<br>    ".$last_tune_val; }
+        else {$lasttune = $last_tune_val;}
+        echo "<br>   Last tune: ".$lasttune;
+        echo "<br>   txTS: ".($abinfo['digital']['ts'] ?? 'N/A');
+        echo "<br>   colorCode: ".($abinfo['digital']['cc'] ?? 'N/A');
+        echo "<br> [USRP]<br/>";
+        echo "   address: ".($abinfo['usrp']['ip'] ?? 'N/A');
+        echo "<br>   txPort: ".($abinfo['usrp']['tx_port'] ?? 'N/A');
+        echo "<br>   rxPort: ".($abinfo['usrp']['rx_port'] ?? 'N/A');
+        echo "<br>   Ping: ".($abinfo['usrp']['ping'] ?? 'N/A');
+        echo "<br>   [To PCM]";;
+        echo "<br>    usrpA: ".($abinfo['usrp']['to_pcm']['shape'] ?? 'N/A')." ";
+        echo "<br>    Gain: ".($abinfo['usrp']['to_pcm']['gain'] ?? 'N/A');
+        echo "<br>   [To AMBE]";;
+        echo "<br>    tlvA: ".($abinfo['usrp']['to_ambe']['shape'] ?? 'N/A')." ";
+        echo "<br>    Gain: ".($abinfo['usrp']['to_ambe']['gain'] ?? 'N/A');
+        echo "<br> [DV3000]<br/>";
+        echo "   address: ".($abinfo['dv3000']['ip'] ?? 'N/A');
+        echo "<br>   rxPort: ".($abinfo['dv3000']['port'] ?? 'N/A');
+        echo "<br>   Serial: ".($abinfo['dv3000']['use_serial'] ?? 'N/A');
+        echo "<br> [Analog Bridge]";
+        echo "<br>   Version: ".($abinfo['ab']['version'] ?? 'N/A');
+        echo "<br/></span></div></th></tr>\n";
+        $call_val = $abinfo['digital']['call'] ?? '';
+        if (!preg_match('/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/', $call_val)) { $call="";
+        } else { $call = $call_val; }
+        echo "<tr><th width=50%>Callsign</th><td style=\"background: #f9f9f9f9;color:#b44010;font-weight: bold;\">".$call."</td></tr>\n";
+        echo "<tr><th width=50%>GW ID</th><td style=\"background: #f9f9f9;\">".($abinfo['digital']['gw'] ?? 'N/A')."</td></tr>\n";
+        echo "<tr><th width=50%>RPT ID</th><td style=\"background: #f9f9f9;\">".($abinfo['digital']['rpt'] ?? 'N/A')."</td></tr>\n";
+        echo "<tr><th width=50%>Mode</th><td style=\"background: #f9f9f9;font-weight: bold;color:#b44010;\">".($abinfo['tlv']['ambe_mode'] ?? 'N/A')."</td></tr>\n";
+        echo "<tr><th width=50%>Tx TG</th><td style=\"background: #f9f9f9;font-weight: bold;color:#ef7215;\">".($abinfo['digital']['tg'] ?? 'N/A')."</td></tr>\n";
+        echo "<tr><th width=50%>AB ver</th><td style=\"background: #f9f9f9;\">".($abinfo['ab']['version'] ?? 'N/A')."</td></tr>\n";
+        echo "</table>\n";
+    } else {
+        echo "<span style=\"font-size:13px;\">Analog Bridge Info</span></th></tr>\n";
+        $call_val = $abinfo['digital']['call'] ?? '';
+        if (!preg_match('/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/', $call_val)) { $call="";
+        } else { $call = $call_val; }
+        echo "<tr><th width=50%>Callsign</th><td style=\"background: #f9f9f9f9;color:#b44010;font-weight: bold;\">".$call."</td></tr>\n";
+        echo "<tr><th width=50%>Mode</th><td style=\"background: #f9f9f9;font-weight: bold;color:#b44010;\">".($abinfo['tlv']['ambe_mode'] ?? 'N/A')."</td></tr>\n";
+        echo "<tr><th width=50%>Tx TG</th><td style=\"background: #f9f9f9;font-weight: bold;color:#ef7215;\">".($abinfo['digital']['tg'] ?? 'N/A')."</td></tr>\n";
+        echo "<tr><th width=50%>AB ver</th><td style=\"background: #f9f9f9;\">".($abinfo['ab']['version'] ?? 'N/A')."</td></tr>\n";
+        echo "</table>\n";
+    }
 }
 
 // N4IRS Something is causing Tx TG to be 0 which the above does not like.
 
 // TRX Status code
+// Get the ambe_mode safely to avoid errors in the logic below.
+$ambe_mode = $abinfo['tlv']['ambe_mode'] ?? '';
+
 echo '<br><table><tr><th colspan="2">TRX Info</th></tr><tr>';
 if (isProcessRunning("MMDVM_Bridge")) {
 if (isset($lastHeard[0])) {
@@ -137,31 +161,36 @@ if (isset($lastHeard[0])) {
                     if (isProcessRunning("MMDVM_Bridge")) { echo "<td style=\"background:#0b0; color:#030;\">Listening</td>"; 
 		} else { echo "<td style=\"background:#ffffed; color:#b0b0b0;font-weight: bold\">OFFLINE</td>"; }
                     }
-            elseif ($listElem[2] && $listElem[6] == null && $abinfo['tlv']['ambe_mode']== "DSTAR" && getActualMode($lastHeard, $mmdvmconfigs) === 'D-Star') {
+            // Safely check $ambe_mode
+            elseif ($listElem[2] && $listElem[6] == null && $ambe_mode == "DSTAR" && getActualMode($lastHeard, $mmdvmconfigs) === 'D-Star') {
                     echo "<td style=\"background:#4aa361;\">RX D-Star</td>";
                     }
             elseif (getActualMode($lastHeard, $mmdvmconfigs) === 'D-Star') {
                     echo "<td style=\"background:#ade;\">Listening D-Star</td>";
                     }
-            elseif ($listElem[2] && $listElem[6] == null && $abinfo['tlv']['ambe_mode']== "DMR" && getActualMode($lastHeard, $mmdvmconfigs) === 'DMR') {
+            // Safely check $ambe_mode
+            elseif ($listElem[2] && $listElem[6] == null && $ambe_mode == "DMR" && getActualMode($lastHeard, $mmdvmconfigs) === 'DMR') {
                     echo "<td style=\"background:#4aa361;\">RX DMR</td>";
                     }
             elseif (getActualMode($lastHeard, $mmdvmconfigs) === 'DMR') {
                     echo "<td style=\"background:#f93;\">Listening DMR</td>";
                     }
-            elseif ($listElem[2] && $listElem[6] == null && ($abinfo['tlv']['ambe_mode']== "YSFN" || $abinfo['tlv']['ambe_mode']== "YSFW") && getActualMode($lastHeard, $mmdvmconfigs) === 'YSF') {
+            // Safely check $ambe_mode
+            elseif ($listElem[2] && $listElem[6] == null && ($ambe_mode == "YSFN" || $ambe_mode == "YSFW") && getActualMode($lastHeard, $mmdvmconfigs) === 'YSF') {
                     echo "<td style=\"background:#4aa361;\">RX YSF</td>";
                     }
             elseif (getActualMode($lastHeard, $mmdvmconfigs) === 'YSF') {
                     echo "<td style=\"background:#ff9;\">Listening YSF</td>";
                     }
-            elseif ($listElem[2] && $listElem[6] == null && $abinfo['tlv']['ambe_mode']== "P25" && getActualMode($lastHeard, $mmdvmconfigs) === 'P25') {
+            // Safely check $ambe_mode
+            elseif ($listElem[2] && $listElem[6] == null && $ambe_mode == "P25" && getActualMode($lastHeard, $mmdvmconfigs) === 'P25') {
     	        echo "<td style=\"background:#4aa361;\">RX P25</td>";
     	        }
     	elseif (getActualMode($lastHeard, $mmdvmconfigs) === 'P25') {
     	        echo "<td style=\"background:#f9f;\">Listening P25</td>";
     	        }
-	elseif ($listElem[2] && $listElem[6] == null && $abinfo['tlv']['ambe_mode']== "NXDN" && getActualMode($lastHeard, $mmdvmconfigs) === 'NXDN') {
+            // Safely check $ambe_mode
+	elseif ($listElem[2] && $listElem[6] == null && $ambe_mode == "NXDN" && getActualMode($lastHeard, $mmdvmconfigs) === 'NXDN') {
     	        echo "<td style=\"background:#4aa361;\">RX NXDN</td>";
     	        }
     	elseif (getActualMode($lastHeard, $mmdvmconfigs) === 'NXDN') {
@@ -183,25 +212,26 @@ echo "<table>\n";;
 echo "<tr><th colspan=\"2\">DMR Master</th></tr>\n";
 if (getEnabled("DMR Network", $mmdvmconfigs) == 1) {
 	if ($dmrMasterHost == '127.0.0.1' && isProcessRunning("DMRGateway")) {
-	    if ((isset($configdmrgateway['XLX Network 1']['Enabled'])) && ($configdmrgateway['XLX Network 1']['Enabled'] == 1)) {
+	    // Use !empty for safe checking of potentially undefined keys.
+	    if (!empty($configdmrgateway['XLX Network 1']['Enabled'])) {
 		echo "<tr><td  style=\"background: #ffffed;\" colspan=\"2\"><span style=\"color:#b5651d;font-weight: bold\">".$xlxMasterHost1."</span></td></tr>\n";
 	    }
-                if ( !isset($configdmrgateway['XLX Network 1']['Enabled']) && isset($configdmrgateway['XLX Network']['Enabled']) && $configdmrgateway['XLX Network']['Enabled'] == 1) {
-		if (file_exists("/var/log/mmdvm/DMRGateway-".gmdate("Y-m-d").".log")) { $xlxMasterHost1 = exec('grep -a \'XLX, Linking\|Unlinking\' /var/log/mmdvm/DMRGateway-'.gmdate("Y-m-d").'.log | tail -1 | awk \'{print $5 " " $8 " " $9}\''); 
-		} else { $xlxMasterHost1 = exec('grep -a \'XLX, Linking\|Unlinking\' /var/log/mmdvm/DMRGateway-'.gmdate("Y-m-d", time() - 86340).'.log | tail -1 | awk \'{print $5 " " $8 " " $9}\''); }
-		if ( strpos($xlxMasterHost1, 'Linking') !== false ) { $xlxMasterHost1 = str_replace('Linking ', '', $xlxMasterHost1); }
-		else if ( strpos($xlxMasterHost1, 'Unlinking') !== false ) { $xlxMasterHost1 = "XLX Not Linked"; }
-		echo "<tr><td  style=\"background: #ffffed;\" colspan=\"2\"><span style=\"color:#b5651d;font-weight: bold\">".$xlxMasterHost1."</span></td></tr>\n";
-                        }
-	    if ($configdmrgateway['DMR Network 1']['Enabled'] == 1) {
+        if (empty($configdmrgateway['XLX Network 1']['Enabled']) && !empty($configdmrgateway['XLX Network']['Enabled'])) {
+		    if (file_exists("/var/log/mmdvm/DMRGateway-".gmdate("Y-m-d").".log")) { $xlxMasterHost1_log = exec('grep -a \'XLX, Linking\|Unlinking\' /var/log/mmdvm/DMRGateway-'.gmdate("Y-m-d").'.log | tail -1 | awk \'{print $5 " " $8 " " $9}\'');
+		    } else { $xlxMasterHost1_log = exec('grep -a \'XLX, Linking\|Unlinking\' /var/log/mmdvm/DMRGateway-'.gmdate("Y-m-d", time() - 86340).'.log | tail -1 | awk \'{print $5 " " $8 " " $9}\''); }
+		    if ( strpos($xlxMasterHost1_log, 'Linking') !== false ) { $xlxMasterHost1_log = str_replace('Linking ', '', $xlxMasterHost1_log); }
+		    else if ( strpos($xlxMasterHost1_log, 'Unlinking') !== false ) { $xlxMasterHost1_log = "XLX Not Linked"; }
+		    echo "<tr><td  style=\"background: #ffffed;\" colspan=\"2\"><span style=\"color:#b5651d;font-weight: bold\">".($xlxMasterHost1_log ?: $xlxMasterHost1)."</span></td></tr>\n";
+        }
+	    if (!empty($configdmrgateway['DMR Network 1']['Enabled'])) {
 		$dmrMasterhost1 = str_replace(' ', '_', $dmrMasterHost1);
                 echo getDMRGstat($dmrMasterhost1);
 	    }
-	    if ($configdmrgateway['DMR Network 2']['Enabled'] == 1) {
+	    if (!empty($configdmrgateway['DMR Network 2']['Enabled'])) {
 		$dmrMasterhost2 = str_replace(' ', '_', $dmrMasterHost2);
                 echo getDMRGstat($dmrMasterhost2);
 	    }
-	    if ($configdmrgateway['DMR Network 3']['Enabled'] == 1) {
+	    if (!empty($configdmrgateway['DMR Network 3']['Enabled'])) {
 		$dmrMasterhost3 = str_replace(' ', '_', $dmrMasterHost3);
                 echo getDMRGstat($dmrMasterhost3);
 	    }
@@ -272,7 +302,7 @@ if ( $testMMDVModeYSF == 1 ) { //Hide the YSF information when System Fusion Net
 	    $ysfLinkedToTxt = "Room<br/><span style=\"color:#b5651d;font-weight: bold;\">".$ysfLinkedToTxt."</span>"; 
 	} else { 
 	    if (strlen($ysfLinkedTo) > 20) { $ysfLinkedToTxt = substr($ysfLinkedTo, 0, 18) . '..'; }
-	    $ysfLinkedToTxt = "Linked to<br/><span style=\"color:#b5651d;font-weight: bold\">".$ysfLinkedToTxt."</span>"; 
+	    $ysfLinkedToTxt = "Linked to<br/><span style=\"color:#b5651d;font-weight: bold\">".$ysfLinkedTo."</span>"; 
 	}
 	    $ysfLinkedToTxt = str_replace('_', ' ', $ysfLinkedToTxt);
         }
@@ -318,7 +348,11 @@ if ($configfile = fopen('/etc/ircddbgateway','r')) {
     echo "<br />\n";
     echo "<table>\n";
     echo "<tr><th colspan=\"2\">D-Star Net</th></tr>\n";
-    if (isProcessRunning("ircddbgatewayd")) { echo "<tr><th width=\"20%\">IRC</th><td style=\"background: #ffffff;color:brown;\">".substr($configs['ircddbHostname'], 0 ,16)."</td></tr>\n";}
+    // Check if ircddbHostname is set before using it to prevent errors.
+    if (isProcessRunning("ircddbgatewayd")) {
+        $hostname = isset($configs['ircddbHostname']) ? substr($configs['ircddbHostname'], 0, 16) : 'N/A';
+        echo "<tr><th width=\"20%\">IRC</th><td style=\"background: #ffffff;color:brown;\">".$hostname."</td></tr>\n";
+    }
     echo "<tr><td colspan=\"2\" style=\"background: #ffffed;\">".getActualLink($reverseLogLinesMMDVM, "D-Star")."</td></tr>\n";
     echo "</table>\n";
 }
