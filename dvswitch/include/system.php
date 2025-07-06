@@ -1,15 +1,50 @@
 <?php
+declare(strict_types=1);
+
 include_once dirname(dirname(__FILE__)).'/include/tools.php';
 include_once dirname(dirname(__FILE__)).'/include/config.php';
 include_once dirname(dirname(__FILE__)).'/include/functions.php';
 
+// Initialize MMDVM configs
+if (!isset($mmdvmconfigs)) {
+    $mmdvmconfigs = getMMDVMConfig();
+}
+
+// Ensure we have a valid config array
+if (!is_array($mmdvmconfigs)) {
+    $mmdvmconfigs = [];
+}
+
 $rawuptime = shell_exec('cat /proc/uptime');
-$uptime = format_uptime(substr($rawuptime,0,strpos($rawuptime," ")));
+$uptime = $rawuptime ? format_uptime((float)substr($rawuptime,0,strpos($rawuptime," "))) : "Unknown";
 
-$free_mem=shell_exec("free -m | awk 'NR==2{printf \"%.0f%%\", $3*100/$2 }'");
-$disk_used=shell_exec("df -h | awk '\$NF==\"/\"{printf \"%s\",$5}'");
+// Get memory usage using a simpler approach
+$free_output = shell_exec('free -m');
+$free_mem = "Unknown";
+if ($free_output) {
+    $lines = explode("\n", $free_output);
+    if (isset($lines[1])) {
+        $parts = preg_split('/\s+/', trim($lines[1]));
+        if (isset($parts[1]) && isset($parts[2]) && $parts[1] > 0) {
+            $free_mem = round(($parts[2] * 100) / $parts[1]) . "%";
+        }
+    }
+}
 
-$cpuLoad = sys_getloadavg();
+// Get disk usage using a simpler approach
+$df_output = shell_exec('df -h /');
+$disk_used = "Unknown";
+if ($df_output) {
+    $lines = explode("\n", $df_output);
+    if (isset($lines[1])) {
+        $parts = preg_split('/\s+/', trim($lines[1]));
+        if (isset($parts[4])) {
+            $disk_used = $parts[4];
+        }
+    }
+}
+
+$cpuLoad = sys_getloadavg() ?: [0, 0, 0];
 if (file_exists('/sys/class/thermal/thermal_zone0/temp')) {
 $cpuTempCRaw = exec('cat /sys/class/thermal/thermal_zone0/temp');
 if ($cpuTempCRaw !="") {
@@ -36,27 +71,83 @@ if ($cpuTempCRaw !="") {
 </fieldset>
 <span style="font-weight: bold;font-size:13px;">Hardware Info</span>
 <fieldset style="box-shadow:0 0 10px #999;background-color:#e8e8e8e8; width:855px;margin-top:8px;margin-left:6px;margin-right:0px;font-size:12px;border-top-left-radius: 10px; border-top-right-radius: 10px;border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
-<table style="margin-top:2px;">
+<table style="margin-top:2px;" class="sys-table">
   <tr>
-    <th>Hostname<br/><span style="font-weight: bold;color:#effd5f;font-size:10px;">IP: <?php echo str_replace(' ', '<br />', exec('hostname -I'));?></span></th>
-    <th><b>Kernel<br/>release</b></th>
-    <th colspan="2">Platform <br><span style="font-weight: bold;color:#effd5f;font-size:12px;">Uptime: <?php echo $uptime; ?></span></th>
-    <th><span>&nbsp;<b>Disk&nbsp;<br> used</b></span></th>
-    <th><span>&nbsp;<b>Memory&nbsp;<br> used</b></span></th>
-    <th><span><b>CPU Load</b></span></th>
+    <th class="sys-hostname">Hostname<br/><span style="font-weight: bold;color:#effd5f;font-size:10px;">IP: <?php echo str_replace(' ', '<br />', exec('hostname -I'));?></span></th>
+    <th class="sys-kernel"><b>Kernel<br/>release</b></th>
+    <th class="sys-platform" colspan="2">Platform <br><span style="font-weight: bold;color:#effd5f;font-size:12px;">Uptime: <?php echo $uptime; ?></span></th>
+    <th class="sys-disk"><span>&nbsp;<b>Disk&nbsp;<br> used</b></span></th>
+    <th class="sys-memory"><span>&nbsp;<b>Memory&nbsp;<br> used</b></span></th>
+    <th class="sys-cpu"><span><b>CPU Load</b></span></th>
 <?php if (file_exists('/sys/class/thermal/thermal_zone0/temp')) {
     echo "<th><span><b>CPU Temp</b></span></th>"; }
 ?>
   </tr>
   <tr height="24px">
-    <td><?php echo php_uname('n');?></td>
-    <td><?php echo php_uname('r');?></td>
-    <td colspan="2"><?php echo exec('/usr/local/sbin/platformDetect.sh');?></td>
-    <td><?php echo $disk_used;?></td>
-    <td><?php echo $free_mem;?></td>
-    <td><?php echo round($cpuLoad[0],1);?> / <?php echo round($cpuLoad[1],1);?> / <?php echo round($cpuLoad[2],1);?></td>
+    <td class="sys-hostname"><?php echo php_uname('n');?></td>
+    <td class="sys-kernel"><?php echo php_uname('r');?></td>
+    <td class="sys-platform" colspan="2"><?php echo exec('/usr/local/sbin/platformDetect.sh');?></td>
+    <td class="sys-disk"><?php echo $disk_used;?></td>
+    <td class="sys-memory"><?php echo $free_mem;?></td>
+    <td class="sys-cpu"><?php echo round($cpuLoad[0],1);?> / <?php echo round($cpuLoad[1],1);?> / <?php echo round($cpuLoad[2],1);?></td>
    <?php if (file_exists('/sys/class/thermal/thermal_zone0/temp')) { echo $cpuTempHTML; } ?>
   </tr>
 </table>
 </fieldset>
 <br>
+
+<?php
+// System utility functions
+function getSystemUptime(): string {
+    $rawuptime = shell_exec('cat /proc/uptime');
+    return format_uptime(substr($rawuptime, 0, strpos($rawuptime, " ")));
+}
+
+function getMemoryUsage(): string {
+    $free_output = shell_exec('free -m');
+    if ($free_output) {
+        $lines = explode("\n", $free_output);
+        if (isset($lines[1])) {
+            $parts = preg_split('/\s+/', trim($lines[1]));
+            if (isset($parts[1]) && isset($parts[2]) && $parts[1] > 0) {
+                return round(($parts[2] * 100) / $parts[1]) . "%";
+            }
+        }
+    }
+    return "Unknown";
+}
+
+function getDiskUsage(): string {
+    $df_output = shell_exec('df -h /');
+    if ($df_output) {
+        $lines = explode("\n", $df_output);
+        if (isset($lines[1])) {
+            $parts = preg_split('/\s+/', trim($lines[1]));
+            if (isset($parts[4])) {
+                return $parts[4];
+            }
+        }
+    }
+    return "Unknown";
+}
+
+function getCpuTemp(): string {
+    if (file_exists('/sys/class/thermal/thermal_zone0/temp')) {
+        $cpuTempCRaw = exec('cat /sys/class/thermal/thermal_zone0/temp');
+        if ($cpuTempCRaw != "") {
+            if ($cpuTempCRaw > 1000) { 
+                $cpuTempC = round($cpuTempCRaw / 1000); 
+            } else { 
+                $cpuTempC = round($cpuTempCRaw); 
+            }
+            return $cpuTempC . "°C";
+        }
+    }
+    return "---";
+}
+
+function getCpuUsage(): string {
+    $cpuLoad = sys_getloadavg();
+    return round($cpuLoad[0], 1) . " / " . round($cpuLoad[1], 1) . " / " . round($cpuLoad[2], 1);
+}
+?>

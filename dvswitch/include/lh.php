@@ -1,4 +1,5 @@
 <?php
+if (!isset($lastHeard)) $lastHeard = [];
 include_once dirname(dirname(__FILE__)).'/include/strftime.php';
 include_once dirname(dirname(__FILE__)).'/include/config.php';         
 include_once dirname(dirname(__FILE__)).'/include/tools.php';        
@@ -6,9 +7,9 @@ include_once dirname(dirname(__FILE__)).'/include/functions.php';
 ?>
 <span style="font-weight: bold;font-size:14px;">Gateway Activity</span>
 <fieldset style="box-shadow:0 0 10px #999;background-color:#e8e8e8e8; width:640px;margin-top:10px;margin-left:0px;margin-right:0px;font-size:12px;border-top-left-radius: 10px; border-top-right-radius: 10px;border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
-  <table style="margin-top:3px;">
+  <table style="margin-top:3px;" class="lh-table">
     <tr>
-      <th>Time (<?php echo date('T')?>)</th>
+      <th class="lh-time">Time (<?php echo date('T')?>)</th>
       <th>Mode</th>
       <th>Callsign</th>
 <?php
@@ -16,9 +17,9 @@ include_once dirname(dirname(__FILE__)).'/include/functions.php';
 ?>
       <th>Target</th>
       <th>Src</th>
-      <th>Dur(s)</th>
-      <th>Loss</th>
-      <th>BER</th>
+      <th class="lh-duration">Dur(s)</th>
+      <th class="lh-loss">Loss</th>
+      <th class="lh-ber">BER</th>
     </tr>
 <?php
 $i = 0;
@@ -34,7 +35,7 @@ for ($i = 0;  ($i <= 19); $i++) { //Last 20 calls
                         $local_time = xstrftime('%H:%M:%S %b %d', $dt->getTimestamp());
 
 		echo"<tr>";
-		echo"<td align=\"left\">&nbsp;$local_time</td>";
+		echo"<td align=\"left\" class=\"lh-time\">&nbsp;$local_time</td>";
 		echo"<td align=\"left\" style=\"color:green; font-weight:bold;\">&nbsp;$listElem[1]</td>";
 		if ((is_numeric($listElem[2]) || strpos($listElem[2], "openSPOT") !== FALSE) && (strlen($listElem[2])==7)) {
 		    echo "<td align=\"left\" style=\"color:#464646;\">&nbsp;<a href=\"https://database.radioid.net/database/view?id=$listElem[2]\" target=\"_blank\"><span style=\"color:#464646;font-weight:bold;\">$listElem[2]</span></a></td>";
@@ -99,19 +100,19 @@ for ($i = 0;  ($i <= 19); $i++) { //Last 20 calls
 			} else if ($listElem[6] == "GPS") {
 				echo "<td colspan=\"3\" style=\"background:#1d1;\"><a style=\"display:block;\" target=\"_blank\" href=https://www.openstreetmap.org/?mlat=".floatval($listElem[9])."&mlon=".floatval($listElem[10])."><b>GPS</b></a></td>";
 			} else {
-			echo "<td>$listElem[6]</td>";
+			echo "<td class=\"lh-duration\">$listElem[6]</td>";
 
 			// Colour the Loss Field
-			if (floatval($listElem[7]) < 1) { echo "<td>$listElem[7]</td>"; }
-			elseif (floatval($listElem[7]) == 1) { echo "<td style=\"background:#1d1;\">$listElem[7]</td>"; }
-			elseif (floatval($listElem[7]) > 1 && floatval($listElem[7]) <= 3) { echo "<td style=\"background:#fa0;\">$listElem[7]</td>"; }
-			else { echo "<td style=\"background:#f33;color:#f9f9f9;\">$listElem[7]</td>"; }
+			if (floatval($listElem[7]) < 1) { echo "<td class=\"lh-loss\">$listElem[7]</td>"; }
+			elseif (floatval($listElem[7]) == 1) { echo "<td class=\"lh-loss\" style=\"background:#1d1;\">$listElem[7]</td>"; }
+			elseif (floatval($listElem[7]) > 1 && floatval($listElem[7]) <= 3) { echo "<td class=\"lh-loss\" style=\"background:#fa0;\">$listElem[7]</td>"; }
+			else { echo "<td class=\"lh-loss\" style=\"background:#f33;color:#f9f9f9;\">$listElem[7]</td>"; }
 
 			// Colour the BER Field
-			if (floatval($listElem[8]) == 0) { echo "<td>$listElem[8]</td>"; }
-			elseif (floatval($listElem[8]) >= 0.0 && floatval($listElem[8]) <= 1.9) { echo "<td style=\"background:#1d1;\">$listElem[8]</td>"; }
-			elseif (floatval($listElem[8]) >= 2.0 && floatval($listElem[8]) <= 4.9) { echo "<td style=\"background:#fa0;\">$listElem[8]</td>"; }
-			else { echo "<td style=\"background:#f33;color:#f9f9f9;\">$listElem[8]</td>"; }
+			if (floatval($listElem[8]) == 0) { echo "<td class=\"lh-ber\">$listElem[8]</td>"; }
+			elseif (floatval($listElem[8]) >= 0.0 && floatval($listElem[8]) <= 1.9) { echo "<td class=\"lh-ber\" style=\"background:#1d1;\">$listElem[8]</td>"; }
+			elseif (floatval($listElem[8]) >= 2.0 && floatval($listElem[8]) <= 4.9) { echo "<td class=\"lh-ber\" style=\"background:#fa0;\">$listElem[8]</td>"; }
+			else { echo "<td class=\"lh-ber\" style=\"background:#f33;color:#f9f9f9;\">$listElem[8]</td>"; }
 		}
 		echo"</tr>\n";
 		}
