@@ -22,7 +22,7 @@ include_once dirname(dirname(__FILE__)).'/include/functions.php';
 // This prevents undefined variable errors in later sections (like TRX Info) that use it.
 $abinfo = null;
 ?>
-<span style="font-weight: bold;font-size:14px;">Status</span>
+<span class="section-header" style="font-weight: bold;font-size:14px;">Status</span>
 <fieldset style="background-color:#e8e8e8e8;width:160px;margin-top:6px;;margin-bottom:0px;margin-left:0px;margin-right:3px;font-size:12px;border-top-left-radius: 10px; border-top-right-radius: 10px;border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
 <?php
 $testMMDVModeDMR = getConfigItem("DMR", "Enable", $mmdvmconfigs);
@@ -122,9 +122,12 @@ if ($abinfo && is_array($abinfo)) {
         echo "<br>   repeaterID: ".($abinfo['digital']['rpt'] ?? 'N/A');
         echo "<br>   txTG: ".($abinfo['digital']['tg'] ?? 'N/A');
         $last_tune_val = $abinfo['last_tune'] ?? '';
-        if (strlen($last_tune_val) > 8) { $lasttune = "<br>    ".$last_tune_val; }
-        else {$lasttune = $last_tune_val;}
-        echo "<br>   Last tune: ".$lasttune;
+        if (strlen($last_tune_val) > 20) {
+            $lasttune = substr($last_tune_val, 0, 17) . '..';
+        } else {
+            $lasttune = $last_tune_val;
+        }
+        echo "<br>   Last tune: " . $lasttune;
         echo "<br>   txTS: ".($abinfo['digital']['ts'] ?? 'N/A');
         echo "<br>   colorCode: ".($abinfo['digital']['cc'] ?? 'N/A');
         echo "<br> [USRP]<br/>";

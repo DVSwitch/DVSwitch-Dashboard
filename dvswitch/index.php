@@ -252,6 +252,11 @@ include_once 'include/tools.php';
         .sys-table th {
           color: var(--text-primary) !important;
         }
+        
+        /* Section headers that need white text in dark mode */
+        .section-header {
+          color: var(--text-primary) !important;
+        }
       }
     </style>
 </head>

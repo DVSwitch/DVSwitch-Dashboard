@@ -1,13 +1,21 @@
 <?php
-if (!isset($lastHeard)) $lastHeard = [];
-$localTXList = $lastHeard;
 include_once dirname(dirname(__FILE__)).'/include/strftime.php';
 include_once dirname(dirname(__FILE__)).'/include/config.php';          
 include_once dirname(dirname(__FILE__)).'/include/tools.php';       
 include_once dirname(dirname(__FILE__)).'/include/functions.php';    
+
+// Populate lastHeard data for localtx.php when called independently
+if (!isset($lastHeard) || empty($lastHeard)) {
+    $logLinesMMDVM = getMMDVMLog();
+    $reverseLogLinesMMDVM = $logLinesMMDVM;
+    array_multisort($reverseLogLinesMMDVM, SORT_DESC);
+    $lastHeard = getLastHeard($reverseLogLinesMMDVM);
+}
+
+$localTXList = $lastHeard;
 ?>
 <div>
-<span style="font-weight: bold;font-size:14px;">Local Activity</span>
+<span class="section-header" style="font-weight: bold;font-size:14px;">Local Activity</span>
 <fieldset style="box-shadow:0 0 10px #999;background-color:#e8e8e8e8; width:640px;margin-top:8px;margin-left:0px;margin-right:0px;font-size:12px;border-top-left-radius: 10px; border-top-right-radius: 10px;border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
   <table style="margin-top:2px;">
     <tr>
@@ -33,7 +41,7 @@ for ($i = 0; $i < count($localTXList); $i++) {
                                 $local_time = xstrftime('%H:%M:%S %b %d', $dt->getTimestamp());
 
 			echo"<tr>";
-			echo"<td align=\"left\">&nbsp;$local_time</td>";
+			echo"<td align=\"left\" class=\"lh-time\">&nbsp;$local_time</td>";
 			echo"<td align=\"left\" style=\"color:green; font-weight:bold;\">&nbsp;$listElem[1]</td>";
 			    if (is_numeric($listElem[2]) || strpos($listElem[2], "openSPOT") !== FALSE) {
 				echo "<td align=\"left\" style=\"color:#464646;\"><b>&nbsp;$listElem[2]</b></td>";
@@ -55,11 +63,11 @@ for ($i = 0; $i < count($localTXList); $i++) {
 				echo "<td>$listElem[5]</td>";
 			}
 			if ($listElem[6] == null) {
-				echo "<td colspan=\"1\" style=\"background:#f33;\">TX</td>";
+				echo "<td colspan=\"1\" style=\"background:#f33;\" class=\"lh-duration\">TX</td>";
 			} else if ($listElem[6] == "DMR Data") {
 				echo "<td colspan=\"1\" style=\"background:#1d1;\">DMR Data</td>";
 			}  else {
-		echo"<td>$listElem[6]</td>"; //duration
+		echo"<td class=\"lh-duration\">$listElem[6]</td>"; //duration
 		}
 			echo"</tr>\n";
 			$counter++; }
