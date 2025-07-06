@@ -159,6 +159,11 @@ function showMode(string $mode, array $mmdvmconfigs): void {
 }
 
 function getMMDVMLog(): array {
+	// Check memory usage to prevent exhaustion
+	if (memory_get_usage(true) > 100 * 1024 * 1024) { // 100MB limit
+		return array();
+	}
+	
 	// Open Logfile and copy loglines into LogLines-Array()
 	$logLines = array();
 	$logLines1 = array();
@@ -170,11 +175,21 @@ function getMMDVMLog(): array {
 			return array();
 		}
 		
+		// Check file size to avoid processing extremely large files
+		$fileSize = filesize($logPath);
+		if ($fileSize > 50 * 1024 * 1024) { // 50MB limit
+			return array();
+		}
+		
 		$filteredLines = array();
-		$handle = fopen($logPath, 'r');
+		$handle = @fopen($logPath, 'r');
 		
 		if ($handle) {
-			while (($line = fgets($handle)) !== false) {
+			$lineCount = 0;
+			$maxLines = 10000; // Limit total lines processed
+			
+			while (($line = fgets($handle)) !== false && $lineCount < $maxLines) {
+				$lineCount++;
 				$line = trim($line);
 				if (empty($line)) continue;
 				
@@ -186,9 +201,9 @@ function getMMDVMLog(): array {
 						$line = str_replace('I:', 'M:', $line);
 						$filteredLines[] = $line;
 						
-						// Keep only last 250 lines to prevent memory buildup
-						if (count($filteredLines) > 250) {
-							$filteredLines = array_slice($filteredLines, -250);
+						// Keep only last 100 lines to prevent memory buildup
+						if (count($filteredLines) > 100) {
+							$filteredLines = array_slice($filteredLines, -100);
 						}
 					}
 				}
@@ -204,7 +219,7 @@ function getMMDVMLog(): array {
 		$logLines1 = parseMMDVMLog($logPath);
 	}
 	
-	if (sizeof($logLines1) < 250) {
+	if (sizeof($logLines1) < 100) {
 		if (file_exists(LOGPATH."/".MMDVMLOGPREFIX."-".gmdate("Y-m-d", time() - 86340).".log")) {
 			$logPath = LOGPATH."/".MMDVMLOGPREFIX."-".gmdate("Y-m-d", time() - 86340).".log";
 			$logLines2 = parseMMDVMLog($logPath);
@@ -212,11 +227,16 @@ function getMMDVMLog(): array {
 	}
 	
 	$logLines = $logLines1 + $logLines2;
-	$logLines = array_slice($logLines, -250);
+	$logLines = array_slice($logLines, -100);
 	return $logLines;
 }
 
 function getYSFGatewayLog(): array {
+	// Check memory usage to prevent exhaustion
+	if (memory_get_usage(true) > 100 * 1024 * 1024) { // 100MB limit
+		return array();
+	}
+	
 	// Open Logfile and copy loglines into LogLines-Array()
 	$logLines = array();
 	$logLines1 = array();
@@ -228,11 +248,21 @@ function getYSFGatewayLog(): array {
 			return array();
 		}
 		
+		// Check file size to avoid processing extremely large files
+		$fileSize = filesize($logPath);
+		if ($fileSize > 50 * 1024 * 1024) { // 50MB limit
+			return array();
+		}
+		
 		$filteredLines = array();
-		$handle = fopen($logPath, 'r');
+		$handle = @fopen($logPath, 'r');
 		
 		if ($handle) {
-			while (($line = fgets($handle)) !== false) {
+			$lineCount = 0;
+			$maxLines = 5000; // Limit total lines processed
+			
+			while (($line = fgets($handle)) !== false && $lineCount < $maxLines) {
+				$lineCount++;
 				$line = trim($line);
 				if (empty($line)) continue;
 				
@@ -273,6 +303,11 @@ function getYSFGatewayLog(): array {
 }
 
 function getP25GatewayLog(): array {
+	// Check memory usage to prevent exhaustion
+	if (memory_get_usage(true) > 100 * 1024 * 1024) { // 100MB limit
+		return array();
+	}
+	
         // Open Logfile and copy loglines into LogLines-Array()
         $logLines = array();
 	
@@ -284,11 +319,21 @@ function getP25GatewayLog(): array {
 			return array();
 		}
 		
+		// Check file size to avoid processing extremely large files
+		$fileSize = filesize($logPath);
+		if ($fileSize > 50 * 1024 * 1024) { // 50MB limit
+			return array();
+		}
+		
 		$filteredLines = array();
-		$handle = fopen($logPath, 'r');
+		$handle = @fopen($logPath, 'r');
 		
 		if ($handle) {
-			while (($line = fgets($handle)) !== false) {
+			$lineCount = 0;
+			$maxLines = 5000; // Limit total lines processed
+			
+			while (($line = fgets($handle)) !== false && $lineCount < $maxLines) {
+				$lineCount++;
 				$line = trim($line);
 				if (empty($line)) continue;
 				
@@ -329,6 +374,11 @@ function getP25GatewayLog(): array {
 }
 
 function getNXDNGatewayLog(): array {
+	// Check memory usage to prevent exhaustion
+	if (memory_get_usage(true) > 100 * 1024 * 1024) { // 100MB limit
+		return array();
+	}
+	
         // Open Logfile and copy loglines into LogLines-Array()
         $logLines = array();
 	
@@ -340,11 +390,21 @@ function getNXDNGatewayLog(): array {
 			return array();
 		}
 		
+		// Check file size to avoid processing extremely large files
+		$fileSize = filesize($logPath);
+		if ($fileSize > 50 * 1024 * 1024) { // 50MB limit
+			return array();
+		}
+		
 		$filteredLines = array();
-		$handle = fopen($logPath, 'r');
+		$handle = @fopen($logPath, 'r');
 		
 		if ($handle) {
-			while (($line = fgets($handle)) !== false) {
+			$lineCount = 0;
+			$maxLines = 5000; // Limit total lines processed
+			
+			while (($line = fgets($handle)) !== false && $lineCount < $maxLines) {
+				$lineCount++;
 				$line = trim($line);
 				if (empty($line)) continue;
 				
@@ -385,6 +445,11 @@ function getNXDNGatewayLog(): array {
 }
 
 function getDAPNETGatewayLog(): array {
+	// Check memory usage to prevent exhaustion
+	if (memory_get_usage(true) > 100 * 1024 * 1024) { // 100MB limit
+		return array();
+	}
+	
         // Open Logfile and copy loglines into LogLines-Array()
         $logLines = array();
 	$logLines1 = array();
@@ -396,11 +461,21 @@ function getDAPNETGatewayLog(): array {
 			return array();
 		}
 		
+		// Check file size to avoid processing extremely large files
+		$fileSize = filesize($logPath);
+		if ($fileSize > 50 * 1024 * 1024) { // 50MB limit
+			return array();
+		}
+		
 		$filteredLines = array();
-		$handle = fopen($logPath, 'r');
+		$handle = @fopen($logPath, 'r');
 		
 		if ($handle) {
-			while (($line = fgets($handle)) !== false) {
+			$lineCount = 0;
+			$maxLines = 5000; // Limit total lines processed
+			
+			while (($line = fgets($handle)) !== false && $lineCount < $maxLines) {
+				$lineCount++;
 				$line = trim($line);
 				if (empty($line)) continue;
 				
@@ -1202,11 +1277,21 @@ function getDMRGstat(string $dmrserver): ?string {
 			return "";
 		}
 		
+		// Check file size to avoid processing extremely large files
+		$fileSize = filesize($logPath);
+		if ($fileSize > 50 * 1024 * 1024) { // 50MB limit
+			return "";
+		}
+		
 		$lastStatus = "";
-		$handle = fopen($logPath, 'r');
+		$handle = @fopen($logPath, 'r');
 		
 		if ($handle) {
-			while (($line = fgets($handle)) !== false) {
+			$lineCount = 0;
+			$maxLines = 5000; // Limit total lines processed
+			
+			while (($line = fgets($handle)) !== false && $lineCount < $maxLines) {
+				$lineCount++;
 				$line = trim($line);
 				if (empty($line)) continue;
 				
