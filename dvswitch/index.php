@@ -232,6 +232,16 @@ include_once 'include/tools.php';
         .essential-text {
           color: var(--text-primary) !important;
         }
+        
+        /* Last Heard table fields that need white text in dark mode */
+        .lh-time, .lh-duration, .lh-loss, .lh-ber {
+          color: var(--text-primary) !important;
+        }
+        
+        /* Ensure table headers are readable in dark mode */
+        .lh-table th {
+          color: var(--text-primary) !important;
+        }
       }
     </style>
 </head>
