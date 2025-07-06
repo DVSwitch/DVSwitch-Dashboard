@@ -164,29 +164,39 @@ function getMMDVMLog(): array {
 	$logLines1 = array();
 	$logLines2 = array();
 	
-	// PHP replacement for shell pipeline
+	// PHP replacement for shell pipeline - memory optimized
 	function parseMMDVMLog($logPath) {
 		if (!file_exists($logPath)) {
 			return array();
 		}
 		
-		$lines = file($logPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 		$filteredLines = array();
+		$handle = fopen($logPath, 'r');
 		
-		foreach ($lines as $line) {
-			// Check for patterns: Begin|state|frames|from|end|watchdog|lost
-			if (preg_match('/Begin|state|frames|from|end|watchdog|lost/', $line)) {
-				// Filter out CSBK, overflow, Downlink
-				if (!preg_match('/CSBK|overflow|Downlink/', $line)) {
-					// Replace I: with M:
-					$line = str_replace('I:', 'M:', $line);
-					$filteredLines[] = $line;
+		if ($handle) {
+			while (($line = fgets($handle)) !== false) {
+				$line = trim($line);
+				if (empty($line)) continue;
+				
+				// Check for patterns: Begin|state|frames|from|end|watchdog|lost
+				if (preg_match('/Begin|state|frames|from|end|watchdog|lost/', $line)) {
+					// Filter out CSBK, overflow, Downlink
+					if (!preg_match('/CSBK|overflow|Downlink/', $line)) {
+						// Replace I: with M:
+						$line = str_replace('I:', 'M:', $line);
+						$filteredLines[] = $line;
+						
+						// Keep only last 250 lines to prevent memory buildup
+						if (count($filteredLines) > 250) {
+							$filteredLines = array_slice($filteredLines, -250);
+						}
+					}
 				}
 			}
+			fclose($handle);
 		}
 		
-		// Return last 250 lines
-		return array_slice($filteredLines, -250);
+		return $filteredLines;
 	}
 	
 	if (file_exists(LOGPATH."/".MMDVMLOGPREFIX."-".gmdate("Y-m-d").".log")) {
@@ -212,27 +222,37 @@ function getYSFGatewayLog(): array {
 	$logLines1 = array();
 	$logLines2 = array();
 	
-	// PHP replacement for shell pipeline
+	// PHP replacement for shell pipeline - memory optimized
 	function parseYSFGatewayLog($logPath) {
 		if (!file_exists($logPath)) {
 			return array();
 		}
 		
-		$lines = file($logPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 		$filteredLines = array();
+		$handle = fopen($logPath, 'r');
 		
-		foreach ($lines as $line) {
-			// Check for patterns: onnection to|onnect to|Link|isconnect|Opening YSF network
-			if (preg_match('/onnection to|onnect to|Link|isconnect|Opening YSF network/', $line)) {
-				// Filter out unwanted patterns
-				if (!preg_match('/Linked to Disconnect|Linked to MMDVM|Link successful to MMDVM|\*Link/', $line)) {
-					$filteredLines[] = $line;
+		if ($handle) {
+			while (($line = fgets($handle)) !== false) {
+				$line = trim($line);
+				if (empty($line)) continue;
+				
+				// Check for patterns: onnection to|onnect to|Link|isconnect|Opening YSF network
+				if (preg_match('/onnection to|onnect to|Link|isconnect|Opening YSF network/', $line)) {
+					// Filter out unwanted patterns
+					if (!preg_match('/Linked to Disconnect|Linked to MMDVM|Link successful to MMDVM|\*Link/', $line)) {
+						$filteredLines[] = $line;
+						
+						// Keep only last line to prevent memory buildup
+						if (count($filteredLines) > 1) {
+							$filteredLines = array_slice($filteredLines, -1);
+						}
+					}
 				}
 			}
+			fclose($handle);
 		}
 		
-		// Return last line only
-		return array_slice($filteredLines, -1);
+		return $filteredLines;
 	}
 	
 	if (file_exists(LOGPATH."/".YSFGATEWAYLOGPREFIX."-".gmdate("Y-m-d").".log")) {
@@ -258,28 +278,38 @@ function getP25GatewayLog(): array {
 	
 	$logLines2 = array();
 	
-	// PHP replacement for shell pipeline
+	// PHP replacement for shell pipeline - memory optimized
 	function parseP25GatewayLog($logPath) {
 		if (!file_exists($logPath)) {
 			return array();
 		}
 		
-		$lines = file($logPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 		$filteredLines = array();
+		$handle = fopen($logPath, 'r');
 		
-		foreach ($lines as $line) {
-			// Check for patterns: Link|Starting|Unlink|unlinking
-			if (preg_match('/Link|Starting|Unlink|unlinking/', $line)) {
-				// Extract fields 2 onwards (skip first field)
-				$fields = preg_split('/\s+/', $line);
-				if (count($fields) > 1) {
-					$filteredLines[] = implode(' ', array_slice($fields, 1));
+		if ($handle) {
+			while (($line = fgets($handle)) !== false) {
+				$line = trim($line);
+				if (empty($line)) continue;
+				
+				// Check for patterns: Link|Starting|Unlink|unlinking
+				if (preg_match('/Link|Starting|Unlink|unlinking/', $line)) {
+					// Extract fields 2 onwards (skip first field)
+					$fields = preg_split('/\s+/', $line);
+					if (count($fields) > 1) {
+						$filteredLines[] = implode(' ', array_slice($fields, 1));
+						
+						// Keep only last line to prevent memory buildup
+						if (count($filteredLines) > 1) {
+							$filteredLines = array_slice($filteredLines, -1);
+						}
+					}
 				}
 			}
+			fclose($handle);
 		}
 		
-		// Return last line only
-		return array_slice($filteredLines, -1);
+		return $filteredLines;
 	}
 	
         if (file_exists(LOGPATH."/".P25GATEWAYLOGPREFIX."-".gmdate("Y-m-d").".log")) {
@@ -304,28 +334,38 @@ function getNXDNGatewayLog(): array {
 	
 	$logLines2 = array();
 	
-	// PHP replacement for shell pipeline
+	// PHP replacement for shell pipeline - memory optimized
 	function parseNXDNGatewayLog($logPath) {
 		if (!file_exists($logPath)) {
 			return array();
 		}
 		
-		$lines = file($logPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 		$filteredLines = array();
+		$handle = fopen($logPath, 'r');
 		
-		foreach ($lines as $line) {
-			// Check for patterns: Link|Starting|Unlink|unlinking
-			if (preg_match('/Link|Starting|Unlink|unlinking/', $line)) {
-				// Extract fields 2 onwards (skip first field)
-				$fields = preg_split('/\s+/', $line);
-				if (count($fields) > 1) {
-					$filteredLines[] = implode(' ', array_slice($fields, 1));
+		if ($handle) {
+			while (($line = fgets($handle)) !== false) {
+				$line = trim($line);
+				if (empty($line)) continue;
+				
+				// Check for patterns: Link|Starting|Unlink|unlinking
+				if (preg_match('/Link|Starting|Unlink|unlinking/', $line)) {
+					// Extract fields 2 onwards (skip first field)
+					$fields = preg_split('/\s+/', $line);
+					if (count($fields) > 1) {
+						$filteredLines[] = implode(' ', array_slice($fields, 1));
+						
+						// Keep only last line to prevent memory buildup
+						if (count($filteredLines) > 1) {
+							$filteredLines = array_slice($filteredLines, -1);
+						}
+					}
 				}
 			}
+			fclose($handle);
 		}
 		
-		// Return last line only
-		return array_slice($filteredLines, -1);
+		return $filteredLines;
 	}
 	
         if (file_exists(LOGPATH."/".NXDNGATEWAYLOGPREFIX."-".gmdate("Y-m-d").".log")) {
@@ -350,28 +390,39 @@ function getDAPNETGatewayLog(): array {
 	$logLines1 = array();
 	$logLines2 = array();
 	
-	// PHP replacement for shell pipeline
+	// PHP replacement for shell pipeline - memory optimized
 	function parseDAPNETGatewayLog($logPath) {
 		if (!file_exists($logPath)) {
 			return array();
 		}
 		
-		$lines = file($logPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 		$filteredLines = array();
+		$handle = fopen($logPath, 'r');
 		
-		foreach ($lines as $line) {
-			// Check for pattern: Sending message
-			if (preg_match('/Sending message/', $line)) {
-				// Extract fields 2 onwards (skip first field)
-				$fields = preg_split('/\s+/', $line);
-				if (count($fields) > 1) {
-					$filteredLines[] = implode(' ', array_slice($fields, 1));
+		if ($handle) {
+			while (($line = fgets($handle)) !== false) {
+				$line = trim($line);
+				if (empty($line)) continue;
+				
+				// Check for pattern: Sending message
+				if (preg_match('/Sending message/', $line)) {
+					// Extract fields 2 onwards (skip first field)
+					$fields = preg_split('/\s+/', $line);
+					if (count($fields) > 1) {
+						$filteredLines[] = implode(' ', array_slice($fields, 1));
+						
+						// Keep only last 20 lines to prevent memory buildup
+						if (count($filteredLines) > 20) {
+							$filteredLines = array_slice($filteredLines, -20);
+						}
+					}
 				}
 			}
+			fclose($handle);
 		}
 		
-		// Return last 20 lines in reverse order (like tac)
-		return array_reverse(array_slice($filteredLines, -20));
+		// Return in reverse order (like tac)
+		return array_reverse($filteredLines);
 	}
 	
         if (file_exists("/var/log/mmdvm/DAPNETGateway-".gmdate("Y-m-d").".log")) {
@@ -938,13 +989,20 @@ function getActualLink(array $logLines, string $mode): string {
 		  $port=trim(substr($to,strpos($to,":")+1));
 		  $link = $address.";".$port;
 		if (file_exists("/var/lib/mmdvm/YSFHosts.txt")) { 
-			// PHP replacement for shell pipeline
+			// PHP replacement for shell pipeline - memory optimized
 			$ysfstatus = "";
-			$lines = file("/var/lib/mmdvm/YSFHosts.txt", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-			foreach ($lines as $line) {
-				if (strpos($line, $link) !== false) {
-					$ysfstatus = $line;
+			$handle = fopen("/var/lib/mmdvm/YSFHosts.txt", 'r');
+			if ($handle) {
+				while (($line = fgets($handle)) !== false) {
+					$line = trim($line);
+					if (empty($line)) continue;
+					
+					if (strpos($line, $link) !== false) {
+						$ysfstatus = $line;
+						break; // Found the match, no need to continue
+					}
 				}
+				fclose($handle);
 			}
 		}
 		    if ($ysfstatus != "") {
@@ -1138,27 +1196,32 @@ function cidr_match(string $ip, string $cidr): bool {
 }
 
 function getDMRGstat(string $dmrserver): ?string {
-	// PHP replacement for shell pipeline
+	// PHP replacement for shell pipeline - memory optimized
 	function parseDMRGatewayStatus($logPath, $dmrserver) {
 		if (!file_exists($logPath)) {
 			return "";
 		}
 		
-		$lines = file($logPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-		$filteredLines = array();
+		$lastStatus = "";
+		$handle = fopen($logPath, 'r');
 		
-		foreach ($lines as $line) {
-			// Check for patterns: $dmrserver, Logged|$dmrserver, Closing DMR|$dmrserver, Opening DMR|$dmrserver, Connection
-			if (preg_match('/' . preg_quote($dmrserver, '/') . ', Logged|' . preg_quote($dmrserver, '/') . ', Closing DMR|' . preg_quote($dmrserver, '/') . ', Opening DMR|' . preg_quote($dmrserver, '/') . ', Connection/', $line)) {
-				$fields = preg_split('/\s+/', $line);
-				if (isset($fields[4])) {
-					$filteredLines[] = $fields[4];
+		if ($handle) {
+			while (($line = fgets($handle)) !== false) {
+				$line = trim($line);
+				if (empty($line)) continue;
+				
+				// Check for patterns: $dmrserver, Logged|$dmrserver, Closing DMR|$dmrserver, Opening DMR|$dmrserver, Connection
+				if (preg_match('/' . preg_quote($dmrserver, '/') . ', Logged|' . preg_quote($dmrserver, '/') . ', Closing DMR|' . preg_quote($dmrserver, '/') . ', Opening DMR|' . preg_quote($dmrserver, '/') . ', Connection/', $line)) {
+					$fields = preg_split('/\s+/', $line);
+					if (isset($fields[4])) {
+						$lastStatus = $fields[4];
+					}
 				}
 			}
+			fclose($handle);
 		}
 		
-		// Return last line only
-		return end($filteredLines) ?: "";
+		return $lastStatus;
 	}
 	
 	$logPath = "/var/log/mmdvm/DMRGateway-".gmdate("Y-m-d").".log";

@@ -255,12 +255,26 @@ if (getEnabled("DMR Network", $mmdvmconfigs) == 1) {
             }
             $xlxMasterHost1_log = "";
             if (file_exists($logfile)) {
-                $lines = file($logfile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-                for ($i = count($lines) - 1; $i >= 0; $i--) {
-                    if (is_string($lines[$i]) && (strpos($lines[$i], 'XLX, Linking') !== false || strpos($lines[$i], 'Unlinking') !== false)) {
-                        $fields = preg_split('/\s+/', $lines[$i]);
-                        $xlxMasterHost1_log = (isset($fields[4]) ? $fields[4] : '') . ' ' . (isset($fields[7]) ? $fields[7] : '') . ' ' . (isset($fields[8]) ? $fields[8] : '');
-                        break;
+                // Memory optimized: read file line by line from end
+                $lines = array();
+                $handle = fopen($logfile, 'r');
+                if ($handle) {
+                    // Read file into array, keeping only last 100 lines to save memory
+                    while (($line = fgets($handle)) !== false) {
+                        $lines[] = trim($line);
+                        if (count($lines) > 100) {
+                            array_shift($lines); // Remove oldest line
+                        }
+                    }
+                    fclose($handle);
+                    
+                    // Search from end (most recent first)
+                    for ($i = count($lines) - 1; $i >= 0; $i--) {
+                        if (is_string($lines[$i]) && (strpos($lines[$i], 'XLX, Linking') !== false || strpos($lines[$i], 'Unlinking') !== false)) {
+                            $fields = preg_split('/\s+/', $lines[$i]);
+                            $xlxMasterHost1_log = (isset($fields[4]) ? $fields[4] : '') . ' ' . (isset($fields[7]) ? $fields[7] : '') . ' ' . (isset($fields[8]) ? $fields[8] : '');
+                            break;
+                        }
                     }
                 }
             }
@@ -302,12 +316,26 @@ if (getEnabled("DMR Network", $mmdvmconfigs) == 1) {
         }
         $dmrstat = "";
         if (file_exists($logfile)) {
-            $lines = file($logfile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-            for ($i = count($lines) - 1; $i >= 0; $i--) {
-                if (is_string($lines[$i]) && (strpos($lines[$i], 'DMR, Logged') !== false || strpos($lines[$i], 'DMR, Closing DMR') !== false || strpos($lines[$i], 'DMR, Opening DMR') !== false || strpos($lines[$i], 'DMR, Connection') !== false)) {
-                    $fields = preg_split('/\s+/', $lines[$i]);
-                    $dmrstat = (isset($fields[4]) ? $fields[4] : '') . ' ' . (isset($fields[9]) ? $fields[9] : '');
-                    break;
+            // Memory optimized: read file line by line from end
+            $lines = array();
+            $handle = fopen($logfile, 'r');
+            if ($handle) {
+                // Read file into array, keeping only last 100 lines to save memory
+                while (($line = fgets($handle)) !== false) {
+                    $lines[] = trim($line);
+                    if (count($lines) > 100) {
+                        array_shift($lines); // Remove oldest line
+                    }
+                }
+                fclose($handle);
+                
+                // Search from end (most recent first)
+                for ($i = count($lines) - 1; $i >= 0; $i--) {
+                    if (is_string($lines[$i]) && (strpos($lines[$i], 'DMR, Logged') !== false || strpos($lines[$i], 'DMR, Closing DMR') !== false || strpos($lines[$i], 'DMR, Opening DMR') !== false || strpos($lines[$i], 'DMR, Connection') !== false)) {
+                        $fields = preg_split('/\s+/', $lines[$i]);
+                        $dmrstat = (isset($fields[4]) ? $fields[4] : '') . ' ' . (isset($fields[9]) ? $fields[9] : '');
+                        break;
+                    }
                 }
             }
         }
