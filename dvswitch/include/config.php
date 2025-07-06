@@ -2,7 +2,7 @@
 // Report all errors except E_NOTICE
 error_reporting(E_ALL & ~E_NOTICE);
 
-define("ABINFO","34001");
+define("ABINFO","31001");
 // Put remote Network or IP address from which want to see tooltip ABInfo
 // IP address has mast /32 for netoworks use /24 etc
 define("REMOTENET", "127.0.0.1/32");
