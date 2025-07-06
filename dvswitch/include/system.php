@@ -104,11 +104,31 @@ function getSystemUptime(): string {
 }
 
 function getMemoryUsage(): string {
-    return shell_exec("free -m | awk 'NR==2{printf \"%.0f%%\", $3*100/$2 }'");
+    $free_output = shell_exec('free -m');
+    if ($free_output) {
+        $lines = explode("\n", $free_output);
+        if (isset($lines[1])) {
+            $parts = preg_split('/\s+/', trim($lines[1]));
+            if (isset($parts[1]) && isset($parts[2]) && $parts[1] > 0) {
+                return round(($parts[2] * 100) / $parts[1]) . "%";
+            }
+        }
+    }
+    return "Unknown";
 }
 
 function getDiskUsage(): string {
-    return shell_exec("df -h | awk '\$NF==\"/\"{printf \"%s\",$5}'");
+    $df_output = shell_exec('df -h /');
+    if ($df_output) {
+        $lines = explode("\n", $df_output);
+        if (isset($lines[1])) {
+            $parts = preg_split('/\s+/', trim($lines[1]));
+            if (isset($parts[4])) {
+                return $parts[4];
+            }
+        }
+    }
+    return "Unknown";
 }
 
 function getCpuTemp(): string {
