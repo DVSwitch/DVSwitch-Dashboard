@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 if (!isset($mmdvmconfigs)) $mmdvmconfigs = [];
 if (!isset($net1)) $net1 = false;
 if (!isset($net2)) $net2 = false;

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 include_once dirname(dirname(__FILE__)).'/include/tools.php';
 include_once dirname(dirname(__FILE__)).'/include/config.php';
 include_once dirname(dirname(__FILE__)).'/include/functions.php';
@@ -60,3 +62,23 @@ if ($cpuTempCRaw !="") {
 </table>
 </fieldset>
 <br>
+
+function getSystemUptime(): string {
+    // ... existing code ...
+}
+
+function getMemoryUsage(): string {
+    // ... existing code ...
+}
+
+function getDiskUsage(): string {
+    // ... existing code ...
+}
+
+function getCpuTemp(): string {
+    // ... existing code ...
+}
+
+function getCpuUsage(): string {
+    // ... existing code ...
+}
