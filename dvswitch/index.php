@@ -4,14 +4,13 @@ declare(strict_types=1);
 include_once 'include/config.php';
 include_once 'include/tools.php';
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta name="robots" content="index" />
-    <meta name="robots" content="follow" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="index, follow" />
     <meta name="language" content="English" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <meta name="generator" content="DVSwitch" />
     <meta name="Author" content="Andrew Taylor (MW0MWZ), Waldek (SP2ONG)" />
     <meta name="Description" content="Dashboard based on Pi-Star Dashboard, © Andy Taylor (MW0MWZ) and adapted to DVSwitch by SP2ONG" />
@@ -23,14 +22,26 @@ include_once 'include/tools.php';
 <link rel="shortcut icon" href="images/favicon.ico" sizes="16x16 32x32" type="image/png">
     <title>DVSwitch Dashboard</title>
 <?php include_once "include/browserdetect.php"; ?>
-    <script type="text/javascript" src="scripts/jquery.min.js"></script>
-    <script type="text/javascript" src="scripts/functions.js"></script>
-    <script type="text/javascript" src="scripts/pcm-player.min.js"></script>
+    <script src="scripts/jquery.min.js"></script>
+    <script src="scripts/functions.js"></script>
+    <script src="scripts/pcm-player.min.js"></script>
     <script type="text/javascript">
-      $.ajaxSetup({ cache: false });
+      // Modern AJAX setup - disable caching for dynamic content
+      if (typeof $ !== 'undefined') {
+        $.ajaxSetup({ cache: false });
+      }
     </script>
-    <link href="css/featherlight.css" type="text/css" rel="stylesheet" />
-    <script src="scripts/featherlight.js" type="text/javascript" charset="utf-8"></script>
+    <link href="css/featherlight.css" rel="stylesheet" />
+    <script src="scripts/featherlight.js"></script>
+    <script>
+      // Initialize modern lightbox with custom options
+      document.addEventListener('DOMContentLoaded', () => {
+        if (window.modernLightbox) {
+          // Customize lightbox options if needed
+          console.log('Modern lightbox initialized');
+        }
+      });
+    </script>
 </head>
 <body style="background-color: #f8f8f8f8;font: 11pt arial, sans-serif;">
 <center>
@@ -69,11 +80,7 @@ $mmdvmconfigfile = getMMDVMConfigFileContent();
     echo '<td width="200px" valign="top" class="hide" style="border:none;background-color:#fafafa;">';
     echo '<div class="nav">'."\n";
     echo '<script type="text/javascript">'."\n";
-    echo 'function reloadModeInfo(){'."\n";
-    echo '  $("#modeInfo").load("include/status.php",function(){ setTimeout(reloadModeInfo,1000) });'."\n";
-    echo '}'."\n";
-    echo 'setTimeout(reloadModeInfo,1000);'."\n";
-    echo '$(window).trigger(\'resize\');'."\n";
+    echo '// Auto-reload functions are now handled in functions.js'."\n";
     echo '</script>'."\n";
     echo '<div id="modeInfo">'."\n";
     include 'include/status.php';			// Mode and Networks Info
@@ -83,18 +90,8 @@ $mmdvmconfigfile = getMMDVMConfigFileContent();
 
     echo '<td valign="top" style="border:none; height: 480px; background-color:#fafafa;">';
     echo '<div class="content">'."\n";
-    echo '<script type="text/javascript">'."\n";define("RXMON","YES"); // define("RXMON","YES");
-
-
-    echo 'function reloadLocalTx(){'."\n";
-    echo '  $("#localTxs").load("include/localtx.php",function(){ setTimeout(reloadLocalTx,1500) });'."\n";
-    echo '}'."\n";
-    echo 'setTimeout(reloadLocalTx,1500);'."\n";
-    echo 'function reloadLastHerd(){'."\n";
-    echo '  $("#lastHerd").load("include/lh.php",function(){ setTimeout(reloadLastHerd,1500) });'."\n";
-    echo '}'."\n";
-    echo 'setTimeout(reloadLastHerd,1500);'."\n";
-    echo '$(window).trigger(\'resize\');'."\n";
+    echo '<script type="text/javascript">'."\n";
+    echo '// Auto-reload functions are now handled in functions.js'."\n";
     echo '</script>'."\n";
     echo '<center><div id="lastHerd">'."\n";
     include 'include/lh.php';
@@ -109,11 +106,7 @@ $mmdvmconfigfile = getMMDVMConfigFileContent();
 <?php
     echo '<div class="content2">'."\n";
     echo '<script type="text/javascript">'."\n";
-    echo 'function reloadSysInfo(){'."\n";
-    echo '  $("#sysInfo").load("include/system.php",function(){ setTimeout(reloadSysInfo,15000) });'."\n";
-    echo '}'."\n";
-    echo 'setTimeout(reloadSysInfo,15000);'."\n";
-    echo '$(window).trigger(\'resize\');'."\n";
+    echo '// Auto-reload functions are now handled in functions.js'."\n";
     echo '</script>'."\n";
     echo '<div id="sysInfo">'."\n";
     include 'include/system.php';		// Basic System Info
