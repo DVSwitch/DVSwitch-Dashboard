@@ -690,8 +690,8 @@ function getHeardList(array $logLines): array {
 				break;
 			case "DMR":
 				$duration	= $dmrduration;
-                		$loss		= strlen($dmrloss) ? $dmrloss : "---";
-                		$ber		= strlen($dmrber) ? $dmrber : "---";
+                		$loss		= (is_string($dmrloss) && strlen($dmrloss)) ? $dmrloss : "---";
+                		$ber		= (is_string($dmrber) && strlen($dmrber)) ? $dmrber : "---";
 				break;
 			case "DMR Slot 1":
 				$duration	= $ts1duration;
@@ -718,15 +718,15 @@ function getHeardList(array $logLines): array {
 				if ($source == "Net" && $target == "TG 10") {$callsign = "PARROT";}
 				if ($source == "Net" && $callsign == "10999") {$callsign = "MMDVM";}
                 		$duration	= $p25duration;
-                		$loss		= strlen($p25loss) ? $p25loss : "---";
-                		$ber		= strlen($p25ber) ? $p25ber : "---";
+                		$loss		= (is_string($p25loss) && strlen($p25loss)) ? $p25loss : "---";
+                		$ber		= (is_string($p25ber) && strlen($p25ber)) ? $p25ber : "---";
 				$rssi		= $p25rssi;
                 		break;
 			case "NXDN":
 				if ($source == "Net" && $target == "TG 10") {$callsign = "PARROT";}
                 		$duration	= $nxdnduration;
-                		$loss		= strlen($nxdnloss) ? $nxdnloss : "---";
-                		$ber		= strlen($nxdnber) ? $nxdnber : "---";
+                		$loss		= (is_string($nxdnloss) && strlen($nxdnloss)) ? $nxdnloss : "---";
+                		$ber		= (is_string($nxdnber) && strlen($nxdnber)) ? $nxdnber : "---";
 				$rssi		= $nxdnrssi;
                 		break;
 			case "POCSAG":
@@ -739,6 +739,8 @@ function getHeardList(array $logLines): array {
 		}
 
 		// Callsign or ID should be less than 11 chars long, otherwise it could be errorneous
+		// Ensure $callsign is a string before calling strlen()
+		$callsign = is_string($callsign) ? $callsign : (string)$callsign;
 		if ( strlen($callsign) < 11 ) {
 			array_push($heardList, array($timestamp, $mode, $callsign, $id, $target, $source, $duration, $loss, $ber, $lat, $long));
 			$duration = "";
@@ -1074,6 +1076,7 @@ function getActualReflector(array $logLines, string $mode): string {
 	foreach ($logLines as $logLine) {
 		if (substr($logLine, 27, strpos($logLine,",") - 27) == $mode) {
 			$from = substr($logLine, strpos($logLine,"from") + 5, strpos($logLine,"to") - strpos($logLine,"from") - 6);
+			$from = is_string($from) ? $from : (string)$from;
 			if (strlen($from) == 4 && startsWith($from,"4")) {
 				if ($from == "4000") {
 					return "No Ref";
@@ -1167,6 +1170,7 @@ function getDMRGstat(string $dmrserver): ?string {
 	}
 	
 	$dmrserver = str_replace('_', ' ', $dmrserver);
+	$dmrserver = is_string($dmrserver) ? $dmrserver : (string)$dmrserver;
 	if (strlen($dmrserver) > 19) { $dmrserver = substr($dmrserver, 0, 17) . '..'; }
 	if (strpos($dmrstatus, 'Logged') !== false ) {
              return "<tr><td  style=\"background: #ffffed;\" colspan=\"2\"><span style=\"color:#b5651d;font-weight: bold\">".$dmrserver."</span></td></tr>\n";
