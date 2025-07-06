@@ -69,7 +69,7 @@ if ($dmrMasterHost == '127.0.0.1' AND file_exists('/opt/DMRGateway/DMRGateway.in
                     }
                 }
             }
-            if (strlen($xlxMasterHost1) > 19) { $xlxMasterHost1 = substr($xlxMasterHost1, 0, 17) . '..'; }
+            if (strlen($xlxMasterHost1) > 19) { /* $xlxMasterHost1 = substr($xlxMasterHost1, 0, 17) . '..'; */ }
         }
     }
 } else {
@@ -122,11 +122,7 @@ if ($abinfo && is_array($abinfo)) {
         echo "<br>   repeaterID: ".($abinfo['digital']['rpt'] ?? 'N/A');
         echo "<br>   txTG: ".($abinfo['digital']['tg'] ?? 'N/A');
         $last_tune_val = $abinfo['last_tune'] ?? '';
-        if (strlen($last_tune_val) > 20) {
-            $lasttune = substr($last_tune_val, 0, 17) . '..';
-        } else {
-            $lasttune = $last_tune_val;
-        }
+        $lasttune = $last_tune_val;
         echo "<br>   Last tune: " . $lasttune;
         echo "<br>   txTS: ".($abinfo['digital']['ts'] ?? 'N/A');
         echo "<br>   colorCode: ".($abinfo['digital']['cc'] ?? 'N/A');
@@ -362,7 +358,7 @@ if (getEnabled("DMR Network", $mmdvmconfigs) == 1) {
 			}
 		}
 		$dmrMasterHost = str_replace('_', ' ', $dmrMasterHost);
-    		if (strlen($dmrMasterHost) > 19) { $dmrMasterHost = substr($dmrMasterHost, 0, 17) . '..'; }
+    		if (strlen($dmrMasterHost) > 19) { /* $dmrMasterHost = substr($dmrMasterHost, 0, 17) . '..'; */ }
 		if ( strpos($dmrstat, 'Logged') !== false ) {
                         echo "<tr><td  style=\"background: #ffffed;\" colspan=\"2\"><span style=\"color:#b5651d;font-weight: bold\">".$dmrMasterHost."</span></td></tr>\n";}
 		else if (strpos($dmrstat, 'Opening') !== false || strpos($dmrstat, 'Closing') !== false || strpos($dmrstat, 'Connection') !== false) {
@@ -400,13 +396,9 @@ if ( $testMMDVModeYSF == 1 ) { //Hide the YSF information when System Fusion Net
                     fclose($ysfHostFile);
                 }
                 if ($ysfLinkedToTxt != "null") { 
-	    $displayTxt = $ysfLinkedToTxt;
-	    if (strlen($displayTxt) > 20) { $displayTxt = substr($displayTxt, 0, 18) . '..'; }
-	    $ysfLinkedToTxt = "Room<br/><span style=\"color:#b5651d;font-weight: bold;\">".$displayTxt."</span>"; 
+	    $ysfLinkedToTxt = "Room<br/><span style=\"color:#b5651d;font-weight: bold;\">".$ysfLinkedToTxt."</span>"; 
 	} else { 
-	    $displayTxt = $ysfLinkedTo;
-	    if (strlen($displayTxt) > 20) { $displayTxt = substr($displayTxt, 0, 18) . '..'; }
-	    $ysfLinkedToTxt = "Linked to<br/><span style=\"color:#b5651d;font-weight: bold;\">".$displayTxt."</span>"; 
+	    $ysfLinkedToTxt = "Linked to<br/><span style=\"color:#b5651d;font-weight: bold;\">".$ysfLinkedTo."</span>"; 
 	}
 	$ysfLinkedToTxt = str_replace('_', ' ', $ysfLinkedToTxt);
         }
@@ -456,7 +448,7 @@ if ($configfile = fopen('/etc/ircddbgateway','r')) {
     echo "<tr><th colspan=\"2\">D-Star Net</th></tr>\n";
     // Check if ircddbHostname is set before using it to prevent errors.
     if (isProcessRunning("ircddbgatewayd")) {
-        $hostname = isset($configs['ircddbHostname']) ? substr($configs['ircddbHostname'], 0, 16) : 'N/A';
+        $hostname = isset($configs['ircddbHostname']) ? $configs['ircddbHostname'] : 'N/A';
         echo "<tr><th width=\"20%\">IRC</th><td style=\"background: #ffffff;color:brown;\">".$hostname."</td></tr>\n";
     }
     echo "<tr><td colspan=\"2\" style=\"background: #ffffed;\">".getActualLink($reverseLogLinesMMDVM, "D-Star")."</td></tr>\n";
