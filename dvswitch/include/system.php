@@ -5,13 +5,23 @@ include_once dirname(dirname(__FILE__)).'/include/tools.php';
 include_once dirname(dirname(__FILE__)).'/include/config.php';
 include_once dirname(dirname(__FILE__)).'/include/functions.php';
 
+// Initialize MMDVM configs
+if (!isset($mmdvmconfigs)) {
+    $mmdvmconfigs = getMMDVMConfig();
+}
+
+// Ensure we have a valid config array
+if (!is_array($mmdvmconfigs)) {
+    $mmdvmconfigs = [];
+}
+
 $rawuptime = shell_exec('cat /proc/uptime');
-$uptime = format_uptime(substr($rawuptime,0,strpos($rawuptime," ")));
+$uptime = $rawuptime ? format_uptime(substr($rawuptime,0,strpos($rawuptime," "))) : "Unknown";
 
-$free_mem=shell_exec("free -m | awk 'NR==2{printf \"%.0f%%\", $3*100/$2 }'");
-$disk_used=shell_exec("df -h | awk '\$NF==\"/\"{printf \"%s\",$5}'");
+$free_mem = shell_exec("free -m | awk 'NR==2{printf \"%.0f%%\", $3*100/$2 }'") ?: "Unknown";
+$disk_used = shell_exec("df -h | awk '\$NF==\"/\"{printf \"%s\",$5}'") ?: "Unknown";
 
-$cpuLoad = sys_getloadavg();
+$cpuLoad = sys_getloadavg() ?: [0, 0, 0];
 if (file_exists('/sys/class/thermal/thermal_zone0/temp')) {
 $cpuTempCRaw = exec('cat /sys/class/thermal/thermal_zone0/temp');
 if ($cpuTempCRaw !="") {
