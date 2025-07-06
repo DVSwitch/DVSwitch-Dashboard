@@ -36,9 +36,7 @@ include_once 'include/tools.php';
 <div class="container"> 
 <div class="header">
 <center>
-<h2>FB Multimode DVSwitch Dashboard</h2>
-<h3>Sponsored by the TEAM at the FB DMR Network</h3>
-<h4>FBDMR.NETWORK</h4>
+<h2>DVSwitch Dashboard</h2>
 </center>
 </div>
 <div class="content"><center>
