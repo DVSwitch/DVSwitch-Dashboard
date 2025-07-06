@@ -50,10 +50,10 @@ if ($dmrMasterHost == '127.0.0.1' AND file_exists('/opt/DMRGateway/DMRGateway.in
         while (!feof($dmrMasterFile)) {
             $dmrMasterLine = fgets($dmrMasterFile);
             $dmrMasterHostF = preg_split('/\s+/', $dmrMasterLine);
-            if ((count($dmrMasterHostF) >= 2) && (strpos($dmrMasterHostF[0], '#') === FALSE) && ($dmrMasterHostF[0] != '')) {
-                if ((strpos($dmrMasterHostF[0], 'XLX_') === 0) && ($xlxMasterHost1 == $dmrMasterHostF[2])) { $xlxMasterHost1 = str_replace('_', ' ', $dmrMasterHostF[0]); }
-                if ((strpos($dmrMasterHostF[0], 'BM_') === 0) && ($dmrMasterHost1 == $dmrMasterHostF[2])) { $dmrMasterHost1 = str_replace('_', ' ', $dmrMasterHostF[0]); }
-                if ((strpos($dmrMasterHostF[0], 'DMR+_') === 0) && ($dmrMasterHost2 == $dmrMasterHostF[2])) { $dmrMasterHost2 = str_replace('_', ' ', $dmrMasterHostF[0]); }
+            		if ((count($dmrMasterHostF) >= 2) && isset($dmrMasterHostF[0]) && (strpos($dmrMasterHostF[0], '#') === FALSE) && ($dmrMasterHostF[0] != '')) {
+			if ((strpos($dmrMasterHostF[0], 'XLX_') === 0) && isset($dmrMasterHostF[2]) && ($xlxMasterHost1 == $dmrMasterHostF[2])) { $xlxMasterHost1 = str_replace('_', ' ', $dmrMasterHostF[0]); }
+			if ((strpos($dmrMasterHostF[0], 'BM_') === 0) && isset($dmrMasterHostF[2]) && ($dmrMasterHost1 == $dmrMasterHostF[2])) { $dmrMasterHost1 = str_replace('_', ' ', $dmrMasterHostF[0]); }
+			if ((strpos($dmrMasterHostF[0], 'DMR+_') === 0) && isset($dmrMasterHostF[2]) && ($dmrMasterHost2 == $dmrMasterHostF[2])) { $dmrMasterHost2 = str_replace('_', ' ', $dmrMasterHostF[0]); }
             }
         }
         if (strlen($xlxMasterHost1) > 19) { $xlxMasterHost1 = substr($xlxMasterHost1, 0, 17) . '..'; }
@@ -62,7 +62,7 @@ if ($dmrMasterHost == '127.0.0.1' AND file_exists('/opt/DMRGateway/DMRGateway.in
     while (!feof($dmrMasterFile)) {
         $dmrMasterLine = fgets($dmrMasterFile);
         $dmrMasterHostF = preg_split('/\s+/', $dmrMasterLine);
-        if ((count($dmrMasterHostF) >= 4) && (strpos($dmrMasterHostF[0], '#') === FALSE) && ($dmrMasterHostF[0] != '')) {
+        		if ((count($dmrMasterHostF) >= 4) && isset($dmrMasterHostF[0]) && (strpos($dmrMasterHostF[0], '#') === FALSE) && ($dmrMasterHostF[0] != '')) {
             if (($dmrMasterHost == $dmrMasterHostF[2]) && ($dmrMasterPort == $dmrMasterHostF[4])) { $dmrMasterHost = str_replace('_', ' ', $dmrMasterHostF[0]); }
         }
     }
@@ -266,8 +266,8 @@ if (getEnabled("DMR Network", $mmdvmconfigs) == 1) {
 		    while (!feof($dmrMasterFile)) {
 			$dmrMasterLine = fgets($dmrMasterFile);
             		$dmrMasterHostF = preg_split('/\s+/', $dmrMasterLine);
-			if ((count($dmrMasterHostF) >= 4) && (strpos($dmrMasterHostF[0], '#') === FALSE) && ($dmrMasterHostF[0] != '')) {
-			if (($dmrMasterHost == $dmrMasterHostF[2]) && ($dmrMasterPort == $dmrMasterHostF[4])) { $dmrMasterHost = str_replace('_', ' ', $dmrMasterHostF[0]); }
+			if ((count($dmrMasterHostF) >= 4) && isset($dmrMasterHostF[0]) && (strpos($dmrMasterHostF[0], '#') === FALSE) && ($dmrMasterHostF[0] != '')) {
+			if (isset($dmrMasterHostF[2]) && isset($dmrMasterHostF[4]) && ($dmrMasterHost == $dmrMasterHostF[2]) && ($dmrMasterPort == $dmrMasterHostF[4])) { $dmrMasterHost = str_replace('_', ' ', $dmrMasterHostF[0]); }
 				}
 			    }
 			fclose($dmrMasterFile);

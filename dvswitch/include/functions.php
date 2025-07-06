@@ -401,7 +401,13 @@ function getHeardList($logLines) {
 		if (strpos($logLine,"TX state = OFF")){
 			$dvsm=substr($logLine, 27, strpos($logLine,",") - 27);
 			if ($dvsm == "DMR") {
-				$duration = substr($logLine, strpos($logLine,"was")+4, strpos($logLine,"frames") - strpos($logLine,"was")-5)*0.059;
+				$wasPos = strpos($logLine,"was");
+		$framesPos = strpos($logLine,"frames");
+		if ($wasPos !== false && $framesPos !== false) {
+			$duration = substr($logLine, $wasPos+4, $framesPos - $wasPos-5)*0.059;
+		} else {
+			$duration = "";
+		}
 				$duration=number_format($duration, 1, '.', '.'); }
 			if ($dvsm == "YSF" || $dvsm == "NXDN" || $dvsm == "P25" || $dvsm == "D-Star") {
 				$duration="---"; }
@@ -521,7 +527,13 @@ function getHeardList($logLines) {
 		if (strpos($logLine,"from") and strpos($logLine,"GPS Position") == False){
 		$mode = substr($logLine, 27, strpos($logLine,",") - 27);
 		$timestamp = substr($logLine, 3, 19);
-		$callsign2 = substr($logLine, strpos($logLine,"from") + 5, strpos($logLine,"to") - strpos($logLine,"from") - 6);
+		$fromPos = strpos($logLine,"from");
+		$toPos = strpos($logLine,"to");
+		if ($fromPos !== false && $toPos !== false) {
+			$callsign2 = substr($logLine, $fromPos + 5, $toPos - $fromPos - 6);
+		} else {
+			$callsign2 = "";
+		}
 		$callsign = $callsign2;
 		if( $callsign == "0" || $callsign == "1234" || $callsign == "1234567") {$callsign="N0CALL";}
 		if (strpos($callsign2,"/") > 0) {
@@ -534,9 +546,14 @@ function getHeardList($logLines) {
 			$id = substr($callsign2, strpos($callsign2,"/") + 1);
 		}
 
-		$target = trim(substr($logLine, strpos($logLine, "to") + 3));
-		// Handle more verbose logging from MMDVM_Bridge
-                if (strpos($target,",") !== 'false') { $target = explode(",", $target)[0]; }
+		$toPos = strpos($logLine, "to");
+		if ($toPos !== false) {
+			$target = trim(substr($logLine, $toPos + 3));
+			// Handle more verbose logging from MMDVM_Bridge
+			if (strpos($target,",") !== false) { $target = explode(",", $target)[0]; }
+		} else {
+			$target = "";
+		}
 
 		$source = "Net";
 		};
@@ -740,9 +757,15 @@ function getActualLink($logLines, $mode) {
 		    $from = "";
 		    if (strpos($logLine, "from") != FALSE) {
 			$from = trim(get_string_between($logLine, "from", "to"));
+		if ($from === false) { $from = ""; }
 		    }
 		    if (strpos($logLine,"to")) {
-			$to = trim(substr($logLine, strpos($logLine,"to") + 3));
+			$toPos = strpos($logLine,"to");
+			if ($toPos !== false) {
+				$to = trim(substr($logLine, $toPos + 3));
+			} else {
+				$to = "";
+			}
 		    }
 		    if ($from !== "") {
 			if ($from === "4000") {
