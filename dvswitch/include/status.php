@@ -245,11 +245,25 @@ if (getEnabled("DMR Network", $mmdvmconfigs) == 1) {
 		echo "<tr><td  style=\"background: #ffffed;\" colspan=\"2\"><span style=\"color:#b5651d;font-weight: bold\">".$xlxMasterHost1."</span></td></tr>\n";
 	    }
         if (empty($configdmrgateway['XLX Network 1']['Enabled']) && !empty($configdmrgateway['XLX Network']['Enabled'])) {
-		    if (file_exists("/var/log/mmdvm/DMRGateway-".gmdate("Y-m-d").".log")) { $xlxMasterHost1_log = exec('grep -a \'XLX, Linking\|Unlinking\' /var/log/mmdvm/DMRGateway-'.gmdate("Y-m-d").'.log | tail -1 | awk \'{print $5 " " $8 " " $9}\'');
-		    } else { $xlxMasterHost1_log = exec('grep -a \'XLX, Linking\|Unlinking\' /var/log/mmdvm/DMRGateway-'.gmdate("Y-m-d", time() - 86340).'.log | tail -1 | awk \'{print $5 " " $8 " " $9}\''); }
-		    if ( strpos($xlxMasterHost1_log, 'Linking') !== false ) { $xlxMasterHost1_log = str_replace('Linking ', '', $xlxMasterHost1_log); }
-		    else if ( strpos($xlxMasterHost1_log, 'Unlinking') !== false ) { $xlxMasterHost1_log = "XLX Not Linked"; }
-		    echo "<tr><td  style=\"background: #ffffed;\" colspan=\"2\"><span style=\"color:#b5651d;font-weight: bold\">".($xlxMasterHost1_log ?: $xlxMasterHost1)."</span></td></tr>\n";
+            // PHP replacement for: grep -a 'XLX, Linking\|Unlinking' ... | tail -1 | awk '{print $5 " " $8 " " $9}'
+            $logfile = "/var/log/mmdvm/DMRGateway-".gmdate("Y-m-d").".log";
+            if (!file_exists($logfile)) {
+                $logfile = "/var/log/mmdvm/DMRGateway-".gmdate("Y-m-d", time() - 86340).".log";
+            }
+            $xlxMasterHost1_log = "";
+            if (file_exists($logfile)) {
+                $lines = file($logfile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+                for ($i = count($lines) - 1; $i >= 0; $i--) {
+                    if (strpos($lines[$i], 'XLX, Linking') !== false || strpos($lines[$i], 'Unlinking') !== false) {
+                        $fields = preg_split('/\s+/', $lines[$i]);
+                        $xlxMasterHost1_log = (isset($fields[4]) ? $fields[4] : '') . ' ' . (isset($fields[7]) ? $fields[7] : '') . ' ' . (isset($fields[8]) ? $fields[8] : '');
+                        break;
+                    }
+                }
+            }
+            if (strpos($xlxMasterHost1_log, 'Linking') !== false) { $xlxMasterHost1_log = str_replace('Linking ', '', $xlxMasterHost1_log); }
+            else if (strpos($xlxMasterHost1_log, 'Unlinking') !== false) { $xlxMasterHost1_log = "XLX Not Linked"; }
+            echo "<tr><td  style=\"background: #ffffed;\" colspan=\"2\"><span style=\"color:#b5651d;font-weight: bold\">".($xlxMasterHost1_log ?: $xlxMasterHost1)."</span></td></tr>\n";
         }
 	    if (!empty($configdmrgateway['DMR Network 1']['Enabled'])) {
 		$dmrMasterhost1 = str_replace(' ', '_', $dmrMasterHost1);
@@ -277,8 +291,23 @@ if (getEnabled("DMR Network", $mmdvmconfigs) == 1) {
 	    }
 	}
 	elseif (isProcessRunning("MMDVM_Bridge")) {
-		if (file_exists("/var/log/mmdvm/MMDVM_Bridge-".gmdate("Y-m-d").".log")) { $dmrstat = exec('grep -a \'DMR, Logged\|DMR, Closing DMR\|DMR, Opening DMR\|DMR, Connection\' /var/log/mmdvm/MMDVM_Bridge-'.gmdate("Y-m-d").'.log | tail -1 | awk \'{print $5 " " $10}\'');
-		} else {$dmrstat = exec('grep -a \'DMR, Logged\|DMR, Closing DMR\|DMR, Opening DMR\|DMR, Connection\' /var/log/mmdvm/MMDVM_Bridge-'.gmdate("Y-m-d", time() - 86340).'.log | tail -1 | awk \'{print $5 " " $10}\''); }
+		if (file_exists("/var/log/mmdvm/MMDVM_Bridge-".gmdate("Y-m-d").".log")) {
+            // PHP replacement for: grep -a 'DMR, Logged\|DMR, Closing DMR\|DMR, Opening DMR\|DMR, Connection' ... | tail -1 | awk '{print $5 " " $10}'
+            $logfile = "/var/log/mmdvm/MMDVM_Bridge-".gmdate("Y-m-d").".log";
+        } else {
+            $logfile = "/var/log/mmdvm/MMDVM_Bridge-".gmdate("Y-m-d", time() - 86340).".log";
+        }
+        $dmrstat = "";
+        if (file_exists($logfile)) {
+            $lines = file($logfile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            for ($i = count($lines) - 1; $i >= 0; $i--) {
+                if (strpos($lines[$i], 'DMR, Logged') !== false || strpos($lines[$i], 'DMR, Closing DMR') !== false || strpos($lines[$i], 'DMR, Opening DMR') !== false || strpos($lines[$i], 'DMR, Connection') !== false) {
+                    $fields = preg_split('/\s+/', $lines[$i]);
+                    $dmrstat = (isset($fields[4]) ? $fields[4] : '') . ' ' . (isset($fields[9]) ? $fields[9] : '');
+                    break;
+                }
+            }
+        }
                  if (($dmrstat !="") && (strpos($dmrstat, ':') !== false) ) {
 		    $dmrMasterHost = trim(substr($dmrstat,7,strpos($dmrstat,':')-strlen(trim(substr($dmrstat, strpos($dmrstat,':')-1)))));
 		  $dmrMasterPort=trim(substr($dmrstat,strpos($dmrstat,":")+1));
