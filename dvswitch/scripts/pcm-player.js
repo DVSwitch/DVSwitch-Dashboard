@@ -25,7 +25,7 @@ function DVSwitchPlayer(port, button) {
     this.btnDefault = button.style.backgroundColor;
     this.stop();
     
-    window.addEventListener("unload", function() {
+    window.addEventListener("beforeunload", function() {
         this.destroy();
     });
 }
