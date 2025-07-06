@@ -33,9 +33,9 @@
   position: relative;
   max-width: 90vw;
   max-height: 90vh;
-  background: white;
+  background: var(--bg-secondary, white);
   border-radius: 12px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 60px var(--shadow-color, rgba(0, 0, 0, 0.3));
   transform: scale(0.8);
   transition: transform 0.3s ease-in-out;
   overflow: hidden;
@@ -47,10 +47,10 @@
   position: absolute;
   top: 15px;
   right: 20px;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--bg-secondary, rgba(255, 255, 255, 0.9));
   border: none;
   font-size: 28px;
-  color: #333;
+  color: var(--text-primary, #333);
   cursor: pointer;
   z-index: 10;
   width: 40px;
@@ -60,17 +60,17 @@
   justify-content: center;
   border-radius: 50%;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px var(--shadow-color, rgba(0, 0, 0, 0.1));
 }
 
 .modern-lightbox-close:hover {
-  background: rgba(255, 255, 255, 1);
+  background: var(--bg-secondary, rgba(255, 255, 255, 1));
   transform: scale(1.1);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 15px var(--shadow-color, rgba(0, 0, 0, 0.2));
 }
 
 .modern-lightbox-close:focus {
-  outline: 2px solid #007bff;
+  outline: 2px solid var(--accent-color, #007bff);
   outline-offset: 2px;
 }
 
@@ -101,7 +101,7 @@
   align-items: center;
   justify-content: center;
   padding: 40px;
-  color: #666;
+  color: var(--text-secondary, #666);
   font-size: 16px;
 }
 
@@ -125,7 +125,7 @@
 .modern-lightbox-error {
   padding: 40px;
   text-align: center;
-  color: #dc3545;
+  color: var(--error-color, #dc3545);
   font-size: 16px;
 }
 
