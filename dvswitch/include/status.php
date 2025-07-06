@@ -254,7 +254,7 @@ if (getEnabled("DMR Network", $mmdvmconfigs) == 1) {
             if (file_exists($logfile)) {
                 $lines = file($logfile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
                 for ($i = count($lines) - 1; $i >= 0; $i--) {
-                    if (strpos($lines[$i], 'XLX, Linking') !== false || strpos($lines[$i], 'Unlinking') !== false) {
+                    if (is_string($lines[$i]) && (strpos($lines[$i], 'XLX, Linking') !== false || strpos($lines[$i], 'Unlinking') !== false)) {
                         $fields = preg_split('/\s+/', $lines[$i]);
                         $xlxMasterHost1_log = (isset($fields[4]) ? $fields[4] : '') . ' ' . (isset($fields[7]) ? $fields[7] : '') . ' ' . (isset($fields[8]) ? $fields[8] : '');
                         break;
@@ -301,7 +301,7 @@ if (getEnabled("DMR Network", $mmdvmconfigs) == 1) {
         if (file_exists($logfile)) {
             $lines = file($logfile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
             for ($i = count($lines) - 1; $i >= 0; $i--) {
-                if (strpos($lines[$i], 'DMR, Logged') !== false || strpos($lines[$i], 'DMR, Closing DMR') !== false || strpos($lines[$i], 'DMR, Opening DMR') !== false || strpos($lines[$i], 'DMR, Connection') !== false) {
+                if (is_string($lines[$i]) && (strpos($lines[$i], 'DMR, Logged') !== false || strpos($lines[$i], 'DMR, Closing DMR') !== false || strpos($lines[$i], 'DMR, Opening DMR') !== false || strpos($lines[$i], 'DMR, Connection') !== false)) {
                     $fields = preg_split('/\s+/', $lines[$i]);
                     $dmrstat = (isset($fields[4]) ? $fields[4] : '') . ' ' . (isset($fields[9]) ? $fields[9] : '');
                     break;
@@ -316,13 +316,15 @@ if (getEnabled("DMR Network", $mmdvmconfigs) == 1) {
 		        $dmrMasterFile = null;
 		    }
 		    if ($dmrMasterFile !== null) {
-		        while (!feof($dmrMasterFile)) {
-			$dmrMasterLine = fgets($dmrMasterFile);
-            		$dmrMasterHostF = preg_split('/\s+/', $dmrMasterLine);
-			if ((count($dmrMasterHostF) >= 4) && isset($dmrMasterHostF[0]) && (strpos($dmrMasterHostF[0], '#') === FALSE) && ($dmrMasterHostF[0] != '')) {
-			if (isset($dmrMasterHostF[2]) && isset($dmrMasterHostF[4]) && ($dmrMasterHost == $dmrMasterHostF[2]) && ($dmrMasterPort == $dmrMasterHostF[4])) { $dmrMasterHost = str_replace('_', ' ', $dmrMasterHostF[0]); }
-				}
-			    }
+		                    while (!feof($dmrMasterFile)) {
+                $dmrMasterLine = fgets($dmrMasterFile);
+                if ($dmrMasterLine !== false && is_string($dmrMasterLine)) {
+                    $dmrMasterHostF = preg_split('/\s+/', $dmrMasterLine);
+                    if ((count($dmrMasterHostF) >= 4) && isset($dmrMasterHostF[0]) && (strpos($dmrMasterHostF[0], '#') === FALSE) && ($dmrMasterHostF[0] != '')) {
+                        if (isset($dmrMasterHostF[2]) && isset($dmrMasterHostF[4]) && ($dmrMasterHost == $dmrMasterHostF[2]) && ($dmrMasterPort == $dmrMasterHostF[4])) { $dmrMasterHost = str_replace('_', ' ', $dmrMasterHostF[0]); }
+                    }
+                }
+            }
 			}
 			if ($dmrMasterFile !== null) {
 			    fclose($dmrMasterFile);
@@ -355,7 +357,7 @@ if ( $testMMDVModeYSF == 1 ) { //Hide the YSF information when System Fusion Net
                 if ($ysfHostFile !== false) {
                     while (!feof($ysfHostFile)) {
                         $ysfHostFileLine = fgets($ysfHostFile);
-                        if ($ysfHostFileLine !== false) {
+                        if ($ysfHostFileLine !== false && is_string($ysfHostFileLine)) {
                             $ysfRoomTxtLine = preg_split('/;/', $ysfHostFileLine);
                             if (empty($ysfRoomTxtLine[0]) || empty($ysfRoomTxtLine[1])) continue;
                             if (($ysfRoomTxtLine[0] == $ysfLinkedTo) || ($ysfRoomTxtLine[1] == $ysfLinkedTo)) {
@@ -408,10 +410,12 @@ if ( $testMMDVModeDSTAR == 1 ) { //Hide the D-Star Reflector information when D-
 $configs = array();
 if ($configfile = fopen('/etc/ircddbgateway','r')) {
         while ($line = fgets($configfile)) {
-                list($key,$value) = preg_split('/=/',$line);
-                $value = trim(str_replace('"','',$value));
-                if ($key != 'ircddbPassword' && strlen($value) > 0)
-                $configs[$key] = $value;
+                if ($line !== false && is_string($line)) {
+                    list($key,$value) = preg_split('/=/',$line);
+                    $value = trim(str_replace('"','',$value));
+                    if ($key != 'ircddbPassword' && strlen($value) > 0)
+                    $configs[$key] = $value;
+                }
         }
 }
     echo "<br />\n";
