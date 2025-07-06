@@ -242,6 +242,16 @@ include_once 'include/tools.php';
         .lh-table th {
           color: var(--text-primary) !important;
         }
+        
+        /* System info table fields that need white text in dark mode */
+        .sys-hostname, .sys-kernel, .sys-platform, .sys-disk, .sys-memory, .sys-cpu {
+          color: var(--text-primary) !important;
+        }
+        
+        /* System info table headers */
+        .sys-table th {
+          color: var(--text-primary) !important;
+        }
       }
     </style>
 </head>
