@@ -188,6 +188,198 @@ include_once 'include/tools.php';
           font-size: 16px;
         }
       }
+      
+      /* Additional dark mode styles for specific elements */
+      [data-theme="dark"] {
+        /* Fieldset and container backgrounds */
+        fieldset {
+          background-color: var(--bg-secondary) !important;
+          color: var(--text-primary) !important;
+        }
+        
+        /* Table headers and cells */
+        th {
+          color: var(--text-primary) !important;
+          background-color: var(--bg-secondary) !important;
+        }
+        
+        td {
+          color: var(--text-primary) !important;
+          background-color: var(--bg-secondary) !important;
+        }
+        
+        /* Specific status colors for dark mode */
+        .status-green {
+          background-color: #2d5a2d !important;
+          color: #90ee90 !important;
+        }
+        
+        .status-red {
+          background-color: #5a2d2d !important;
+          color: #ff6b6b !important;
+        }
+        
+        .status-orange {
+          background-color: #5a4a2d !important;
+          color: #ffd43b !important;
+        }
+        
+        .status-blue {
+          background-color: #2d4a5a !important;
+          color: #4dabf7 !important;
+        }
+        
+        .status-gray {
+          background-color: #4a4a4a !important;
+          color: #b0b0b0 !important;
+        }
+        
+        /* Text colors for dark mode */
+        .text-dark {
+          color: var(--text-primary) !important;
+        }
+        
+        .text-secondary {
+          color: var(--text-secondary) !important;
+        }
+        
+        /* Links in dark mode */
+        a {
+          color: var(--accent-color) !important;
+        }
+        
+        a:hover {
+          color: var(--button-hover) !important;
+        }
+        
+        /* Button styles for dark mode */
+        .button, button {
+          background-color: var(--button-bg) !important;
+          color: var(--button-text) !important;
+          border-color: var(--border-color) !important;
+        }
+        
+        .button:hover, button:hover {
+          background-color: var(--button-hover) !important;
+        }
+        
+        /* Tooltip styles for dark mode */
+        .tooltip .tooltiptext {
+          background-color: var(--bg-secondary) !important;
+          color: var(--text-primary) !important;
+          border: 1px solid var(--border-color) !important;
+        }
+        
+        /* Span and div text colors */
+        span, div {
+          color: var(--text-primary) !important;
+        }
+        
+        /* Specific color overrides for dark mode */
+        .color-b44010 {
+          color: #ff8c69 !important;
+        }
+        
+        .color-ef7215 {
+          color: #ffa366 !important;
+        }
+        
+        .color-b0b0b0 {
+          color: #d0d0d0 !important;
+        }
+        
+        .color-030 {
+          color: #90ee90 !important;
+        }
+        
+        .color-b5651d {
+          color: #ffa366 !important;
+        }
+        
+        /* Background color overrides for dark mode */
+        .bg-f9f9f9 {
+          background-color: var(--bg-secondary) !important;
+        }
+        
+        .bg-ffffed {
+          background-color: var(--bg-secondary) !important;
+        }
+        
+        .bg-e8e8e8 {
+          background-color: var(--bg-secondary) !important;
+        }
+        
+        /* Status background colors for dark mode */
+        .bg-f33 {
+          background-color: #5a2d2d !important;
+          color: #ff6b6b !important;
+        }
+        
+        .bg-0b0 {
+          background-color: #2d5a2d !important;
+          color: #90ee90 !important;
+        }
+        
+        .bg-4aa361 {
+          background-color: #2d5a2d !important;
+          color: #90ee90 !important;
+        }
+        
+        .bg-ade {
+          background-color: #2d4a5a !important;
+          color: #4dabf7 !important;
+        }
+        
+        .bg-f93 {
+          background-color: #5a4a2d !important;
+          color: #ffd43b !important;
+        }
+        
+        .bg-ff9 {
+          background-color: #5a4a2d !important;
+          color: #ffd43b !important;
+        }
+        
+        .bg-f9f {
+          background-color: #5a2d5a !important;
+          color: #ff9bff !important;
+        }
+        
+        .bg-c9f {
+          background-color: #4a2d5a !important;
+          color: #d9b3ff !important;
+        }
+        
+        .bg-12AD2A {
+          background-color: #2d5a2d !important;
+          color: #90ee90 !important;
+        }
+        
+        .bg-b00 {
+          background-color: #5a2d2d !important;
+          color: #ff6b6b !important;
+        }
+        
+        .bg-606060 {
+          background-color: #4a4a4a !important;
+          color: #b0b0b0 !important;
+        }
+        
+        .bg-ffffed {
+          background-color: var(--bg-secondary) !important;
+          color: var(--text-primary) !important;
+        }
+        
+        .bg-ffffff {
+          background-color: var(--bg-secondary) !important;
+          color: var(--text-primary) !important;
+        }
+        
+        .bg-fafafa {
+          background-color: var(--bg-secondary) !important;
+          color: var(--text-primary) !important;
+        }
+      }
     </style>
 </head>
 <body>
@@ -197,7 +389,7 @@ include_once 'include/tools.php';
     </button>
 
 <center>
-<fieldset style="box-shadow:0 0 10px var(--shadow-color); background-color:var(--bg-secondary); width:0px;margin-top:15px;margin-left:0px;margin-right:5px;font-size:13px;border-top-left-radius: 10px; border-top-right-radius: 10px;border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
+<fieldset style="box-shadow:0 0 10px var(--shadow-color); background-color:var(--bg-secondary); color:var(--text-primary); width:0px;margin-top:15px;margin-left:0px;margin-right:5px;font-size:13px;border-top-left-radius: 10px; border-top-right-radius: 10px;border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
 <div class="container"> 
 <div class="header">
 <center>
