@@ -1,5 +1,7 @@
 <?php
-function format_time($seconds) {
+declare(strict_types=1);
+
+function format_time(int $seconds): string {
 	$secs = intval($seconds % 60);
 	$mins = intval($seconds / 60 % 60);
 	$hours = intval($seconds / 3600 % 24);
@@ -25,7 +27,7 @@ function format_time($seconds) {
 	return $uptimeString;
 }
 
-function format_uptime($float_secs) {
+function format_uptime(float $float_secs): string {
     $seconds = (int)$float_secs;
     $secs = $seconds % 60;
     $mins = ((int)($seconds / 60)) % 60;
@@ -48,11 +50,11 @@ function format_uptime($float_secs) {
     return $uptimeString;
 }
 
-function startsWith($haystack, $needle) {
+function startsWith(string $haystack, string $needle): bool {
     return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== false;
 }
 
-function isProcessRunning($processName, $full = false, $refresh = false) {
+function isProcessRunning(string $processName, bool $full = false, bool $refresh = false): bool {
   if ($full) {
     static $processes_full = array();
     if ($refresh) $processes_full = array();

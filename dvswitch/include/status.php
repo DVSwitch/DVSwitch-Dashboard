@@ -8,6 +8,11 @@ if (!isset($net3)) $net3 = false;
 if (!isset($net4)) $net4 = false;
 if (!isset($net5)) $net5 = false;
 if (!isset($abinfo)) $abinfo = null;
+if (!isset($lastHeard)) $lastHeard = [];
+if (!isset($reverseLogLinesYSFGateway)) $reverseLogLinesYSFGateway = [];
+if (!isset($logLinesP25Gateway)) $logLinesP25Gateway = [];
+if (!isset($logLinesNXDNGateway)) $logLinesNXDNGateway = [];
+if (!isset($configdmrgateway)) $configdmrgateway = [];
 
 include_once dirname(dirname(__FILE__)).'/include/tools.php';
 include_once dirname(dirname(__FILE__)).'/include/config.php';
@@ -40,7 +45,7 @@ if ($dmrMasterHost == '127.0.0.1' AND file_exists('/opt/DMRGateway/DMRGateway.in
     $dmrGatewayConfigFile = '/opt/DMRGateway/DMRGateway.ini';
     // parse_ini_file returns false on failure, so we check the result.
     $configdmrgateway = parse_ini_file($dmrGatewayConfigFile, true);
-    if ($configdmrgateway) { // Proceed only if the INI file was parsed successfully.
+    if ($configdmrgateway !== false) { // Proceed only if the INI file was parsed successfully.
         // Use null coalescing operator (??) for safe access to array keys.
         $xlxMasterHost1 = $configdmrgateway['XLX Network 1']['Address'] ?? "";
         $dmrMasterHost1 = $configdmrgateway['DMR Network 1']['Address'] ?? "";
