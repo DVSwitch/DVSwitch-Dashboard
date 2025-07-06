@@ -266,9 +266,7 @@ include_once 'include/tools.php';
 <div class="container"> 
 <div class="header">
 <center>
-<h2>FB Multimode DVSwitch Dashboard</h2>
-<h3>Sponsored by the TEAM at the FB DMR Network</h3>
-<h4>FBDMR.NETWORK</h4>
+<h2>DVSwitch Dashboard</h2>
 </center>
 </div>
 <div class="content"><center>
@@ -331,7 +329,7 @@ $mmdvmconfigfile = getMMDVMConfigFileContent();
     echo '</div>'."\n";
 ?>
 <div class="content">
-<center><span class="footer-text" style="font: 7pt arial, sans-serif;">DVSwitch Dashboard <?php $cdate=date("Y"); if ($cdate > "2020") {$cdate="2020-".date("Y");} echo $cdate; ?>
+<center><span style="font: 7pt arial, sans-serif;">DVSwitch Dashboard Version 20250706 <?php $cdate=date("Y"); if ($cdate > "2020") {$cdate="2020-".date("Y");} echo $cdate; ?>
 	<br>Dashboard based on Pi-Star Dashboard, © Andy Taylor (MW0MWZ) and adapted to DVSwitch by SP2ONG</span></center>
 <!-- DVSwitch Dashboard: version 20250101 -->
 	</div>
