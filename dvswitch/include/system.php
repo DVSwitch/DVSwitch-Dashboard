@@ -16,10 +16,10 @@ if (!is_array($mmdvmconfigs)) {
 }
 
 $rawuptime = shell_exec('cat /proc/uptime');
-$uptime = $rawuptime ? format_uptime(substr($rawuptime,0,strpos($rawuptime," "))) : "Unknown";
+$uptime = $rawuptime ? format_uptime((float)substr($rawuptime,0,strpos($rawuptime," "))) : "Unknown";
 
-$free_mem = shell_exec("free -m | awk 'NR==2{printf \"%.0f%%\", $3*100/$2 }'") ?: "Unknown";
-$disk_used = shell_exec("df -h | awk '\$NF==\"/\"{printf \"%s\",$5}'") ?: "Unknown";
+$free_mem = shell_exec('free -m | awk \'NR==2{printf "%.0f%%", $3*100/$2 }\'') ?: "Unknown";
+$disk_used = shell_exec('df -h | awk \'$NF=="/"{printf "%s",$5}\'') ?: "Unknown";
 
 $cpuLoad = sys_getloadavg() ?: [0, 0, 0];
 if (file_exists('/sys/class/thermal/thermal_zone0/temp')) {
