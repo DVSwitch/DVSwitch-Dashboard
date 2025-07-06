@@ -1,4 +1,5 @@
 <?php
+if (!isset($lastHeard)) $lastHeard = [];
 include_once dirname(dirname(__FILE__)).'/include/strftime.php';
 include_once dirname(dirname(__FILE__)).'/include/config.php';         
 include_once dirname(dirname(__FILE__)).'/include/tools.php';        

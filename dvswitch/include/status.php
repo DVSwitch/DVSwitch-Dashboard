@@ -1,4 +1,12 @@
 <?php
+if (!isset($mmdvmconfigs)) $mmdvmconfigs = [];
+if (!isset($net1)) $net1 = false;
+if (!isset($net2)) $net2 = false;
+if (!isset($net3)) $net3 = false;
+if (!isset($net4)) $net4 = false;
+if (!isset($net5)) $net5 = false;
+if (!isset($abinfo)) $abinfo = null;
+
 include_once dirname(dirname(__FILE__)).'/include/tools.php';
 include_once dirname(dirname(__FILE__)).'/include/config.php';
 include_once dirname(dirname(__FILE__)).'/include/functions.php';

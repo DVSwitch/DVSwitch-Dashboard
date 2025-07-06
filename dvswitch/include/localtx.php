@@ -1,9 +1,10 @@
 <?php
+if (!isset($lastHeard)) $lastHeard = [];
+$localTXList = $lastHeard;
 include_once dirname(dirname(__FILE__)).'/include/strftime.php';
 include_once dirname(dirname(__FILE__)).'/include/config.php';          
 include_once dirname(dirname(__FILE__)).'/include/tools.php';       
 include_once dirname(dirname(__FILE__)).'/include/functions.php';    
-$localTXList = $lastHeard;
 ?>
 <div>
 <span style="font-weight: bold;font-size:14px;">Local Activity</span>
