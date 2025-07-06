@@ -22,7 +22,7 @@ include_once dirname(dirname(__FILE__)).'/include/functions.php';
 // This prevents undefined variable errors in later sections (like TRX Info) that use it.
 $abinfo = null;
 ?>
-<span style="font-weight: bold;font-size:14px;">Status</span>
+<span class="section-header" style="font-weight: bold;font-size:14px;">Status</span>
 <fieldset style="background-color:#e8e8e8e8;width:160px;margin-top:6px;;margin-bottom:0px;margin-left:0px;margin-right:3px;font-size:12px;border-top-left-radius: 10px; border-top-right-radius: 10px;border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
 <?php
 $testMMDVModeDMR = getConfigItem("DMR", "Enable", $mmdvmconfigs);
