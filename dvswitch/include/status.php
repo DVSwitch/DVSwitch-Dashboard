@@ -122,9 +122,12 @@ if ($abinfo && is_array($abinfo)) {
         echo "<br>   repeaterID: ".($abinfo['digital']['rpt'] ?? 'N/A');
         echo "<br>   txTG: ".($abinfo['digital']['tg'] ?? 'N/A');
         $last_tune_val = $abinfo['last_tune'] ?? '';
-        if (strlen($last_tune_val) > 8) { $lasttune = "<br>    ".$last_tune_val; }
-        else {$lasttune = $last_tune_val;}
-        echo "<br>   Last tune: ".$lasttune;
+        if (strlen($last_tune_val) > 20) {
+            $lasttune = substr($last_tune_val, 0, 17) . '..';
+        } else {
+            $lasttune = $last_tune_val;
+        }
+        echo "<br>   Last tune: " . $lasttune;
         echo "<br>   txTS: ".($abinfo['digital']['ts'] ?? 'N/A');
         echo "<br>   colorCode: ".($abinfo['digital']['cc'] ?? 'N/A');
         echo "<br> [USRP]<br/>";
