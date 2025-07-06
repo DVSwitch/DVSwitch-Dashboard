@@ -68,7 +68,7 @@ if (!function_exists('xstrftime')) {
 // EASY WAY - USING SHELL TO GET DATE TEXT
 
         if (is_callable('shell_exec') && (stripos(ini_get('disable_functions'), 'shell_exec') === false)) {
-            $cmd = 'export LC_TIME=' . escapeshellarg($locale) . '; date --date @' . escapeshellarg($timestamp) . ' +' . escapeshellarg($format);
+            $cmd = 'export LC_TIME=' . escapeshellarg($locale) . '; date --date @' . escapeshellarg((string)$timestamp) . ' +' . escapeshellarg($format);
             return preg_replace('/\r?\n$/', '', shell_exec($cmd));
         }
 
