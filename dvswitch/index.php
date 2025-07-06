@@ -24,7 +24,7 @@ include_once 'include/tools.php';
 <?php include_once "include/browserdetect.php"; ?>
     <script src="scripts/jquery.min.js"></script>
     <script src="scripts/functions.js"></script>
-    <script src="scripts/pcm-player.min.js"></script>
+    <script src="scripts/pcm-player.js"></script>
     <script type="text/javascript">
       // Modern AJAX setup - disable caching for dynamic content
       if (typeof $ !== 'undefined') {
