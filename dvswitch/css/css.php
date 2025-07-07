@@ -121,8 +121,8 @@ table {
     border-spacing: 4px;
     border-width: 2px;
     text-decoration: none;
-    color: #fff;
-    background: #007bff;
+    color: #ffffff;
+    background: #000000;
     font-family: verdana,arial,sans-serif;
     width: 100%;
     white-space: nowrap;
@@ -182,12 +182,11 @@ table tr:nth-child(odd) {
 }
 
 table td {
-    color: #fff;
+    color: #000000;
     font-family: "Lucidia Console",Monaco,monospace;
     text-decoration: none;
     border: 1px solid #000000;
     overflow-x: hidden;
-    background: #007bff;
 }
 table td.links {
     color: #ff0000;
