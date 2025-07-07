@@ -35,18 +35,18 @@ for ($i = 0;  ($i <= 19); $i++) { //Last 20 calls
                         $local_time = xstrftime('%H:%M:%S %b %d', $dt->getTimestamp());
 
 		echo"<tr>";
-		echo"<td align=\"left\" class=\"lh-time\">&nbsp;$local_time</td>";
-		echo"<td align=\"left\" style=\"color:green; font-weight:bold;\">&nbsp;$listElem[1]</td>";
+		echo"<td align=\"left\" class=\"lh-time\">&nbsp;".htmlspecialchars($local_time, ENT_QUOTES, 'UTF-8')."</td>";
+		echo"<td align=\"left\" style=\"color:green; font-weight:bold;\">&nbsp;".htmlspecialchars($listElem[1], ENT_QUOTES, 'UTF-8')."</td>";
 		if ((is_numeric($listElem[2]) || strpos($listElem[2], "openSPOT") !== FALSE) && (strlen($listElem[2])==7)) {
-		    echo "<td align=\"left\" style=\"color:#464646;\">&nbsp;<a href=\"https://database.radioid.net/database/view?id=$listElem[2]\" target=\"_blank\"><span style=\"color:#464646;font-weight:bold;\">$listElem[2]</span></a></td>";
+		    echo "<td align=\"left\" style=\"color:#464646;\">&nbsp;<a href=\"https://database.radioid.net/database/view?id=".htmlspecialchars($listElem[2], ENT_QUOTES, 'UTF-8')."\" target=\"_blank\"><span style=\"color:#464646;font-weight:bold;\">".htmlspecialchars($listElem[2], ENT_QUOTES, 'UTF-8')."</span></a></td>";
 		} elseif (!preg_match('/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/', $listElem[2])|| $listElem[2] == "N0CALL") {
- 	                       echo "<td align=\"left\" style=\"color:#464646;\"><b>&nbsp;$listElem[2]</b></td>";
+ 	                       echo "<td align=\"left\" style=\"color:#464646;\"><b>&nbsp;".htmlspecialchars($listElem[2], ENT_QUOTES, 'UTF-8')."</b></td>";
 		} else {
 		    if (strpos($listElem[2],"-") > 0) { $listElem[2] = substr($listElem[2], 0, strpos($listElem[2],"-")); }
 			    if ( $listElem[3] && $listElem[3] != '    ' ) {
-			echo "<td align=\"left\">&nbsp;<a href=\"http://www.qrz.com/db/$listElem[2]\" target=\"_blank\"><b>$listElem[2]</b></a><span style=\"color:#464646;font-weight:bold;\">/$listElem[3]</span></td>";
+			echo "<td align=\"left\">&nbsp;<a href=\"http://www.qrz.com/db/".htmlspecialchars($listElem[2], ENT_QUOTES, 'UTF-8')."\" target=\"_blank\"><b>".htmlspecialchars($listElem[2], ENT_QUOTES, 'UTF-8')."</b></a><span style=\"color:#464646;font-weight:bold;\">/".htmlspecialchars($listElem[3], ENT_QUOTES, 'UTF-8')."</span></td>";
 		    } else {
-			echo "<td align=\"left\">&nbsp;<a href=\"http://www.qrz.com/db/$listElem[2]\" target=\"_blank\"><b>$listElem[2]</b></a></td>";
+			echo "<td align=\"left\">&nbsp;<a href=\"http://www.qrz.com/db/".htmlspecialchars($listElem[2], ENT_QUOTES, 'UTF-8')."\" target=\"_blank\"><b>".htmlspecialchars($listElem[2], ENT_QUOTES, 'UTF-8')."</b></a></td>";
 		    }
 		}
 		// Display NAME by DV8AWC
@@ -64,10 +64,10 @@ for ($i = 0;  ($i <= 19); $i++) { //Last 20 calls
 				$name = rtrim($name, " ");
 				if ($x < $y) {
 					$name = substr($name, 0, $x);
-					echo "<td align=\"left\" style=\"font-weight:bold;color:#464646;\">&nbsp;<b>".$name."</b></td>";
+					echo "<td align=\"left\" style=\"font-weight:bold;color:#464646;\">&nbsp;<b>".htmlspecialchars($name, ENT_QUOTES, 'UTF-8')."</b></td>";
 				} else {
 					$name = substr($name, 0, $y);
-					echo "<td align=\"left\" style=\"font-weight:bold;color:#464646;\">&nbsp;<b>".$name."</b></td>";
+					echo "<td align=\"left\" style=\"font-weight:bold;color:#464646;\">&nbsp;<b>".htmlspecialchars($name, ENT_QUOTES, 'UTF-8')."</b></td>";
 				}
 			} else {
 				echo "<td align=\"left\" style=\"font-weight:bold;color:#464646;\">&nbsp;<b>&nbsp;</b></td>";
@@ -76,16 +76,16 @@ for ($i = 0;  ($i <= 19); $i++) { //Last 20 calls
 		}
 		if (strlen($listElem[4]) == 1) { $listElem[4] = str_pad($listElem[4], 8, " ", STR_PAD_LEFT); }
 		if ( substr($listElem[4], 0, 6) === 'CQCQCQ' ) {
-			echo "<td align=\"left\">&nbsp;<span style=\"color:#b5651d;font-weight:bold;\">$listElem[4]</span></td>";
+			echo "<td align=\"left\">&nbsp;<span style=\"color:#b5651d;font-weight:bold;\">".htmlspecialchars($listElem[4], ENT_QUOTES, 'UTF-8')."</span></td>";
 		} else {
-			echo "<td align=\"left\">&nbsp;<span style=\"color:#b5651d;font-weight:bold;\">".str_replace(" ","&nbsp;", $listElem[4])."</span></td>";
+			echo "<td align=\"left\">&nbsp;<span style=\"color:#b5651d;font-weight:bold;\">".htmlspecialchars(str_replace(" ","&nbsp;", $listElem[4]), ENT_QUOTES, 'UTF-8')."</span></td>";
 		}
 
 
 		if ($listElem[5] == "LNet"){
 			echo "<td style=\"background:#1d1;\">LNet</td>";
 		}else{
-			echo "<td>$listElem[5]</td>";
+			echo "<td>".htmlspecialchars($listElem[5], ENT_QUOTES, 'UTF-8')."</td>";
 		}
 		if ($listElem[6] == null) {
                              if ($listElem[1] == "DMR Slot 2" && $listElem[5] == "Net")  {echo "<td colspan=\"3\" style=\"background:#f93;\">&nbsp;&nbsp;&nbsp;RX DMR&nbsp;&nbsp;&nbsp;</td>";}
@@ -100,7 +100,7 @@ for ($i = 0;  ($i <= 19); $i++) { //Last 20 calls
 			} else if ($listElem[6] == "GPS") {
 				echo "<td colspan=\"3\" style=\"background:#1d1;\"><a style=\"display:block;\" target=\"_blank\" href=https://www.openstreetmap.org/?mlat=".floatval($listElem[9])."&mlon=".floatval($listElem[10])."><b>GPS</b></a></td>";
 			} else {
-			echo "<td class=\"lh-duration\">$listElem[6]</td>";
+			echo "<td class=\"lh-duration\">".htmlspecialchars($listElem[6], ENT_QUOTES, 'UTF-8')."</td>";
 
 			// Colour the Loss Field
 			if (floatval($listElem[7]) < 1) { echo "<td class=\"lh-loss\">$listElem[7]</td>"; }

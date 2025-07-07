@@ -46,9 +46,9 @@ body, font {
 }
 
 .header {
-    background : #<?php echo $backgroundBanners; ?>;
+    background : #<?php echo htmlspecialchars($backgroundBanners, ENT_QUOTES, 'UTF-8'); ?>;
     text-decoration : none;
-    color : #<?php echo $textBanners; ?>;
+    color : #<?php echo htmlspecialchars($textBanners, ENT_QUOTES, 'UTF-8'); ?>;
     font-family : verdana, arial, sans-serif;
     text-align : left;
     padding : 5px 0px 5px 0px;
@@ -68,28 +68,28 @@ body, font {
 .content {
     margin : 0 0 0 0px;
     padding : 1px 5px 5px 5px;
-    color : #<?php echo $textContent; ?>;
-    background : #<?php echo $backgroundContent; ?>;
+    color : #<?php echo htmlspecialchars($textContent, ENT_QUOTES, 'UTF-8'); ?>;
+    background : #<?php echo htmlspecialchars($backgroundContent, ENT_QUOTES, 'UTF-8'); ?>;
     text-align: center;
 }
 .content2 {
     margin : 0 0 0 0px;
     padding : 1px 5px 5px 5px;
-    color : #<?php echo $textContent; ?>;
-    background : #<?php echo $backgroundContent; ?>;
+    color : #<?php echo htmlspecialchars($textContent, ENT_QUOTES, 'UTF-8'); ?>;
+    background : #<?php echo htmlspecialchars($backgroundContent, ENT_QUOTES, 'UTF-8'); ?>;
     text-align: center;
 }
 .contentwide {
     padding: 5px 5px 5px 5px;
-    color: #<?php echo $textContent; ?>;
-    background: #<?php echo $backgroundContent; ?>;
+    color: #<?php echo htmlspecialchars($textContent, ENT_QUOTES, 'UTF-8'); ?>;
+    background: #<?php echo htmlspecialchars($backgroundContent, ENT_QUOTES, 'UTF-8'); ?>;
     text-align: center;
 }
 
 .footer {
-    background : #<?php echo $backgroundBanners; ?>;
+    background : #<?php echo htmlspecialchars($backgroundBanners, ENT_QUOTES, 'UTF-8'); ?>;
     text-decoration : none;
-    color : #<?php echo $textBanners; ?>;
+    color : #<?php echo htmlspecialchars($textBanners, ENT_QUOTES, 'UTF-8'); ?>;
     font-family : verdana, arial, sans-serif;
     font-size : 9px;
     text-align : center;
@@ -167,18 +167,18 @@ color: orange;
 
 table th {
     font-family: "Lucidia Console",Monaco,monospace;
-    text-shadow: 1px 1px #<?php echo $tableHeadDropShaddow; ?>;
+    text-shadow: 1px 1px #<?php echo htmlspecialchars($tableHeadDropShaddow, ENT_QUOTES, 'UTF-8'); ?>;
     text-decoration: none;
-    background: #<?php echo $backgroundBanners; ?>;
+    background: #<?php echo htmlspecialchars($backgroundBanners, ENT_QUOTES, 'UTF-8'); ?>;
     border: 1px solid #c0c0c0;
 }
 
 table tr:nth-child(even) {
-    background: #<?php echo $tableRowEvenBg; ?>;
+    background: #<?php echo htmlspecialchars($tableRowEvenBg, ENT_QUOTES, 'UTF-8'); ?>;
 }
 
 table tr:nth-child(odd) {
-    background: #<?php echo $tableRowOddBg; ?>;
+    background: #<?php echo htmlspecialchars($tableRowOddBg, ENT_QUOTES, 'UTF-8'); ?>;
 }
 
 table td {

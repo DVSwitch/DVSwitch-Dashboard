@@ -1267,9 +1267,9 @@ function getDMRGstat(string $dmrserver): ?string {
 	$dmrserver = is_string($dmrserver) ? $dmrserver : (string)$dmrserver;
 	if (strlen($dmrserver) > 19) { $dmrserver = substr($dmrserver, 0, 17) . '..'; }
 	if (strpos($dmrstatus, 'Logged') !== false ) {
-             return "<tr><td  style=\"background: #ffffed;\" colspan=\"2\"><span style=\"color:#b5651d;font-weight: bold\">".$dmrserver."</span></td></tr>\n";
+             return "<tr><td  style=\"background: #ffffed;\" colspan=\"2\"><span style=\"color:#b5651d;font-weight: bold\">".htmlspecialchars($dmrserver, ENT_QUOTES, 'UTF-8')."</span></td></tr>\n";
         } else if (strpos($dmrstatus, 'Opening') !== false || strpos($dmrstatus, 'Closing') !== false || strpos($dmrstatus, 'Connection') !== false) {
-             return "<tr><td  style=\"background: #ffffed;\" colspan=\"2\"><span style=\"color:#b0b0b0;font-weight: bold\">".$dmrserver."</span></td></tr>\n"; }
+             return "<tr><td  style=\"background: #ffffed;\" colspan=\"2\"><span style=\"color:#b0b0b0;font-weight: bold\">".htmlspecialchars($dmrserver, ENT_QUOTES, 'UTF-8')."</span></td></tr>\n"; }
 }
 
 

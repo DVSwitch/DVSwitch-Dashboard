@@ -107,62 +107,62 @@ if ($abinfo && is_array($abinfo)) {
     if ($net1 == TRUE || $net2 == TRUE || $net3 == TRUE || $net4 == TRUE || $net5 == TRUE) {
         // Use isset() or null coalescing operator (??) for safer access to potentially missing keys.
         echo "<div class=\"tooltip\" style=\"font-size:12px;\">Analog Bridge Info<span class=\"tooltiptext\" style=\"font-size:11px;\">";
-        echo "<br> decoderFallBack: ".($abinfo['use_fallback'] ?? 'N/A');
-        echo "<br> useEmulator: ".($abinfo['use_emulator'] ?? 'N/A');
-        echo "<br> Mute: ".($abinfo['mute'] ?? 'N/A');
-        echo "<br> [TLV]";
-        echo "<br>   address: ".($abinfo['tlv']['ip'] ?? 'N/A');
-        echo "<br>   txPort: ".($abinfo['tlv']['tx_port'] ?? 'N/A');
-        echo "<br>   rxPort: ".($abinfo['tlv']['rx_port'] ?? 'N/A');
-        echo "<br>   ambeMode: ".($abinfo['tlv']['ambe_mode'] ?? 'N/A');
-        echo "<br>   AMBE Size: ".($abinfo['tlv']['ambe_size'] ?? 'N/A');
-        echo "<br> [Digital]<br/>";
-        echo "   Callsign: ".($abinfo['digital']['call'] ?? 'N/A');
-        echo "<br>   gatewayID: ".($abinfo['digital']['gw'] ?? 'N/A');
-        echo "<br>   repeaterID: ".($abinfo['digital']['rpt'] ?? 'N/A');
-        echo "<br>   txTG: ".($abinfo['digital']['tg'] ?? 'N/A');
+        echo "<br> decoderFallBack: ".htmlspecialchars($abinfo['use_fallback'] ?? 'N/A', ENT_QUOTES, 'UTF-8');
+        echo "<br> useEmulator: ".htmlspecialchars($abinfo['use_emulator'] ?? 'N/A', ENT_QUOTES, 'UTF-8');
+        echo "<br> Mute: ".htmlspecialchars($abinfo['mute'] ?? 'N/A', ENT_QUOTES, 'UTF-8');
+        echo "<br> [TLV]";
+        echo "<br>    address: ".htmlspecialchars($abinfo['tlv']['ip'] ?? 'N/A', ENT_QUOTES, 'UTF-8');
+        echo "<br>    txPort: ".htmlspecialchars($abinfo['tlv']['tx_port'] ?? 'N/A', ENT_QUOTES, 'UTF-8');
+        echo "<br>    rxPort: ".htmlspecialchars($abinfo['tlv']['rx_port'] ?? 'N/A', ENT_QUOTES, 'UTF-8');
+        echo "<br>    ambeMode: ".htmlspecialchars($abinfo['tlv']['ambe_mode'] ?? 'N/A', ENT_QUOTES, 'UTF-8');
+        echo "<br>    AMBE Size: ".htmlspecialchars($abinfo['tlv']['ambe_size'] ?? 'N/A', ENT_QUOTES, 'UTF-8');
+        echo "<br> [Digital]<br/>";
+        echo "    Callsign: ".htmlspecialchars($abinfo['digital']['call'] ?? 'N/A', ENT_QUOTES, 'UTF-8');
+        echo "<br>    gatewayID: ".htmlspecialchars($abinfo['digital']['gw'] ?? 'N/A', ENT_QUOTES, 'UTF-8');
+        echo "<br>    repeaterID: ".htmlspecialchars($abinfo['digital']['rpt'] ?? 'N/A', ENT_QUOTES, 'UTF-8');
+        echo "<br>    txTG: ".htmlspecialchars($abinfo['digital']['tg'] ?? 'N/A', ENT_QUOTES, 'UTF-8');
         $last_tune_val = $abinfo['last_tune'] ?? '';
         $lasttune = $last_tune_val;
-        echo "<br>   Last tune: " . $lasttune;
-        echo "<br>   txTS: ".($abinfo['digital']['ts'] ?? 'N/A');
-        echo "<br>   colorCode: ".($abinfo['digital']['cc'] ?? 'N/A');
-        echo "<br> [USRP]<br/>";
-        echo "   address: ".($abinfo['usrp']['ip'] ?? 'N/A');
-        echo "<br>   txPort: ".($abinfo['usrp']['tx_port'] ?? 'N/A');
-        echo "<br>   rxPort: ".($abinfo['usrp']['rx_port'] ?? 'N/A');
-        echo "<br>   Ping: ".($abinfo['usrp']['ping'] ?? 'N/A');
-        echo "<br>   [To PCM]";;
-        echo "<br>    usrpA: ".($abinfo['usrp']['to_pcm']['shape'] ?? 'N/A')." ";
-        echo "<br>    Gain: ".($abinfo['usrp']['to_pcm']['gain'] ?? 'N/A');
-        echo "<br>   [To AMBE]";;
-        echo "<br>    tlvA: ".($abinfo['usrp']['to_ambe']['shape'] ?? 'N/A')." ";
-        echo "<br>    Gain: ".($abinfo['usrp']['to_ambe']['gain'] ?? 'N/A');
-        echo "<br> [DV3000]<br/>";
-        echo "   address: ".($abinfo['dv3000']['ip'] ?? 'N/A');
-        echo "<br>   rxPort: ".($abinfo['dv3000']['port'] ?? 'N/A');
-        echo "<br>   Serial: ".($abinfo['dv3000']['use_serial'] ?? 'N/A');
-        echo "<br> [Analog Bridge]";
-        echo "<br>   Version: ".($abinfo['ab']['version'] ?? 'N/A');
+        echo "<br>    Last tune: " . htmlspecialchars($lasttune, ENT_QUOTES, 'UTF-8');
+        echo "<br>    txTS: ".htmlspecialchars($abinfo['digital']['ts'] ?? 'N/A', ENT_QUOTES, 'UTF-8');
+        echo "<br>    colorCode: ".htmlspecialchars($abinfo['digital']['cc'] ?? 'N/A', ENT_QUOTES, 'UTF-8');
+        echo "<br> [USRP]<br/>";
+        echo "    address: ".htmlspecialchars($abinfo['usrp']['ip'] ?? 'N/A', ENT_QUOTES, 'UTF-8');
+        echo "<br>    txPort: ".htmlspecialchars($abinfo['usrp']['tx_port'] ?? 'N/A', ENT_QUOTES, 'UTF-8');
+        echo "<br>    rxPort: ".htmlspecialchars($abinfo['usrp']['rx_port'] ?? 'N/A', ENT_QUOTES, 'UTF-8');
+        echo "<br>    Ping: ".htmlspecialchars($abinfo['usrp']['ping'] ?? 'N/A', ENT_QUOTES, 'UTF-8');
+        echo "<br>    [To PCM]";;
+        echo "<br>     usrpA: ".htmlspecialchars($abinfo['usrp']['to_pcm']['shape'] ?? 'N/A', ENT_QUOTES, 'UTF-8')." ";
+        echo "<br>     Gain: ".htmlspecialchars($abinfo['usrp']['to_pcm']['gain'] ?? 'N/A', ENT_QUOTES, 'UTF-8');
+        echo "<br>    [To AMBE]";;
+        echo "<br>     tlvA: ".htmlspecialchars($abinfo['usrp']['to_ambe']['shape'] ?? 'N/A', ENT_QUOTES, 'UTF-8')." ";
+        echo "<br>     Gain: ".htmlspecialchars($abinfo['usrp']['to_ambe']['gain'] ?? 'N/A', ENT_QUOTES, 'UTF-8');
+        echo "<br> [DV3000]<br/>";
+        echo "    address: ".htmlspecialchars($abinfo['dv3000']['ip'] ?? 'N/A', ENT_QUOTES, 'UTF-8');
+        echo "<br>    rxPort: ".htmlspecialchars($abinfo['dv3000']['port'] ?? 'N/A', ENT_QUOTES, 'UTF-8');
+        echo "<br>    Serial: ".htmlspecialchars($abinfo['dv3000']['use_serial'] ?? 'N/A', ENT_QUOTES, 'UTF-8');
+        echo "<br> [Analog Bridge]";
+        echo "<br>    Version: ".htmlspecialchars($abinfo['ab']['version'] ?? 'N/A', ENT_QUOTES, 'UTF-8');
         echo "<br/></span></div></th></tr>\n";
         $call_val = $abinfo['digital']['call'] ?? '';
         if (!preg_match('/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/', $call_val)) { $call="";
         } else { $call = $call_val; }
-        echo "<tr><th width=50%>Callsign</th><td style=\"background: #f9f9f9f9;color:#b44010;font-weight: bold;\">".$call."</td></tr>\n";
-        echo "<tr><th width=50%>GW ID</th><td style=\"background: #f9f9f9;\">".($abinfo['digital']['gw'] ?? 'N/A')."</td></tr>\n";
-        echo "<tr><th width=50%>RPT ID</th><td style=\"background: #f9f9f9;\">".($abinfo['digital']['rpt'] ?? 'N/A')."</td></tr>\n";
-        echo "<tr><th width=50%>Mode</th><td style=\"background: #f9f9f9;font-weight: bold;color:#b44010;\">".($abinfo['tlv']['ambe_mode'] ?? 'N/A')."</td></tr>\n";
-        echo "<tr><th width=50%>Tx TG</th><td style=\"background: #f9f9f9;font-weight: bold;color:#ef7215;\">".($abinfo['digital']['tg'] ?? 'N/A')."</td></tr>\n";
-        echo "<tr><th width=50%>AB ver</th><td style=\"background: #f9f9f9;\">".($abinfo['ab']['version'] ?? 'N/A')."</td></tr>\n";
+        echo "<tr><th width=50%>Callsign</th><td style=\"background: #f9f9f9f9;color:#b44010;font-weight: bold;\">".htmlspecialchars($call, ENT_QUOTES, 'UTF-8')."</td></tr>\n";
+        echo "<tr><th width=50%>GW ID</th><td style=\"background: #f9f9f9;\">".htmlspecialchars($abinfo['digital']['gw'] ?? 'N/A', ENT_QUOTES, 'UTF-8')."</td></tr>\n";
+        echo "<tr><th width=50%>RPT ID</th><td style=\"background: #f9f9f9;\">".htmlspecialchars($abinfo['digital']['rpt'] ?? 'N/A', ENT_QUOTES, 'UTF-8')."</td></tr>\n";
+        echo "<tr><th width=50%>Mode</th><td style=\"background: #f9f9f9;font-weight: bold;color:#b44010;\">".htmlspecialchars($abinfo['tlv']['ambe_mode'] ?? 'N/A', ENT_QUOTES, 'UTF-8')."</td></tr>\n";
+        echo "<tr><th width=50%>Tx TG</th><td style=\"background: #f9f9f9;font-weight: bold;color:#ef7215;\">".htmlspecialchars($abinfo['digital']['tg'] ?? 'N/A', ENT_QUOTES, 'UTF-8')."</td></tr>\n";
+        echo "<tr><th width=50%>AB ver</th><td style=\"background: #f9f9f9;\">".htmlspecialchars($abinfo['ab']['version'] ?? 'N/A', ENT_QUOTES, 'UTF-8')."</td></tr>\n";
         echo "</table>\n";
     } else {
         echo "<span style=\"font-size:13px;\">Analog Bridge Info</span></th></tr>\n";
         $call_val = $abinfo['digital']['call'] ?? '';
         if (!preg_match('/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/', $call_val)) { $call="";
         } else { $call = $call_val; }
-        echo "<tr><th width=50%>Callsign</th><td style=\"background: #f9f9f9f9;color:#b44010;font-weight: bold;\">".$call."</td></tr>\n";
-        echo "<tr><th width=50%>Mode</th><td style=\"background: #f9f9f9;font-weight: bold;color:#b44010;\">".($abinfo['tlv']['ambe_mode'] ?? 'N/A')."</td></tr>\n";
-        echo "<tr><th width=50%>Tx TG</th><td style=\"background: #f9f9f9;font-weight: bold;color:#ef7215;\">".($abinfo['digital']['tg'] ?? 'N/A')."</td></tr>\n";
-        echo "<tr><th width=50%>AB ver</th><td style=\"background: #f9f9f9;\">".($abinfo['ab']['version'] ?? 'N/A')."</td></tr>\n";
+        echo "<tr><th width=50%>Callsign</th><td style=\"background: #f9f9f9f9;color:#b44010;font-weight: bold;\">".htmlspecialchars($call, ENT_QUOTES, 'UTF-8')."</td></tr>\n";
+        echo "<tr><th width=50%>Mode</th><td style=\"background: #f9f9f9;font-weight: bold;color:#b44010;\">".htmlspecialchars($abinfo['tlv']['ambe_mode'] ?? 'N/A', ENT_QUOTES, 'UTF-8')."</td></tr>\n";
+        echo "<tr><th width=50%>Tx TG</th><td style=\"background: #f9f9f9;font-weight: bold;color:#ef7215;\">".htmlspecialchars($abinfo['digital']['tg'] ?? 'N/A', ENT_QUOTES, 'UTF-8')."</td></tr>\n";
+        echo "<tr><th width=50%>AB ver</th><td style=\"background: #f9f9f9;\">".htmlspecialchars($abinfo['ab']['version'] ?? 'N/A', ENT_QUOTES, 'UTF-8')."</td></tr>\n";
         echo "</table>\n";
     }
 }
@@ -241,7 +241,7 @@ if (getEnabled("DMR Network", $mmdvmconfigs) == 1) {
 	if ($dmrMasterHost == '127.0.0.1' && isProcessRunning("DMRGateway")) {
 	    // Use !empty for safe checking of potentially undefined keys.
 	    if (!empty($configdmrgateway['XLX Network 1']['Enabled'])) {
-		echo "<tr><td  style=\"background: #ffffed;\" colspan=\"2\"><span style=\"color:#b5651d;font-weight: bold\">".$xlxMasterHost1."</span></td></tr>\n";
+		echo "<tr><td  style=\"background: #ffffed;\" colspan=\"2\"><span style=\"color:#b5651d;font-weight: bold\">".htmlspecialchars($xlxMasterHost1, ENT_QUOTES, 'UTF-8')."</span></td></tr>\n";
 	    }
         if (empty($configdmrgateway['XLX Network 1']['Enabled']) && !empty($configdmrgateway['XLX Network']['Enabled'])) {
             // PHP replacement for: grep -a 'XLX, Linking\|Unlinking' ... | tail -1 | awk '{print $5 " " $8 " " $9}'
@@ -276,7 +276,7 @@ if (getEnabled("DMR Network", $mmdvmconfigs) == 1) {
             }
             if (strpos($xlxMasterHost1_log, 'Linking') !== false) { $xlxMasterHost1_log = str_replace('Linking ', '', $xlxMasterHost1_log); }
             else if (strpos($xlxMasterHost1_log, 'Unlinking') !== false) { $xlxMasterHost1_log = "XLX Not Linked"; }
-            echo "<tr><td  style=\"background: #ffffed;\" colspan=\"2\"><span style=\"color:#b5651d;font-weight: bold\">".($xlxMasterHost1_log ?: $xlxMasterHost1)."</span></td></tr>\n";
+            echo "<tr><td  style=\"background: #ffffed;\" colspan=\"2\"><span style=\"color:#b5651d;font-weight: bold\">".htmlspecialchars(($xlxMasterHost1_log ?: $xlxMasterHost1), ENT_QUOTES, 'UTF-8')."</span></td></tr>\n";
         }
 	    if (!empty($configdmrgateway['DMR Network 1']['Enabled'])) {
 		$dmrMasterhost1 = str_replace(' ', '_', $dmrMasterHost1);
@@ -360,7 +360,7 @@ if (getEnabled("DMR Network", $mmdvmconfigs) == 1) {
 		$dmrMasterHost = str_replace('_', ' ', $dmrMasterHost);
     		if (strlen($dmrMasterHost) > 19) { /* $dmrMasterHost = substr($dmrMasterHost, 0, 17) . '..'; */ }
 		if ( strpos($dmrstat, 'Logged') !== false ) {
-                        echo "<tr><td  style=\"background: #ffffed;\" colspan=\"2\"><span style=\"color:#b5651d;font-weight: bold\">".$dmrMasterHost."</span></td></tr>\n";}
+                        echo "<tr><td  style=\"background: #ffffed;\" colspan=\"2\"><span style=\"color:#b5651d;font-weight: bold\">".htmlspecialchars($dmrMasterHost, ENT_QUOTES, 'UTF-8')."</span></td></tr>\n";}
 		else if (strpos($dmrstat, 'Opening') !== false || strpos($dmrstat, 'Closing') !== false || strpos($dmrstat, 'Connection') !== false) {
 			echo "<tr><td  style=\"background: #ffffed;\" colspan=\"2\"><span style=\"color:#b0b0b0;font-weight: bold\">Not Connected</span></td></tr>\n"; }
 		}
@@ -398,18 +398,18 @@ if ( $testMMDVModeYSF == 1 ) { //Hide the YSF information when System Fusion Net
                 if ($ysfLinkedToTxt != "null") { 
 	    $displayTxt = $ysfLinkedToTxt;
 	    if (strlen($displayTxt) > 20) { $displayTxt = substr($displayTxt, 0, 18) . '..'; }
-	    $ysfLinkedToTxt = "Room<br/><span style=\"color:#b5651d;font-weight: bold;\">".$displayTxt."</span>"; 
+	    $ysfLinkedToTxt = "Room<br/><span style=\"color:#b5651d;font-weight: bold;\">".htmlspecialchars($displayTxt, ENT_QUOTES, 'UTF-8')."</span>"; 
 	} else { 
 	    $displayTxt = $ysfLinkedTo;
 	    if (strlen($displayTxt) > 20) { $displayTxt = substr($displayTxt, 0, 18) . '..'; }
-	    $ysfLinkedToTxt = "Linked to<br/><span style=\"color:#b5651d;font-weight: bold;\">".$displayTxt."</span>"; 
+	    $ysfLinkedToTxt = "Linked to<br/><span style=\"color:#b5651d;font-weight: bold;\">".htmlspecialchars($displayTxt, ENT_QUOTES, 'UTF-8')."</span>"; 
 	}
 	$ysfLinkedToTxt = str_replace('_', ' ', $ysfLinkedToTxt);
         }
         echo "<br />\n";
         echo "<table>\n";
         echo "<tr><th colspan=\"2\">YSF Net</th></tr>\n";
-        echo "<tr><td colspan=\"2\" style=\"background: #ffffed;\">".$ysfLinkedToTxt."</td></tr>\n";
+        echo "<tr><td colspan=\"2\" style=\"background: #ffffed;\">".htmlspecialchars($ysfLinkedToTxt, ENT_QUOTES, 'UTF-8')."</td></tr>\n";
         echo "</table>\n";
 }
 $testMMDVModeP25 = getConfigItem("P25 Network", "Enable", $mmdvmconfigs);
@@ -417,7 +417,7 @@ if ( $testMMDVModeP25 == 1 ) { //Hide the P25 information when P25 Network mode 
     echo "<br />\n";
     echo "<table>\n";
     echo "<tr><th colspan=\"2\">P25 Net</th></tr>\n";
-    echo "<tr><td colspan=\"2\" style=\"background: #ffffed;\">".getActualLink($logLinesP25Gateway, "P25")."</td></tr>\n";
+    echo "<tr><td colspan=\"2\" style=\"background: #ffffed;\">".htmlspecialchars(getActualLink($logLinesP25Gateway, "P25"), ENT_QUOTES, 'UTF-8')."</td></tr>\n";
     echo "</table>\n";
 }
 
@@ -427,7 +427,7 @@ if ( $testMMDVModeNXDN == 1 ) { //Hide the NXDN information when NXDN Network mo
     echo "<table>\n";
     echo "<tr><th colspan=\"2\">NXDN Net</th></tr>\n";
     if (file_exists('/opt/NXDNGateway/NXDNGateway.ini')) {
-	echo "<tr><td colspan=\"2\" style=\"background: #ffffed;\">".getActualLink($logLinesNXDNGateway, "NXDN")."</td></tr>\n";
+	echo "<tr><td colspan=\"2\" style=\"background: #ffffed;\">".htmlspecialchars(getActualLink($logLinesNXDNGateway, "NXDN"), ENT_QUOTES, 'UTF-8')."</td></tr>\n";
     } else {
 	echo "<tr><td colspan=\"2\" style=\"background: #ffffff;\">Linked to <span style=\"color:#b5651d;font-weight: bold;\">TG65000</span></td></tr>\n";
     }
@@ -453,9 +453,9 @@ if ($configfile = fopen('/etc/ircddbgateway','r')) {
     // Check if ircddbHostname is set before using it to prevent errors.
     if (isProcessRunning("ircddbgatewayd")) {
         $hostname = isset($configs['ircddbHostname']) ? $configs['ircddbHostname'] : 'N/A';
-        echo "<tr><th width=\"20%\">IRC</th><td style=\"background: #ffffff;color:brown;\">".$hostname."</td></tr>\n";
+        echo "<tr><th width=\"20%\">IRC</th><td style=\"background: #ffffff;color:brown;\">".htmlspecialchars($hostname, ENT_QUOTES, 'UTF-8')."</td></tr>\n";
     }
-    echo "<tr><td colspan=\"2\" style=\"background: #ffffed;\">".getActualLink($reverseLogLinesMMDVM, "D-Star")."</td></tr>\n";
+    echo "<tr><td colspan=\"2\" style=\"background: #ffffed;\">".htmlspecialchars(getActualLink($reverseLogLinesMMDVM, "D-Star"), ENT_QUOTES, 'UTF-8')."</td></tr>\n";
     echo "</table>\n";
 }
 

@@ -73,9 +73,9 @@ if ($cpuTempCRaw !="") {
 <fieldset style="box-shadow:0 0 10px #999;background-color:#e8e8e8e8; width:855px;margin-top:8px;margin-left:6px;margin-right:0px;font-size:12px;border-top-left-radius: 10px; border-top-right-radius: 10px;border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
 <table style="margin-top:2px;" class="sys-table">
   <tr>
-    <th class="sys-hostname">Hostname<br/><span style="font-weight: bold;color:#effd5f;font-size:10px;">IP: <?php echo str_replace(' ', '<br />', exec('hostname -I'));?></span></th>
+    <th class="sys-hostname">Hostname<br/><span style="font-weight: bold;color:#effd5f;font-size:10px;">IP: <?php echo htmlspecialchars(str_replace(' ', '<br />', exec('hostname -I')), ENT_QUOTES, 'UTF-8');?></span></th>
     <th class="sys-kernel"><b>Kernel<br/>release</b></th>
-    <th class="sys-platform" colspan="2">Platform <br><span style="font-weight: bold;color:#effd5f;font-size:12px;">Uptime: <?php echo $uptime; ?></span></th>
+    <th class="sys-platform" colspan="2">Platform <br><span style="font-weight: bold;color:#effd5f;font-size:12px;">Uptime: <?php echo htmlspecialchars($uptime, ENT_QUOTES, 'UTF-8'); ?></span></th>
     <th class="sys-disk"><span>&nbsp;<b>Disk&nbsp;<br> used</b></span></th>
     <th class="sys-memory"><span>&nbsp;<b>Memory&nbsp;<br> used</b></span></th>
     <th class="sys-cpu"><span><b>CPU Load</b></span></th>
@@ -84,13 +84,13 @@ if ($cpuTempCRaw !="") {
 ?>
   </tr>
   <tr height="24px">
-    <td class="sys-hostname"><?php echo php_uname('n');?></td>
-    <td class="sys-kernel"><?php echo php_uname('r');?></td>
-    <td class="sys-platform" colspan="2"><?php echo exec('/usr/local/sbin/platformDetect.sh');?></td>
-    <td class="sys-disk"><?php echo $disk_used;?></td>
-    <td class="sys-memory"><?php echo $free_mem;?></td>
-    <td class="sys-cpu"><?php echo round($cpuLoad[0],1);?> / <?php echo round($cpuLoad[1],1);?> / <?php echo round($cpuLoad[2],1);?></td>
-   <?php if (file_exists('/sys/class/thermal/thermal_zone0/temp')) { echo $cpuTempHTML; } ?>
+    <td class="sys-hostname"><?php echo htmlspecialchars(php_uname('n'), ENT_QUOTES, 'UTF-8');?></td>
+    <td class="sys-kernel"><?php echo htmlspecialchars(php_uname('r'), ENT_QUOTES, 'UTF-8');?></td>
+    <td class="sys-platform" colspan="2"><?php echo htmlspecialchars(exec('/usr/local/sbin/platformDetect.sh'), ENT_QUOTES, 'UTF-8');?></td>
+    <td class="sys-disk"><?php echo htmlspecialchars($disk_used, ENT_QUOTES, 'UTF-8');?></td>
+    <td class="sys-memory"><?php echo htmlspecialchars($free_mem, ENT_QUOTES, 'UTF-8');?></td>
+    <td class="sys-cpu"><?php echo htmlspecialchars(round($cpuLoad[0],1), ENT_QUOTES, 'UTF-8');?> / <?php echo htmlspecialchars(round($cpuLoad[1],1), ENT_QUOTES, 'UTF-8');?> / <?php echo htmlspecialchars(round($cpuLoad[2],1), ENT_QUOTES, 'UTF-8');?></td>
+   <?php if (file_exists('/sys/class/thermal/thermal_zone0/temp')) { echo htmlspecialchars($cpuTempHTML, ENT_QUOTES, 'UTF-8'); } ?>
   </tr>
 </table>
 </fieldset>

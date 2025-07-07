@@ -41,33 +41,33 @@ for ($i = 0; $i < count($localTXList); $i++) {
                                 $local_time = xstrftime('%H:%M:%S %b %d', $dt->getTimestamp());
 
 			echo"<tr>";
-			echo"<td align=\"left\" class=\"lh-time\">&nbsp;$local_time</td>";
-			echo"<td align=\"left\" style=\"color:green; font-weight:bold;\">&nbsp;$listElem[1]</td>";
+			echo"<td align=\"left\" class=\"lh-time\">&nbsp;".htmlspecialchars($local_time, ENT_QUOTES, 'UTF-8')."</td>";
+			echo"<td align=\"left\" style=\"color:green; font-weight:bold;\">&nbsp;".htmlspecialchars($listElem[1], ENT_QUOTES, 'UTF-8')."</td>";
 			    if (is_numeric($listElem[2]) || strpos($listElem[2], "openSPOT") !== FALSE) {
-				echo "<td align=\"left\" style=\"color:#464646;\"><b>&nbsp;$listElem[2]</b></td>";
+				echo "<td align=\"left\" style=\"color:#464646;\"><b>&nbsp;".htmlspecialchars($listElem[2], ENT_QUOTES, 'UTF-8')."</b></td>";
 			    } elseif (!preg_match('/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/', $listElem[2])) {
-				echo "<td align=\"left\" style=\"color:#464646;\"><b>&nbsp;$listElem[2]</b></td>";
+				echo "<td align=\"left\" style=\"color:#464646;\"><b>&nbsp;".htmlspecialchars($listElem[2], ENT_QUOTES, 'UTF-8')."</b></td>";
 	    			} else {
 			if (strpos($listElem[2],"-") > 0) { $listElem[2] = substr($listElem[2], 0, strpos($listElem[2],"-")); }
 			if ($listElem[3] && $listElem[3] != '    ' ) {
-			    echo "<td align=\"left\">&nbsp;<a href=\"http://www.qrz.com/db/$listElem[2]\" target=\"_blank\"><b>$listElem[2]</b></a><b>/$listElem[3]</b></td>";
+			    echo "<td align=\"left\">&nbsp;<a href=\"http://www.qrz.com/db/".htmlspecialchars($listElem[2], ENT_QUOTES, 'UTF-8')."\" target=\"_blank\"><b>".htmlspecialchars($listElem[2], ENT_QUOTES, 'UTF-8')."</b></a><b>/".htmlspecialchars($listElem[3], ENT_QUOTES, 'UTF-8')."</b></td>";
 			} else {
-			    echo "<td align=\"left\">&nbsp;<a href=\"http://www.qrz.com/db/$listElem[2]\" target=\"_blank\"><b>$listElem[2]</b></a></td>";
+			    echo "<td align=\"left\">&nbsp;<a href=\"http://www.qrz.com/db/".htmlspecialchars($listElem[2], ENT_QUOTES, 'UTF-8')."\" target=\"_blank\"><b>".htmlspecialchars($listElem[2], ENT_QUOTES, 'UTF-8')."</b></a></td>";
 			}
 		    }
 			if (strlen($listElem[4]) == 1) { $listElem[4] = str_pad($listElem[4], 8, " ", STR_PAD_LEFT); }
-			echo"<td align=\"left\">&nbsp;<span style=\"color:#b5651d;font-weight:bold;\">".str_replace(" ","&nbsp;", $listElem[4])."</span></td>";
+			echo"<td align=\"left\">&nbsp;<span style=\"color:#b5651d;font-weight:bold;\">".htmlspecialchars(str_replace(" ","&nbsp;", $listElem[4]), ENT_QUOTES, 'UTF-8')."</span></td>";
 			if ($listElem[5] == "LNet"){
 				echo "<td style=\"background:#1d1;\">LNet</td>";
 			} else {
-				echo "<td>$listElem[5]</td>";
+				echo "<td>".htmlspecialchars($listElem[5], ENT_QUOTES, 'UTF-8')."</td>";
 			}
 			if ($listElem[6] == null) {
 				echo "<td colspan=\"1\" style=\"background:#f33;\" class=\"lh-duration\">TX</td>";
 			} else if ($listElem[6] == "DMR Data") {
 				echo "<td colspan=\"1\" style=\"background:#1d1;\">DMR Data</td>";
 			}  else {
-		echo"<td class=\"lh-duration\">$listElem[6]</td>"; //duration
+		echo"<td class=\"lh-duration\">".htmlspecialchars($listElem[6], ENT_QUOTES, 'UTF-8')."</td>"; //duration
 		}
 			echo"</tr>\n";
 			$counter++; }
