@@ -49,16 +49,16 @@ include_once 'include/tools.php';
         /* Light theme variables */
         --bg-primary: #f8f8f8;
         --bg-secondary: #fafafa;
-        --text-primary: #333;
-        --text-secondary: #666;
+        --text-primary: #ffffff; //#333;
+        --text-secondary: #ffffff; //#666;
         --border-color: #ddd;
         --shadow-color: rgba(0, 0, 0, 0.1);
         --accent-color: #007bff;
         --success-color: #28a745;
         --warning-color: #ffc107;
         --error-color: #dc3545;
-        --header-bg: #fafafa;
-        --button-bg: #007bff;
+        --header-bg: #30649c; // #fafafa;
+        --button-bg: #30649c; // #007bff;
         --button-text: #fff;
         --button-hover: #0056b3;
       }
