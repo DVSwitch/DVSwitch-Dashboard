@@ -396,9 +396,13 @@ if ( $testMMDVModeYSF == 1 ) { //Hide the YSF information when System Fusion Net
                     fclose($ysfHostFile);
                 }
                 if ($ysfLinkedToTxt != "null") { 
-	    $ysfLinkedToTxt = "Room<br/><span style=\"color:#b5651d;font-weight: bold;\">".$ysfLinkedToTxt."</span>"; 
+	    $displayTxt = $ysfLinkedToTxt;
+	    if (strlen($displayTxt) > 20) { $displayTxt = substr($displayTxt, 0, 18) . '..'; }
+	    $ysfLinkedToTxt = "Room<br/><span style=\"color:#b5651d;font-weight: bold;\">".$displayTxt."</span>"; 
 	} else { 
-	    $ysfLinkedToTxt = "Linked to<br/><span style=\"color:#b5651d;font-weight: bold;\">".$ysfLinkedTo."</span>"; 
+	    $displayTxt = $ysfLinkedTo;
+	    if (strlen($displayTxt) > 20) { $displayTxt = substr($displayTxt, 0, 18) . '..'; }
+	    $ysfLinkedToTxt = "Linked to<br/><span style=\"color:#b5651d;font-weight: bold;\">".$displayTxt."</span>"; 
 	}
 	$ysfLinkedToTxt = str_replace('_', ' ', $ysfLinkedToTxt);
         }
