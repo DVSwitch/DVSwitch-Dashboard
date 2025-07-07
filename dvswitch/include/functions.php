@@ -222,7 +222,7 @@ function getP25GatewayLog(): array {
 	
         // Open Logfile and copy loglines into LogLines-Array()
         $logLines = array();
-	
+	$logLines1 = array();
 	$logLines2 = array();
 	
 	if (file_exists(LOGPATH."/".P25GATEWAYLOGPREFIX."-".gmdate("Y-m-d").".log")) {
@@ -249,7 +249,7 @@ function getNXDNGatewayLog(): array {
 	
         // Open Logfile and copy loglines into LogLines-Array()
         $logLines = array();
-	
+	$logLines1 = array();
 	$logLines2 = array();
 	
 	if (file_exists(LOGPATH."/".NXDNGATEWAYLOGPREFIX."-".gmdate("Y-m-d").".log")) {
