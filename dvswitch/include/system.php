@@ -58,11 +58,11 @@ if ($cpuTempCRaw !="") {
 ?>
 <fieldset style="box-shadow:0 0 10px #999;background-color:#e8e8e8e8;width:855px;margin-top:8px;;margin-bottom:8px;margin-left:6px;margin-right:0px;font-size:12px;border-top-left-radius: 10px; border-top-right-radius: 10px;border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
 <table style="margin-top:2px;">
-    <tr><th style="padding-top:4px;padding-bottom:4px;">&nbsp;Modes&nbsp;</th>
+    <tr><th style="padding-top:4px;padding-bottom:4px;">Modes</th>
     <?php showMode("DMR", $mmdvmconfigs);?><?php showMode("System Fusion", $mmdvmconfigs);?>
     <?php showMode("NXDN", $mmdvmconfigs);?><?php showMode("P25", $mmdvmconfigs);?>
     <?php showMode("D-Star", $mmdvmconfigs);?>
-    <th style="padding-top:4px;padding-bottom:4px;">&nbsp;Networks&nbsp;</th>
+    <th style="padding-top:4px;padding-bottom:4px;">Networks</th>
   <?php showMode("DMR Network", $mmdvmconfigs);?><?php showMode("System Fusion Network", $mmdvmconfigs);?>
   <?php showMode("NXDN Network", $mmdvmconfigs);?><?php showMode("P25 Network", $mmdvmconfigs);?>
   <?php showMode("D-Star Network", $mmdvmconfigs);?></tr>
@@ -73,11 +73,11 @@ if ($cpuTempCRaw !="") {
 <fieldset style="box-shadow:0 0 10px #999;background-color:#e8e8e8e8; width:855px;margin-top:8px;margin-left:6px;margin-right:0px;font-size:12px;border-top-left-radius: 10px; border-top-right-radius: 10px;border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
 <table style="margin-top:2px;" class="sys-table">
   <tr>
-    <th class="sys-hostname">Hostname<br/><span style="font-weight: bold;color:#effd5f;font-size:10px;">IP: <?php echo htmlspecialchars(str_replace(' ', '<br />', exec('hostname -I')), ENT_QUOTES, 'UTF-8');?></span></th>
+    <th class="sys-hostname">Hostname<br/><span style="font-weight: bold;color:#effd5f;font-size:10px;">IP: <?php $ip_addrs = preg_split('/\s+/', trim(exec('hostname -I'))); echo implode('<br />', array_map(function($ip) { return htmlspecialchars($ip, ENT_QUOTES, 'UTF-8'); }, $ip_addrs)); ?></span></th>
     <th class="sys-kernel"><b>Kernel<br/>release</b></th>
     <th class="sys-platform" colspan="2">Platform <br><span style="font-weight: bold;color:#effd5f;font-size:12px;">Uptime: <?php echo htmlspecialchars($uptime, ENT_QUOTES, 'UTF-8'); ?></span></th>
-    <th class="sys-disk"><span>&nbsp;<b>Disk&nbsp;<br> used</b></span></th>
-    <th class="sys-memory"><span>&nbsp;<b>Memory&nbsp;<br> used</b></span></th>
+    <th class="sys-disk"><span><b>Disk<br> used</b></span></th>
+    <th class="sys-memory"><span><b>Memory<br> used</b></span></th>
     <th class="sys-cpu"><span><b>CPU Load</b></span></th>
 <?php if (file_exists('/sys/class/thermal/thermal_zone0/temp')) {
     echo "<th><span><b>CPU Temp</b></span></th>"; }
@@ -89,7 +89,7 @@ if ($cpuTempCRaw !="") {
     <td class="sys-platform" colspan="2"><?php echo htmlspecialchars(exec('/usr/local/sbin/platformDetect.sh'), ENT_QUOTES, 'UTF-8');?></td>
     <td class="sys-disk"><?php echo htmlspecialchars($disk_used, ENT_QUOTES, 'UTF-8');?></td>
     <td class="sys-memory"><?php echo htmlspecialchars($free_mem, ENT_QUOTES, 'UTF-8');?></td>
-    <td class="sys-cpu"><?php echo htmlspecialchars(round($cpuLoad[0],1), ENT_QUOTES, 'UTF-8');?> / <?php echo htmlspecialchars(round($cpuLoad[1],1), ENT_QUOTES, 'UTF-8');?> / <?php echo htmlspecialchars(round($cpuLoad[2],1), ENT_QUOTES, 'UTF-8');?></td>
+    <td class="sys-cpu"><?php echo htmlspecialchars((string)round($cpuLoad[0],1), ENT_QUOTES, 'UTF-8');?> / <?php echo htmlspecialchars((string)round($cpuLoad[1],1), ENT_QUOTES, 'UTF-8');?> / <?php echo htmlspecialchars((string)round($cpuLoad[2],1), ENT_QUOTES, 'UTF-8');?></td>
    <?php if (file_exists('/sys/class/thermal/thermal_zone0/temp')) { echo htmlspecialchars($cpuTempHTML, ENT_QUOTES, 'UTF-8'); } ?>
   </tr>
 </table>

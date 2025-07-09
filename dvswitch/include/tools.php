@@ -10,19 +10,19 @@ function format_time(int $seconds): string {
 
 	if ($days > 0) {
 		$uptimeString .= $days;
-		$uptimeString .= (($days == 1) ? "&nbsp;day" : "&nbsp;days");
+		$uptimeString .= (($days == 1) ? " day" : " days");
 	}
 	if ($hours > 0) {
 		$uptimeString .= (($days > 0) ? ", " : "") . $hours;
-		$uptimeString .= (($hours == 1) ? "&nbsp;hr" : "&nbsp;hrs");
+		$uptimeString .= (($hours == 1) ? " hr" : " hrs");
 	}
 	if ($mins > 0) {
 		$uptimeString .= (($days > 0 || $hours > 0) ? ", " : "") . $mins;
-		$uptimeString .= (($mins == 1) ? "&nbsp;min" : "&nbsp;mins");
+		$uptimeString .= (($mins == 1) ? " min" : " mins");
 	}
 	if ($secs > 0) {
 		$uptimeString .= (($days > 0 || $hours > 0 || $mins > 0) ? ", " : "") . $secs;
-		$uptimeString .= (($secs == 1) ? "&nbsp;s" : "&nbsp;s");
+		$uptimeString .= (($secs == 1) ? " s" : " s");
 	}
 	return $uptimeString;
 }
@@ -37,15 +37,15 @@ function format_uptime(float $float_secs): string {
 
     if ($days > 0) {
     $uptimeString .= $days;
-    $uptimeString .= (($days == 1) ? "&nbsp;day" : "&nbsp;days");
+    $uptimeString .= (($days == 1) ? " day" : " days");
     }
     if ($hours > 0) {
     $uptimeString .= (($days > 0) ? ", " : "") . $hours;
-    $uptimeString .= (($hours == 1) ? "&nbsp;hr" : "&nbsp;hrs");
+    $uptimeString .= (($hours == 1) ? " hr" : " hrs");
     }
     if ($mins > 0) {
     $uptimeString .= (($days > 0 || $hours > 0) ? ", " : "") . $mins;
-    $uptimeString .= (($mins == 1) ? "&nbsp;min" : "&nbsp;mins");
+    $uptimeString .= (($mins == 1) ? " min" : " mins");
     }
     return $uptimeString;
 }

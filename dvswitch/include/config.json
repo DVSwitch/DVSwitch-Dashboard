@@ -1,0 +1,23 @@
+{
+  "ABINFO": "31001",
+  "REMOTENET": "127.0.0.1/32",
+  "RXMONITOR": "YES",
+  "DISPLAYNAME": "NO",
+  "LOGPATH": "/var/log/mmdvm",
+  "MMDVMLOGPREFIX": "MMDVM_Bridge",
+  "MMDVMINIPATH": "/opt/MMDVM_Bridge/",
+  "MMDVMINIFILENAME": "MMDVM_Bridge.ini",
+  "DMRIDDATPATH": "/var/lib/mmdvm",
+  "YSFGATEWAYLOGPREFIX": "YSFGateway",
+  "YSFGATEWAYINIPATH": "/opt/YSFGateway",
+  "YSFGATEWAYINIFILENAME": "YSFGateway.ini",
+  "P25GATEWAYLOGPREFIX": "P25Gateway",
+  "P25GATEWAYINIPATH": "/opt/P25Gateway",
+  "P25GATEWAYINIFILENAME": "P25Gateway.ini",
+  "NXDNGATEWAYLOGPREFIX": "NXDNGateway",
+  "NXDNGATEWAYINIPATH": "/opt/NXDNGateway",
+  "NXDNGATEWAYINIFILENAME": "NXDNGateway.ini",
+  "LINKLOGPATH": "/var/log/ircddbgateway",
+  "IRCDDBGATEWAY": "ircddbgatewayd",
+  "IRCDDBGATEWAYINIFILENAME": "/etc/ircddbgateway"
+} 

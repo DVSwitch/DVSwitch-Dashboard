@@ -282,7 +282,7 @@ include_once 'include/tools.php';
 <div class="content"><center>
 <div style="margin-top:8px;">
 <?php
-if ( RXMONITOR == "YES" ) {
+if ($config['RXMONITOR'] == "YES" ) {
 echo '<button class="button link" onclick="playAudioToggle(8080, this)"><b>&nbsp;&nbsp;&nbsp;<img src=images/speaker.png alt="" style="vertical-align:middle">&nbsp;&nbsp;RX Monitor&nbsp;&nbsp;&nbsp;</b></button>';}
 ?>
 </div></center>

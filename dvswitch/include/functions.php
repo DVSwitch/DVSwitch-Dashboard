@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__ . '/config.php';
 
 function get_string_between(string $string, string $start, string $end): string {
     $string = " ".$string;
@@ -12,52 +13,52 @@ function get_string_between(string $string, string $start, string $end): string 
     return substr($string,$ini,$len);
 }
 
-function getMMDVMConfig(): array {
-	// loads MMDVM_Bridge.ini into array for further use
-	$conf = array();
-	if ($configs = @fopen(MMDVMINIPATH."/".MMDVMINIFILENAME, 'r')) {
-		while ($config = fgets($configs)) {
-			array_push($conf, trim ( $config, " \t\n\r\0\x0B"));
-		}
-		fclose($configs);
-	}
-	return $conf;
+function getMMDVMConfig() {
+    global $config;
+    $conf = array();
+    if ($configs = @fopen($config['MMDVMINIPATH']."/".$config['MMDVMINIFILENAME'], 'r')) {
+        while ($configLine = fgets($configs)) {
+            array_push($conf, trim($configLine, " \t\n\r\0\x0B"));
+        }
+        fclose($configs);
+    }
+    return $conf;
 }
 
-function getYSFGatewayConfig(): array {
-	// loads YSFGateway.ini into array for further use
-	$conf = array();
-	if ($configs = @fopen(YSFGATEWAYINIPATH."/".YSFGATEWAYINIFILENAME, 'r')) {
-		while ($config = fgets($configs)) {
-			array_push($conf, trim ( $config, " \t\n\r\0\x0B"));
-		}
-		fclose($configs);
-	}
-	return $conf;
+function getYSFGatewayConfig() {
+    global $config;
+    $conf = array();
+    if ($configs = @fopen($config['YSFGATEWAYINIPATH']."/".$config['YSFGATEWAYINIFILENAME'], 'r')) {
+        while ($configLine = fgets($configs)) {
+            array_push($conf, trim($configLine, " \t\n\r\0\x0B"));
+        }
+        fclose($configs);
+    }
+    return $conf;
 }
 
-function getP25GatewayConfig(): array {
-	// loads P25Gateway.ini into array for further use
-	$conf = array();
-	if ($configs = @fopen(P25GATEWAYINIPATH."/".P25GATEWAYINIFILENAME, 'r')) {
-		while ($config = fgets($configs)) {
-			array_push($conf, trim ( $config, " \t\n\r\0\x0B"));
-		}
-		fclose($configs);
-	}
-	return $conf;
+function getP25GatewayConfig() {
+    global $config;
+    $conf = array();
+    if ($configs = @fopen($config['P25GATEWAYINIPATH']."/".$config['P25GATEWAYINIFILENAME'], 'r')) {
+        while ($configLine = fgets($configs)) {
+            array_push($conf, trim($configLine, " \t\n\r\0\x0B"));
+        }
+        fclose($configs);
+    }
+    return $conf;
 }
 
-function getNXDNGatewayConfig(): array {
-	// loads NXDNGateway.ini into array for further use
-	$conf = array();
-	if ($configs = @fopen(NXDNGATEWAYINIPATH."/".NXDNGATEWAYINIFILENAME, 'r')) {
-		while ($config = fgets($configs)) {
-			array_push($conf, trim ( $config, " \t\n\r\0\x0B"));
-		}
-		fclose($configs);
-	}
-	return $conf;
+function getNXDNGatewayConfig() {
+    global $config;
+    $conf = array();
+    if ($configs = @fopen($config['NXDNGATEWAYINIPATH']."/".$config['NXDNGATEWAYINIFILENAME'], 'r')) {
+        while ($configLine = fgets($configs)) {
+            array_push($conf, trim($configLine, " \t\n\r\0\x0B"));
+        }
+        fclose($configs);
+    }
+    return $conf;
 }
 
 function getDAPNETGatewayConfig(): array {
@@ -92,73 +93,75 @@ function getEnabled(string $mode, array $mmdvmconfigs): ?string {
 }
 
 function showMode(string $mode, array $mmdvmconfigs): void {
-	// shows if mode is enabled or not.
-	if (getEnabled($mode, $mmdvmconfigs) == 1) {
-		if ($mode == "D-Star Network") {
-			if (isProcessRunning(IRCDDBGATEWAY)) {
-				echo "<td style=\"background:#12AD2A; color:#030; width:8%;\">&nbsp;";
-			} else {
-				echo "<td style=\"background:#b00; color:#f9f9f9; width:8%;\">&nbsp;";
-			}
-		}
-		elseif ($mode == "System Fusion Network") {
-			if ( (isProcessRunning("MMDVM_Bridge")) || (getConfigItem("System Fusion Network", "GatewayAddress", $mmdvmconfigs) == '127.0.0.1' && isProcessRunning("YSFGateway"))) {
-					echo "<td style=\"background:#12AD2A; color:#030; width:8%;\">&nbsp;";
-				} else {
-					echo "<td style=\"background:#b00; color:#f9f9f9; width:8%;\">&nbsp;";
-				}
-			}
-		elseif ($mode == "P25 Network") {
-			if (isProcessRunning("P25Gateway")) {
-				echo "<td style=\"background:#12AD2A; color:#030; width:10%;\">&nbsp;";
-			} else {
-				echo "<td style=\"background:#b00; color:#f9f9f9; width:10%;\">&nbsp;";
-			}
-		}
-		elseif ($mode == "NXDN Network") {
-			if (isProcessRunning("NXDNGateway")) {
-				echo "<td style=\"background:#12AD2A; color:#030; width:10%;\">&nbsp;";
-			} else {
-				echo "<td style=\"background:#b00; color:#f9f9f9; width:10%;\">&nbsp;";
-			}
-		}
-		elseif ($mode == "DMR Network") {
-			if (getConfigItem("DMR Network", "Address", $mmdvmconfigs) == '127.0.0.1') {
-				if (isProcessRunning("DMRGateway") || isProcessRunning("MMDVM_Bridge") ) {
-					echo "<td style=\"background:#12AD2A; color:#030; width:8%;\">&nbsp;";
-				} else {
-					echo "<td style=\"background:#b00; color:#f9f9f9; width:8%;\">&nbsp;";
-				}
-			}
-			else {
-				if (isProcessRunning("MMDVM_Bridge")) {
-					echo "<td style=\"background:#12AD2A; color:#030; width:8%;\">&nbsp;";
-				} else {
-					echo "<td style=\"background:#b00; color:#f9f9f9; width:8%;\">&nbsp;";
-				}
-			}
-		}
-		else {
-			if ($mode == "D-Star" || $mode == "DMR" || $mode == "System Fusion" || $mode == "P25" || $mode == "NXDN" ) {
-				if (isProcessRunning("MMDVM_Bridge")) {
-					echo "<td style=\"background:#12AD2A; color:#030; width:8%;\">&nbsp;";
-				} else {
-					echo "<td style=\"background:#b00; color:#f9f9f9; width:8%;\">&nbsp;";
-				}
-			}
-		}
-	}
-	else {
-		echo "<td style=\"background:#606060; color:#b0b0b0; width:8%;\">&nbsp;";
+    global $config;
+    // shows if mode is enabled or not.
+    if (getEnabled($mode, $mmdvmconfigs) == 1) {
+        if ($mode == "D-Star Network") {
+            if (isProcessRunning($config['IRCDDBGATEWAY'])) {
+                echo "<td style=\"background:#12AD2A; color:#030; width:8%;\">";
+            } else {
+                echo "<td style=\"background:#b00; color:#f9f9f9; width:8%;\">";
+            }
+        }
+        elseif ($mode == "System Fusion Network") {
+            if ( (isProcessRunning("MMDVM_Bridge")) || (getConfigItem("System Fusion Network", "GatewayAddress", $mmdvmconfigs) == '127.0.0.1' && isProcessRunning("YSFGateway"))) {
+                    echo "<td style=\"background:#12AD2A; color:#030; width:8%;\">";
+                } else {
+                    echo "<td style=\"background:#b00; color:#f9f9f9; width:8%;\">";
+                }
+            }
+        elseif ($mode == "P25 Network") {
+            if (isProcessRunning("P25Gateway")) {
+                echo "<td style=\"background:#12AD2A; color:#030; width:10%;\">";
+            } else {
+                echo "<td style=\"background:#b00; color:#f9f9f9; width:10%;\">";
+            }
+        }
+        elseif ($mode == "NXDN Network") {
+            if (isProcessRunning("NXDNGateway")) {
+                echo "<td style=\"background:#12AD2A; color:#030; width:10%;\">";
+            } else {
+                echo "<td style=\"background:#b00; color:#f9f9f9; width:10%;\">";
+            }
+        }
+        elseif ($mode == "DMR Network") {
+            if (getConfigItem("DMR Network", "Address", $mmdvmconfigs) == '127.0.0.1') {
+                if (isProcessRunning("DMRGateway") || isProcessRunning("MMDVM_Bridge") ) {
+                    echo "<td style=\"background:#12AD2A; color:#030; width:8%;\">";
+                } else {
+                    echo "<td style=\"background:#b00; color:#f9f9f9; width:8%;\">";
+                }
+            }
+            else {
+                if (isProcessRunning("MMDVM_Bridge")) {
+                    echo "<td style=\"background:#12AD2A; color:#030; width:8%;\">";
+                } else {
+                    echo "<td style=\"background:#b00; color:#f9f9f9; width:8%;\">";
+                }
+            }
+        }
+        else {
+            if ($mode == "D-Star" || $mode == "DMR" || $mode == "System Fusion" || $mode == "P25" || $mode == "NXDN" ) {
+                if (isProcessRunning("MMDVM_Bridge")) {
+                    echo "<td style=\"background:#12AD2A; color:#030; width:8%;\">";
+                } else {
+                    echo "<td style=\"background:#b00; color:#f9f9f9; width:8%;\">";
+                }
+            }
+        }
+    }
+    else {
+        echo "<td style=\"background:#606060; color:#b0b0b0; width:8%;\">";
     }
     $mode = str_replace("System Fusion", "YSF", $mode);
     $mode = str_replace("Network", "Net", $mode);
     if (strpos($mode, 'YSF2') > -1) { $mode = str_replace(" Net", "", $mode); }
     if (strpos($mode, 'DMR2') > -1) { $mode = str_replace(" Net", "", $mode); }
-    echo $mode."&nbsp;</td>\n";
+    echo htmlspecialchars($mode, ENT_QUOTES, 'UTF-8')."</td>\n";
 }
 
 function getMMDVMLog(): array {
+    global $config;
 	// Check memory usage to prevent exhaustion
 	if (memory_get_usage(true) > 100 * 1024 * 1024) { // 100MB limit
 		return array();
@@ -214,14 +217,14 @@ function getMMDVMLog(): array {
 		return $filteredLines;
 	}
 	
-	if (file_exists(LOGPATH."/".MMDVMLOGPREFIX."-".gmdate("Y-m-d").".log")) {
-		$logPath = LOGPATH."/".MMDVMLOGPREFIX."-".gmdate("Y-m-d").".log";
+	if (file_exists($config['LOGPATH']."/".$config['MMDVMLOGPREFIX']."-".gmdate("Y-m-d").".log")) {
+		$logPath = $config['LOGPATH']."/".$config['MMDVMLOGPREFIX']."-".gmdate("Y-m-d").".log";
 		$logLines1 = parseMMDVMLog($logPath);
 	}
 	
 	if (sizeof($logLines1) < 100) {
-		if (file_exists(LOGPATH."/".MMDVMLOGPREFIX."-".gmdate("Y-m-d", time() - 86340).".log")) {
-			$logPath = LOGPATH."/".MMDVMLOGPREFIX."-".gmdate("Y-m-d", time() - 86340).".log";
+		if (file_exists($config['LOGPATH']."/".$config['MMDVMLOGPREFIX']."-".gmdate("Y-m-d", time() - 86340).".log")) {
+			$logPath = $config['LOGPATH']."/".$config['MMDVMLOGPREFIX']."-".gmdate("Y-m-d", time() - 86340).".log";
 			$logLines2 = parseMMDVMLog($logPath);
 		}
 	}
@@ -232,6 +235,7 @@ function getMMDVMLog(): array {
 }
 
 function getYSFGatewayLog(): array {
+    global $config;
 	// Check memory usage to prevent exhaustion
 	if (memory_get_usage(true) > 100 * 1024 * 1024) { // 100MB limit
 		return array();
@@ -285,15 +289,15 @@ function getYSFGatewayLog(): array {
 		return $filteredLines;
 	}
 	
-	if (file_exists(LOGPATH."/".YSFGATEWAYLOGPREFIX."-".gmdate("Y-m-d").".log")) {
-		$logPath1 = LOGPATH."/".YSFGATEWAYLOGPREFIX."-".gmdate("Y-m-d").".log";
+	if (file_exists($config['LOGPATH']."/".$config['YSFGATEWAYLOGPREFIX']."-".gmdate("Y-m-d").".log")) {
+		$logPath1 = $config['LOGPATH']."/".$config['YSFGATEWAYLOGPREFIX']."-".gmdate("Y-m-d").".log";
 		$logLines1 = parseYSFGatewayLog($logPath1);
 	}
 	$logLines1 = array_filter($logLines1);
 	
 	if (sizeof($logLines1) == 0) {
-		if (file_exists(LOGPATH."/".YSFGATEWAYLOGPREFIX."-".gmdate("Y-m-d", time() - 86340).".log")) {
-			$logPath2 = LOGPATH."/".YSFGATEWAYLOGPREFIX."-".gmdate("Y-m-d", time() - 86340).".log";
+		if (file_exists($config['LOGPATH']."/".$config['YSFGATEWAYLOGPREFIX']."-".gmdate("Y-m-d", time() - 86340).".log")) {
+			$logPath2 = $config['LOGPATH']."/".$config['YSFGATEWAYLOGPREFIX']."-".gmdate("Y-m-d", time() - 86340).".log";
 			$logLines1 = parseYSFGatewayLog($logPath2);
 		}
 		$logLines2 = array_filter($logLines2);
@@ -303,6 +307,7 @@ function getYSFGatewayLog(): array {
 }
 
 function getP25GatewayLog(): array {
+    global $config;
 	// Check memory usage to prevent exhaustion
 	if (memory_get_usage(true) > 100 * 1024 * 1024) { // 100MB limit
 		return array();
@@ -357,14 +362,14 @@ function getP25GatewayLog(): array {
 		return $filteredLines;
 	}
 	
-        if (file_exists(LOGPATH."/".P25GATEWAYLOGPREFIX."-".gmdate("Y-m-d").".log")) {
-		$logPath1 = LOGPATH."/".P25GATEWAYLOGPREFIX."-".gmdate("Y-m-d").".log";
+        if (file_exists($config['LOGPATH']."/".$config['P25GATEWAYLOGPREFIX']."-".gmdate("Y-m-d").".log")) {
+		$logPath1 = $config['LOGPATH']."/".$config['P25GATEWAYLOGPREFIX']."-".gmdate("Y-m-d").".log";
 		$logLines1 = parseP25GatewayLog($logPath1);
         }
 	$logLines1 = array_filter($logLines1);
         if (sizeof($logLines1) == 0) {
-                if (file_exists(LOGPATH."/".P25GATEWAYLOGPREFIX."-".gmdate("Y-m-d", time() - 86340).".log")) {
-                        $logPath2 = LOGPATH."/".P25GATEWAYLOGPREFIX."-".gmdate("Y-m-d", time() - 86340).".log";
+                if (file_exists($config['LOGPATH']."/".$config['P25GATEWAYLOGPREFIX']."-".gmdate("Y-m-d", time() - 86340).".log")) {
+                        $logPath2 = $config['LOGPATH']."/".$config['P25GATEWAYLOGPREFIX']."-".gmdate("Y-m-d", time() - 86340).".log";
 			$logLines2 = parseP25GatewayLog($logPath2);
                 }
 		$logLines2 = array_filter($logLines2);
@@ -374,6 +379,7 @@ function getP25GatewayLog(): array {
 }
 
 function getNXDNGatewayLog(): array {
+    global $config;
 	// Check memory usage to prevent exhaustion
 	if (memory_get_usage(true) > 100 * 1024 * 1024) { // 100MB limit
 		return array();
@@ -428,14 +434,14 @@ function getNXDNGatewayLog(): array {
 		return $filteredLines;
 	}
 	
-        if (file_exists(LOGPATH."/".NXDNGATEWAYLOGPREFIX."-".gmdate("Y-m-d").".log")) {
-		$logPath1 = LOGPATH."/".NXDNGATEWAYLOGPREFIX."-".gmdate("Y-m-d").".log";
+        if (file_exists($config['LOGPATH']."/".$config['NXDNGATEWAYLOGPREFIX']."-".gmdate("Y-m-d").".log")) {
+		$logPath1 = $config['LOGPATH']."/".$config['NXDNGATEWAYLOGPREFIX']."-".gmdate("Y-m-d").".log";
 		$logLines1 = parseNXDNGatewayLog($logPath1);
         }
 	$logLines1 = array_filter($logLines1);
         if (sizeof($logLines1) == 0) {
-                if (file_exists(LOGPATH."/".NXDNGATEWAYLOGPREFIX."-".gmdate("Y-m-d", time() - 86340).".log")) {
-			$logPath2 = LOGPATH."/".NXDNGATEWAYLOGPREFIX."-".gmdate("Y-m-d", time() - 86340).".log";
+                if (file_exists($config['LOGPATH']."/".$config['NXDNGATEWAYLOGPREFIX']."-".gmdate("Y-m-d", time() - 86340).".log")) {
+			$logPath2 = $config['LOGPATH']."/".$config['NXDNGATEWAYLOGPREFIX']."-".gmdate("Y-m-d", time() - 86340).".log";
 			$logLines2 = parseNXDNGatewayLog($logPath2);
                 }
 		$logLines2 = array_filter($logLines2);
@@ -874,10 +880,10 @@ function getActualMode(array $metaLastHeard, array $mmdvmconfigs): string {
 
 function getDSTARLinks(): string {
 	// returns link-states of all D-Star-modules
-	if (filesize(LINKLOGPATH."/Links.log") == 0) {
+	if (filesize($config['LINKLOGPATH']."/Links.log") == 0) {
 		return "<span style=\"color:#b0b0b0;\"><b>Not Linked</b></span>";
 	}
-	if ($linkLog = fopen(LINKLOGPATH."/Links.log",'r')) {
+	if ($linkLog = fopen($config['LINKLOGPATH']."/Links.log",'r')) {
 		while ($linkLine = fgets($linkLog)) {
 			$linkDate	= "&nbsp;";
 			$protocol	= "&nbsp;";
@@ -933,7 +939,7 @@ function getActualLink(array $logLines, string $mode): string {
 	//M: 2017-09-03 08:10:42.862 DMR Slot 2, received network data header from M6JQD to TG 9, 5 blocks
 	switch ($mode) {
     case "D-Star":
-    	if (isProcessRunning(IRCDDBGATEWAY)) {
+    	if (isProcessRunning($config['IRCDDBGATEWAY'])) {
 			return getDSTARLinks();
     	} else {
     		return "<span style=\"color:#b0b0b0;\"><b>No D-Star Network</b></span>";
@@ -1192,8 +1198,8 @@ if (!in_array($_SERVER["PHP_SELF"],array('/include/bm_links.php','/include/bm_ma
 	}
 	// Only need these in index.php and lh.php
 	if (strpos($_SERVER["PHP_SELF"], 'index.php') !== false || strpos($_SERVER["PHP_SELF"], 'lh.php') !== false) {
-        if ( DISPLAYNAME == "YES"  && file_exists(DMRIDDATPATH."/DMRIds.dat") && ! empty(DMRIDDATPATH."/DMRIds.dat")) {
-	     $dmrIDline = file_get_contents(DMRIDDATPATH."/DMRIds.dat");
+        if ($config['DISPLAYNAME'] == "YES"  && file_exists($config['DMRIDDATPATH']."/DMRIds.dat") && ! empty($config['DMRIDDATPATH']."/DMRIds.dat")) {
+	     $dmrIDline = file_get_contents($config['DMRIDDATPATH']."/DMRIds.dat");
 	    }
 	}
 }

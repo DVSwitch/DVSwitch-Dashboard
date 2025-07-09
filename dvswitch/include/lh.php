@@ -13,7 +13,7 @@ include_once dirname(dirname(__FILE__)).'/include/functions.php';
       <th>Mode</th>
       <th>Callsign</th>
 <?php
-    if (DISPLAYNAME == "YES" && file_exists(DMRIDDATPATH."/DMRIds.dat") && ! empty(DMRIDDATPATH."/DMRIds.dat")) { echo "<th>Name</th>"; }
+    if ($config['DISPLAYNAME'] == "YES" && file_exists($config['DMRIDDATPATH']."/DMRIds.dat") && ! empty($config['DMRIDDATPATH']."/DMRIds.dat")) { echo "<th>Name</th>"; }
 ?>
       <th>Target</th>
       <th>Src</th>
@@ -35,12 +35,12 @@ for ($i = 0;  ($i <= 19); $i++) { //Last 20 calls
                         $local_time = xstrftime('%H:%M:%S %b %d', $dt->getTimestamp());
 
 		echo"<tr>";
-		echo"<td align=\"left\" class=\"lh-time\">&nbsp;".htmlspecialchars($local_time, ENT_QUOTES, 'UTF-8')."</td>";
-		echo"<td align=\"left\" style=\"color:green; font-weight:bold;\">&nbsp;".htmlspecialchars($listElem[1], ENT_QUOTES, 'UTF-8')."</td>";
+		echo "<td align=\"left\" class=\"lh-time\">".htmlspecialchars($local_time, ENT_QUOTES, 'UTF-8')."</td>";
+		echo "<td align=\"left\" style=\"color:green; font-weight:bold;\">".htmlspecialchars($listElem[1], ENT_QUOTES, 'UTF-8')."</td>";
 		if ((is_numeric($listElem[2]) || strpos($listElem[2], "openSPOT") !== FALSE) && (strlen($listElem[2])==7)) {
-		    echo "<td align=\"left\" style=\"color:#464646;\">&nbsp;<a href=\"https://database.radioid.net/database/view?id=".htmlspecialchars($listElem[2], ENT_QUOTES, 'UTF-8')."\" target=\"_blank\"><span style=\"color:#464646;font-weight:bold;\">".htmlspecialchars($listElem[2], ENT_QUOTES, 'UTF-8')."</span></a></td>";
+		    echo "<td align=\"left\" style=\"color:#464646;\">".htmlspecialchars($listElem[2], ENT_QUOTES, 'UTF-8')."</td>";
 		} elseif (!preg_match('/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/', $listElem[2])|| $listElem[2] == "N0CALL") {
- 	                       echo "<td align=\"left\" style=\"color:#464646;\"><b>&nbsp;".htmlspecialchars($listElem[2], ENT_QUOTES, 'UTF-8')."</b></td>";
+ 	                       echo "<td align=\"left\" style=\"color:#464646;\"><b>".htmlspecialchars($listElem[2], ENT_QUOTES, 'UTF-8')."</b></td>";
 		} else {
 		    if (strpos($listElem[2],"-") > 0) { $listElem[2] = substr($listElem[2], 0, strpos($listElem[2],"-")); }
 			    if ( $listElem[3] && $listElem[3] != '    ' ) {
@@ -50,7 +50,7 @@ for ($i = 0;  ($i <= 19); $i++) { //Last 20 calls
 		    }
 		}
 		// Display NAME by DV8AWC
-		if ( DISPLAYNAME == "YES" && file_exists(DMRIDDATPATH."/DMRIds.dat") && ! empty(DMRIDDATPATH."/DMRIds.dat")) {
+		if ($config['DISPLAYNAME'] == "YES" && file_exists($config['DMRIDDATPATH']."/DMRIds.dat") && ! empty($config['DMRIDDATPATH']."/DMRIds.dat")) {
 		$arr2 = $listElem[2];
 		if (is_numeric($arr2) || $arr2 == "FCS" || $arr2 == "MMDVM" || $arr2 == "P25"|| $arr2 == "N0CALL") {
 			echo "<td align=\"left\" style=\"font-weight:bold;color:#464646;\">&nbsp;<b>&nbsp;</b></td>";
@@ -76,9 +76,9 @@ for ($i = 0;  ($i <= 19); $i++) { //Last 20 calls
 		}
 		if (strlen($listElem[4]) == 1) { $listElem[4] = str_pad($listElem[4], 8, " ", STR_PAD_LEFT); }
 		if ( substr($listElem[4], 0, 6) === 'CQCQCQ' ) {
-			echo "<td align=\"left\">&nbsp;<span style=\"color:#b5651d;font-weight:bold;\">".htmlspecialchars($listElem[4], ENT_QUOTES, 'UTF-8')."</span></td>";
+			echo "<td align=\"left\"><span style=\"color:#b5651d;font-weight:bold;\">".htmlspecialchars($listElem[4], ENT_QUOTES, 'UTF-8')."</span></td>";
 		} else {
-			echo "<td align=\"left\">&nbsp;<span style=\"color:#b5651d;font-weight:bold;\">".htmlspecialchars(str_replace(" ","&nbsp;", $listElem[4]), ENT_QUOTES, 'UTF-8')."</span></td>";
+			echo "<td align=\"left\"><span style=\"color:#b5651d;font-weight:bold;\">".htmlspecialchars($listElem[4], ENT_QUOTES, 'UTF-8')."</span></td>";
 		}
 
 

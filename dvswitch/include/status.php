@@ -94,10 +94,10 @@ $net1= cidr_match($ip,"192.168.0.0/16");
 $net2= cidr_match($ip,"172.16.0.0/12");
 $net3= cidr_match($ip,"127.0.0.0/8");
 $net4= cidr_match($ip,"10.0.0.0/8");
-$net5= cidr_match($ip,REMOTENET);
+$net5= cidr_match($ip,$config['REMOTENET']);
 
-if (file_exists('/tmp/ABInfo_'.ABINFO.'.json')) {
-    $abinfo = getABInfo('/tmp/ABInfo_'.ABINFO.'.json');
+if (file_exists('/tmp/ABInfo_'.$config['ABINFO'].'.json')) {
+    $abinfo = getABInfo('/tmp/ABInfo_'.$config['ABINFO'].'.json');
 }
 
 // Only display the Analog Bridge Info table if $abinfo was successfully populated.

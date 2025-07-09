@@ -41,8 +41,8 @@ for ($i = 0; $i < count($localTXList); $i++) {
                                 $local_time = xstrftime('%H:%M:%S %b %d', $dt->getTimestamp());
 
 			echo"<tr>";
-			echo"<td align=\"left\" class=\"lh-time\">&nbsp;".htmlspecialchars($local_time, ENT_QUOTES, 'UTF-8')."</td>";
-			echo"<td align=\"left\" style=\"color:green; font-weight:bold;\">&nbsp;".htmlspecialchars($listElem[1], ENT_QUOTES, 'UTF-8')."</td>";
+			echo "<td align=\"left\" class=\"lh-time\">".htmlspecialchars($local_time, ENT_QUOTES, 'UTF-8')."</td>";
+			echo "<td align=\"left\" style=\"color:green; font-weight:bold;\">".htmlspecialchars($listElem[1], ENT_QUOTES, 'UTF-8')."</td>";
 			    if (is_numeric($listElem[2]) || strpos($listElem[2], "openSPOT") !== FALSE) {
 				echo "<td align=\"left\" style=\"color:#464646;\"><b>&nbsp;".htmlspecialchars($listElem[2], ENT_QUOTES, 'UTF-8')."</b></td>";
 			    } elseif (!preg_match('/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/', $listElem[2])) {
@@ -56,7 +56,7 @@ for ($i = 0; $i < count($localTXList); $i++) {
 			}
 		    }
 			if (strlen($listElem[4]) == 1) { $listElem[4] = str_pad($listElem[4], 8, " ", STR_PAD_LEFT); }
-			echo"<td align=\"left\">&nbsp;<span style=\"color:#b5651d;font-weight:bold;\">".htmlspecialchars(str_replace(" ","&nbsp;", $listElem[4]), ENT_QUOTES, 'UTF-8')."</span></td>";
+			echo "<td align=\"left\"><span style=\"color:#b5651d;font-weight:bold;\">".htmlspecialchars($listElem[4], ENT_QUOTES, 'UTF-8')."</span></td>";
 			if ($listElem[5] == "LNet"){
 				echo "<td style=\"background:#1d1;\">LNet</td>";
 			} else {
