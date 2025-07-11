@@ -122,7 +122,7 @@ if ($abinfo && is_array($abinfo)) {
         echo "<br>    repeaterID: ".htmlspecialchars($abinfo['digital']['rpt'] ?? 'N/A', ENT_QUOTES, 'UTF-8');
         echo "<br>    txTG: ".htmlspecialchars($abinfo['digital']['tg'] ?? 'N/A', ENT_QUOTES, 'UTF-8');
         $last_tune_val = $abinfo['last_tune'] ?? '';
-        $lasttune = $last_tune_val;
+            $lasttune = $last_tune_val;
         echo "<br>    Last tune: " . htmlspecialchars($lasttune, ENT_QUOTES, 'UTF-8');
         echo "<br>    txTS: ".htmlspecialchars($abinfo['digital']['ts'] ?? 'N/A', ENT_QUOTES, 'UTF-8');
         echo "<br>    colorCode: ".htmlspecialchars($abinfo['digital']['cc'] ?? 'N/A', ENT_QUOTES, 'UTF-8');
@@ -404,7 +404,7 @@ if ( $testMMDVModeYSF == 1 ) { //Hide the YSF information when System Fusion Net
 	    if (strlen($displayTxt) > 20) { $displayTxt = substr($displayTxt, 0, 18) . '..'; }
 	    $ysfLinkedToTxt = "Linked to<br/><span style=\"color:#b5651d;font-weight: bold;\">".htmlspecialchars($displayTxt, ENT_QUOTES, 'UTF-8')."</span>"; 
 	}
-	$ysfLinkedToTxt = str_replace('_', ' ', $ysfLinkedToTxt);
+	    $ysfLinkedToTxt = str_replace('_', ' ', $ysfLinkedToTxt);
         }
         echo "<br />\n";
         echo "<table>\n";
