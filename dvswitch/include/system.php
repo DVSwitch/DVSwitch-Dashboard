@@ -90,7 +90,7 @@ if ($cpuTempCRaw !="") {
     <td class="sys-disk"><?php echo htmlspecialchars($disk_used, ENT_QUOTES, 'UTF-8');?></td>
     <td class="sys-memory"><?php echo htmlspecialchars($free_mem, ENT_QUOTES, 'UTF-8');?></td>
     <td class="sys-cpu"><?php echo htmlspecialchars((string)round($cpuLoad[0],1), ENT_QUOTES, 'UTF-8');?> / <?php echo htmlspecialchars((string)round($cpuLoad[1],1), ENT_QUOTES, 'UTF-8');?> / <?php echo htmlspecialchars((string)round($cpuLoad[2],1), ENT_QUOTES, 'UTF-8');?></td>
-   <?php if (file_exists('/sys/class/thermal/thermal_zone0/temp')) { echo htmlspecialchars($cpuTempHTML, ENT_QUOTES, 'UTF-8'); } ?>
+   <?php if (file_exists('/sys/class/thermal/thermal_zone0/temp')) { echo $cpuTempHTML; } ?>
   </tr>
 </table>
 </fieldset>
