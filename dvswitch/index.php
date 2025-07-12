@@ -75,7 +75,7 @@ include_once 'include/tools.php';
         --success-color: #51cf66;
         --warning-color: #ffd43b;
         --error-color: #ff6b6b;
-        --header-bg: #2d2d2d;
+        --header-bg: #2A659A;
         --button-bg: #4dabf7;
         --button-text: #1a1a1a;
         --button-hover: #339af0;
