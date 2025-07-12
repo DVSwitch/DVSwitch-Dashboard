@@ -2,6 +2,269 @@
 declare(strict_types=1);
 require_once __DIR__ . '/config.php';
 
+// Parse functions moved to file level to prevent redeclaration errors
+if (!function_exists('parseMMDVMLog')) {
+    function parseMMDVMLog($logPath) {
+        if (!file_exists($logPath)) {
+            return array();
+        }
+        
+        // Check file size to avoid processing extremely large files
+        $fileSize = filesize($logPath);
+        if ($fileSize > 50 * 1024 * 1024) { // 50MB limit
+            return array();
+        }
+        
+        $filteredLines = array();
+        $handle = @fopen($logPath, 'r');
+        
+        if ($handle) {
+            $lineCount = 0;
+            $maxLines = 10000; // Limit total lines processed
+            
+            while (($line = fgets($handle)) !== false && $lineCount < $maxLines) {
+                $lineCount++;
+                $line = trim($line);
+                if (empty($line)) continue;
+                
+                // Check for patterns: Begin|state|frames|from|end|watchdog|lost
+                if (preg_match('/Begin|state|frames|from|end|watchdog|lost/', $line)) {
+                    // Filter out CSBK, overflow, Downlink
+                    if (!preg_match('/CSBK|overflow|Downlink/', $line)) {
+                        // Replace I: with M:
+                        $line = str_replace('I:', 'M:', $line);
+                        $filteredLines[] = $line;
+                        
+                        // Keep only last 100 lines to prevent memory buildup
+                        if (count($filteredLines) > 100) {
+                            $filteredLines = array_slice($filteredLines, -100);
+                        }
+                    }
+                }
+            }
+            fclose($handle);
+        }
+        
+        return $filteredLines;
+    }
+}
+
+if (!function_exists('parseYSFGatewayLog')) {
+    function parseYSFGatewayLog($logPath) {
+        if (!file_exists($logPath)) {
+            return array();
+        }
+        
+        // Check file size to avoid processing extremely large files
+        $fileSize = filesize($logPath);
+        if ($fileSize > 50 * 1024 * 1024) { // 50MB limit
+            return array();
+        }
+        
+        $filteredLines = array();
+        $handle = @fopen($logPath, 'r');
+        
+        if ($handle) {
+            $lineCount = 0;
+            $maxLines = 5000; // Limit total lines processed
+            
+            while (($line = fgets($handle)) !== false && $lineCount < $maxLines) {
+                $lineCount++;
+                $line = trim($line);
+                if (empty($line)) continue;
+                
+                // Check for patterns: onnection to|onnect to|Link|isconnect|Opening YSF network
+                if (preg_match('/onnection to|onnect to|Link|isconnect|Opening YSF network/', $line)) {
+                    // Filter out unwanted patterns
+                    if (!preg_match('/Linked to Disconnect|Linked to MMDVM|Link successful to MMDVM|\*Link/', $line)) {
+                        $filteredLines[] = $line;
+                        
+                        // Keep only last line to prevent memory buildup
+                        if (count($filteredLines) > 1) {
+                            $filteredLines = array_slice($filteredLines, -1);
+                        }
+                    }
+                }
+            }
+            fclose($handle);
+        }
+        
+        return $filteredLines;
+    }
+}
+
+if (!function_exists('parseP25GatewayLog')) {
+    function parseP25GatewayLog($logPath) {
+        if (!file_exists($logPath)) {
+            return array();
+        }
+        
+        // Check file size to avoid processing extremely large files
+        $fileSize = filesize($logPath);
+        if ($fileSize > 50 * 1024 * 1024) { // 50MB limit
+            return array();
+        }
+        
+        $filteredLines = array();
+        $handle = @fopen($logPath, 'r');
+        
+        if ($handle) {
+            $lineCount = 0;
+            $maxLines = 5000; // Limit total lines processed
+            
+            while (($line = fgets($handle)) !== false && $lineCount < $maxLines) {
+                $lineCount++;
+                $line = trim($line);
+                if (empty($line)) continue;
+                
+                // Check for patterns: Link|Starting|Unlink|unlinking
+                if (preg_match('/Link|Starting|Unlink|unlinking/', $line)) {
+                    // Extract fields 2 onwards (skip first field)
+                    $fields = preg_split('/\s+/', $line);
+                    if (count($fields) > 1) {
+                        $filteredLines[] = implode(' ', array_slice($fields, 1));
+                        
+                        // Keep only last line to prevent memory buildup
+                        if (count($filteredLines) > 1) {
+                            $filteredLines = array_slice($filteredLines, -1);
+                        }
+                    }
+                }
+            }
+            fclose($handle);
+        }
+        
+        return $filteredLines;
+    }
+}
+
+if (!function_exists('parseNXDNGatewayLog')) {
+    function parseNXDNGatewayLog($logPath) {
+        if (!file_exists($logPath)) {
+            return array();
+        }
+        
+        // Check file size to avoid processing extremely large files
+        $fileSize = filesize($logPath);
+        if ($fileSize > 50 * 1024 * 1024) { // 50MB limit
+            return array();
+        }
+        
+        $filteredLines = array();
+        $handle = @fopen($logPath, 'r');
+        
+        if ($handle) {
+            $lineCount = 0;
+            $maxLines = 5000; // Limit total lines processed
+            
+            while (($line = fgets($handle)) !== false && $lineCount < $maxLines) {
+                $lineCount++;
+                $line = trim($line);
+                if (empty($line)) continue;
+                
+                // Check for patterns: Link|Starting|Unlink|unlinking
+                if (preg_match('/Link|Starting|Unlink|unlinking/', $line)) {
+                    // Extract fields 2 onwards (skip first field)
+                    $fields = preg_split('/\s+/', $line);
+                    if (count($fields) > 1) {
+                        $filteredLines[] = implode(' ', array_slice($fields, 1));
+                        
+                        // Keep only last line to prevent memory buildup
+                        if (count($filteredLines) > 1) {
+                            $filteredLines = array_slice($filteredLines, -1);
+                        }
+                    }
+                }
+            }
+            fclose($handle);
+        }
+        
+        return $filteredLines;
+    }
+}
+
+if (!function_exists('parseDAPNETGatewayLog')) {
+    function parseDAPNETGatewayLog($logPath) {
+        if (!file_exists($logPath)) {
+            return array();
+        }
+        
+        // Check file size to avoid processing extremely large files
+        $fileSize = filesize($logPath);
+        if ($fileSize > 50 * 1024 * 1024) { // 50MB limit
+            return array();
+        }
+        
+        $filteredLines = array();
+        $handle = @fopen($logPath, 'r');
+        
+        if ($handle) {
+            $lineCount = 0;
+            $maxLines = 5000; // Limit total lines processed
+            
+            while (($line = fgets($handle)) !== false && $lineCount < $maxLines) {
+                $lineCount++;
+                $line = trim($line);
+                if (empty($line)) continue;
+                
+                // Check for pattern: Sending message
+                if (preg_match('/Sending message/', $line)) {
+                    // Extract fields 2 onwards (skip first field)
+                    $fields = preg_split('/\s+/', $line);
+                    if (count($fields) > 1) {
+                        $filteredLines[] = implode(' ', array_slice($fields, 1));
+                        
+                        // Keep only last 20 lines to prevent memory buildup
+                        if (count($filteredLines) > 20) {
+                            $filteredLines = array_slice($filteredLines, -20);
+                        }
+                    }
+                }
+            }
+            fclose($handle);
+        }
+        
+        // Return in reverse order (like tac)
+        return array_reverse($filteredLines);
+    }
+}
+
+if (!function_exists('parseDMRGatewayStatus')) {
+    function parseDMRGatewayStatus($logPath, $dmrserver) {
+        if (!file_exists($logPath)) {
+            return null;
+        }
+        
+        // Check file size to avoid processing extremely large files
+        $fileSize = filesize($logPath);
+        if ($fileSize > 50 * 1024 * 1024) { // 50MB limit
+            return null;
+        }
+        
+        $handle = @fopen($logPath, 'r');
+        
+        if ($handle) {
+            $lineCount = 0;
+            $maxLines = 1000; // Limit total lines processed
+            
+            while (($line = fgets($handle)) !== false && $lineCount < $maxLines) {
+                $lineCount++;
+                $line = trim($line);
+                if (empty($line)) continue;
+                
+                // Look for lines containing the DMR server
+                if (strpos($line, $dmrserver) !== false) {
+                    fclose($handle);
+                    return $line;
+                }
+            }
+            fclose($handle);
+        }
+        
+        return null;
+    }
+}
+
 function get_string_between(string $string, string $start, string $end): string {
     $string = " ".$string;
     $ini = strpos($string,$start);
@@ -172,51 +435,6 @@ function getMMDVMLog(): array {
 	$logLines1 = array();
 	$logLines2 = array();
 	
-	// PHP replacement for shell pipeline - memory optimized
-	function parseMMDVMLog($logPath) {
-		if (!file_exists($logPath)) {
-			return array();
-		}
-		
-		// Check file size to avoid processing extremely large files
-		$fileSize = filesize($logPath);
-		if ($fileSize > 50 * 1024 * 1024) { // 50MB limit
-			return array();
-		}
-		
-		$filteredLines = array();
-		$handle = @fopen($logPath, 'r');
-		
-		if ($handle) {
-			$lineCount = 0;
-			$maxLines = 10000; // Limit total lines processed
-			
-			while (($line = fgets($handle)) !== false && $lineCount < $maxLines) {
-				$lineCount++;
-				$line = trim($line);
-				if (empty($line)) continue;
-				
-				// Check for patterns: Begin|state|frames|from|end|watchdog|lost
-				if (preg_match('/Begin|state|frames|from|end|watchdog|lost/', $line)) {
-					// Filter out CSBK, overflow, Downlink
-					if (!preg_match('/CSBK|overflow|Downlink/', $line)) {
-						// Replace I: with M:
-						$line = str_replace('I:', 'M:', $line);
-						$filteredLines[] = $line;
-						
-						// Keep only last 100 lines to prevent memory buildup
-						if (count($filteredLines) > 100) {
-							$filteredLines = array_slice($filteredLines, -100);
-						}
-					}
-				}
-			}
-			fclose($handle);
-		}
-		
-		return $filteredLines;
-	}
-	
 	if (file_exists($config['LOGPATH']."/".$config['MMDVMLOGPREFIX']."-".gmdate("Y-m-d").".log")) {
 		$logPath = $config['LOGPATH']."/".$config['MMDVMLOGPREFIX']."-".gmdate("Y-m-d").".log";
 		$logLines1 = parseMMDVMLog($logPath);
@@ -245,49 +463,6 @@ function getYSFGatewayLog(): array {
 	$logLines = array();
 	$logLines1 = array();
 	$logLines2 = array();
-	
-	// PHP replacement for shell pipeline - memory optimized
-	function parseYSFGatewayLog($logPath) {
-		if (!file_exists($logPath)) {
-			return array();
-		}
-		
-		// Check file size to avoid processing extremely large files
-		$fileSize = filesize($logPath);
-		if ($fileSize > 50 * 1024 * 1024) { // 50MB limit
-			return array();
-		}
-		
-		$filteredLines = array();
-		$handle = @fopen($logPath, 'r');
-		
-		if ($handle) {
-			$lineCount = 0;
-			$maxLines = 5000; // Limit total lines processed
-			
-			while (($line = fgets($handle)) !== false && $lineCount < $maxLines) {
-				$lineCount++;
-				$line = trim($line);
-				if (empty($line)) continue;
-				
-				// Check for patterns: onnection to|onnect to|Link|isconnect|Opening YSF network
-				if (preg_match('/onnection to|onnect to|Link|isconnect|Opening YSF network/', $line)) {
-					// Filter out unwanted patterns
-					if (!preg_match('/Linked to Disconnect|Linked to MMDVM|Link successful to MMDVM|\*Link/', $line)) {
-						$filteredLines[] = $line;
-						
-						// Keep only last line to prevent memory buildup
-						if (count($filteredLines) > 1) {
-							$filteredLines = array_slice($filteredLines, -1);
-						}
-					}
-				}
-			}
-			fclose($handle);
-		}
-		
-		return $filteredLines;
-	}
 	
 	if (file_exists($config['LOGPATH']."/".$config['YSFGATEWAYLOGPREFIX']."-".gmdate("Y-m-d").".log")) {
 		$logPath1 = $config['LOGPATH']."/".$config['YSFGATEWAYLOGPREFIX']."-".gmdate("Y-m-d").".log";
@@ -318,50 +493,6 @@ function getP25GatewayLog(): array {
 	$logLines1 = array();
 	$logLines2 = array();
 	
-	// PHP replacement for shell pipeline - memory optimized
-	function parseP25GatewayLog($logPath) {
-		if (!file_exists($logPath)) {
-			return array();
-		}
-		
-		// Check file size to avoid processing extremely large files
-		$fileSize = filesize($logPath);
-		if ($fileSize > 50 * 1024 * 1024) { // 50MB limit
-			return array();
-		}
-		
-		$filteredLines = array();
-		$handle = @fopen($logPath, 'r');
-		
-		if ($handle) {
-			$lineCount = 0;
-			$maxLines = 5000; // Limit total lines processed
-			
-			while (($line = fgets($handle)) !== false && $lineCount < $maxLines) {
-				$lineCount++;
-				$line = trim($line);
-				if (empty($line)) continue;
-				
-				// Check for patterns: Link|Starting|Unlink|unlinking
-				if (preg_match('/Link|Starting|Unlink|unlinking/', $line)) {
-					// Extract fields 2 onwards (skip first field)
-					$fields = preg_split('/\s+/', $line);
-					if (count($fields) > 1) {
-						$filteredLines[] = implode(' ', array_slice($fields, 1));
-						
-						// Keep only last line to prevent memory buildup
-						if (count($filteredLines) > 1) {
-							$filteredLines = array_slice($filteredLines, -1);
-						}
-					}
-				}
-			}
-			fclose($handle);
-		}
-		
-		return $filteredLines;
-	}
-	
         if (file_exists($config['LOGPATH']."/".$config['P25GATEWAYLOGPREFIX']."-".gmdate("Y-m-d").".log")) {
 		$logPath1 = $config['LOGPATH']."/".$config['P25GATEWAYLOGPREFIX']."-".gmdate("Y-m-d").".log";
 		$logLines1 = parseP25GatewayLog($logPath1);
@@ -390,50 +521,6 @@ function getNXDNGatewayLog(): array {
 	$logLines1 = array();
 	$logLines2 = array();
 	
-	// PHP replacement for shell pipeline - memory optimized
-	function parseNXDNGatewayLog($logPath) {
-		if (!file_exists($logPath)) {
-			return array();
-		}
-		
-		// Check file size to avoid processing extremely large files
-		$fileSize = filesize($logPath);
-		if ($fileSize > 50 * 1024 * 1024) { // 50MB limit
-			return array();
-		}
-		
-		$filteredLines = array();
-		$handle = @fopen($logPath, 'r');
-		
-		if ($handle) {
-			$lineCount = 0;
-			$maxLines = 5000; // Limit total lines processed
-			
-			while (($line = fgets($handle)) !== false && $lineCount < $maxLines) {
-				$lineCount++;
-				$line = trim($line);
-				if (empty($line)) continue;
-				
-				// Check for patterns: Link|Starting|Unlink|unlinking
-				if (preg_match('/Link|Starting|Unlink|unlinking/', $line)) {
-					// Extract fields 2 onwards (skip first field)
-					$fields = preg_split('/\s+/', $line);
-					if (count($fields) > 1) {
-						$filteredLines[] = implode(' ', array_slice($fields, 1));
-						
-						// Keep only last line to prevent memory buildup
-						if (count($filteredLines) > 1) {
-							$filteredLines = array_slice($filteredLines, -1);
-						}
-					}
-				}
-			}
-			fclose($handle);
-		}
-		
-		return $filteredLines;
-	}
-	
         if (file_exists($config['LOGPATH']."/".$config['NXDNGATEWAYLOGPREFIX']."-".gmdate("Y-m-d").".log")) {
 		$logPath1 = $config['LOGPATH']."/".$config['NXDNGATEWAYLOGPREFIX']."-".gmdate("Y-m-d").".log";
 		$logLines1 = parseNXDNGatewayLog($logPath1);
@@ -461,52 +548,7 @@ function getDAPNETGatewayLog(): array {
 	$logLines1 = array();
 	$logLines2 = array();
 	
-	// PHP replacement for shell pipeline - memory optimized
-	function parseDAPNETGatewayLog($logPath) {
-		if (!file_exists($logPath)) {
-			return array();
-		}
-		
-		// Check file size to avoid processing extremely large files
-		$fileSize = filesize($logPath);
-		if ($fileSize > 50 * 1024 * 1024) { // 50MB limit
-			return array();
-		}
-		
-		$filteredLines = array();
-		$handle = @fopen($logPath, 'r');
-		
-		if ($handle) {
-			$lineCount = 0;
-			$maxLines = 5000; // Limit total lines processed
-			
-			while (($line = fgets($handle)) !== false && $lineCount < $maxLines) {
-				$lineCount++;
-				$line = trim($line);
-				if (empty($line)) continue;
-				
-				// Check for pattern: Sending message
-				if (preg_match('/Sending message/', $line)) {
-					// Extract fields 2 onwards (skip first field)
-					$fields = preg_split('/\s+/', $line);
-					if (count($fields) > 1) {
-						$filteredLines[] = implode(' ', array_slice($fields, 1));
-						
-						// Keep only last 20 lines to prevent memory buildup
-						if (count($filteredLines) > 20) {
-							$filteredLines = array_slice($filteredLines, -20);
-						}
-					}
-				}
-			}
-			fclose($handle);
-		}
-		
-		// Return in reverse order (like tac)
-		return array_reverse($filteredLines);
-	}
-	
-	if (file_exists("/var/log/mmdvm/DAPNETGateway-".gmdate("Y-m-d").".log")) {
+        if (file_exists("/var/log/mmdvm/DAPNETGateway-".gmdate("Y-m-d").".log")) {
 		$logPath1 = "/var/log/mmdvm/DAPNETGateway-".gmdate("Y-m-d").".log";
 		$logLines1 = parseDAPNETGatewayLog($logPath1);
 	}
@@ -1224,43 +1266,6 @@ function cidr_match(string $ip, string $cidr): bool {
 
 function getDMRGstat(string $dmrserver): ?string {
 	// PHP replacement for shell pipeline - memory optimized
-	function parseDMRGatewayStatus($logPath, $dmrserver) {
-		if (!file_exists($logPath)) {
-			return "";
-		}
-		
-		// Check file size to avoid processing extremely large files
-		$fileSize = filesize($logPath);
-		if ($fileSize > 50 * 1024 * 1024) { // 50MB limit
-			return "";
-		}
-		
-		$lastStatus = "";
-		$handle = @fopen($logPath, 'r');
-		
-		if ($handle) {
-			$lineCount = 0;
-			$maxLines = 5000; // Limit total lines processed
-			
-			while (($line = fgets($handle)) !== false && $lineCount < $maxLines) {
-				$lineCount++;
-				$line = trim($line);
-				if (empty($line)) continue;
-				
-				// Check for patterns: $dmrserver, Logged|$dmrserver, Closing DMR|$dmrserver, Opening DMR|$dmrserver, Connection
-				if (preg_match('/' . preg_quote($dmrserver, '/') . ', Logged|' . preg_quote($dmrserver, '/') . ', Closing DMR|' . preg_quote($dmrserver, '/') . ', Opening DMR|' . preg_quote($dmrserver, '/') . ', Connection/', $line)) {
-					$fields = preg_split('/\s+/', $line);
-					if (isset($fields[4])) {
-						$lastStatus = $fields[4];
-					}
-				}
-			}
-			fclose($handle);
-		}
-		
-		return $lastStatus;
-	}
-	
 	$logPath = "/var/log/mmdvm/DMRGateway-".gmdate("Y-m-d").".log";
 	$dmrstatus = parseDMRGatewayStatus($logPath, $dmrserver);
 	
