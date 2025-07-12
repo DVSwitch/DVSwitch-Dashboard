@@ -187,6 +187,7 @@ table td {
     text-decoration: none;
     border: 1px solid #000000;
     overflow-x: hidden;
+    text-align: center;
 }
 table td.links {
     color: #ff0000;

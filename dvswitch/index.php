@@ -238,6 +238,16 @@ include_once 'include/tools.php';
           color: var(--text-primary) !important;
         }
         
+        /* Mode data - use bright green in dark mode */
+        td[style*="color:green"], td[style*="color: green"] {
+          color: #00ff00 !important;
+        }
+        
+        /* Target entries - use bright red in dark mode */
+        td span[style*="color:#b5651d"], td span[style*="color: #b5651d"] {
+          color: #ff4444 !important;
+        }
+        
         /* Ensure table headers are readable in dark mode */
         .lh-table th {
           color: var(--text-primary) !important;

@@ -41,22 +41,22 @@ for ($i = 0; $i < count($localTXList); $i++) {
                                 $local_time = xstrftime('%H:%M:%S %b %d', $dt->getTimestamp());
 
 			echo"<tr>";
-			echo "<td align=\"left\" class=\"lh-time\">".htmlspecialchars($local_time, ENT_QUOTES, 'UTF-8')."</td>";
-			echo "<td align=\"left\" style=\"color:green; font-weight:bold;\">".htmlspecialchars($listElem[1], ENT_QUOTES, 'UTF-8')."</td>";
+			echo "<td class=\"lh-time\">".htmlspecialchars($local_time, ENT_QUOTES, 'UTF-8')."</td>";
+			echo "<td style=\"color:green; font-weight:bold;\">".htmlspecialchars($listElem[1], ENT_QUOTES, 'UTF-8')."</td>";
 			    if (is_numeric($listElem[2]) || strpos($listElem[2], "openSPOT") !== FALSE) {
-				echo "<td align=\"left\" style=\"color:#464646;\"><b>&nbsp;".htmlspecialchars($listElem[2], ENT_QUOTES, 'UTF-8')."</b></td>";
+				echo "<td style=\"color:#464646;\"><b>&nbsp;".htmlspecialchars($listElem[2], ENT_QUOTES, 'UTF-8')."</b></td>";
 			    } elseif (!preg_match('/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/', $listElem[2])) {
-				echo "<td align=\"left\" style=\"color:#464646;\"><b>&nbsp;".htmlspecialchars($listElem[2], ENT_QUOTES, 'UTF-8')."</b></td>";
+				echo "<td style=\"color:#464646;\"><b>&nbsp;".htmlspecialchars($listElem[2], ENT_QUOTES, 'UTF-8')."</b></td>";
 	    			} else {
 			if (strpos($listElem[2],"-") > 0) { $listElem[2] = substr($listElem[2], 0, strpos($listElem[2],"-")); }
 			if ($listElem[3] && $listElem[3] != '    ' ) {
-			    echo "<td align=\"left\">&nbsp;<a href=\"http://www.qrz.com/db/".htmlspecialchars($listElem[2], ENT_QUOTES, 'UTF-8')."\" target=\"_blank\"><b>".htmlspecialchars($listElem[2], ENT_QUOTES, 'UTF-8')."</b></a><b>/".htmlspecialchars($listElem[3], ENT_QUOTES, 'UTF-8')."</b></td>";
+			    echo "<td>&nbsp;<a href=\"http://www.qrz.com/db/".htmlspecialchars($listElem[2], ENT_QUOTES, 'UTF-8')."\" target=\"_blank\"><b>".htmlspecialchars($listElem[2], ENT_QUOTES, 'UTF-8')."</b></a><b>/".htmlspecialchars($listElem[3], ENT_QUOTES, 'UTF-8')."</b></td>";
 			} else {
-			    echo "<td align=\"left\">&nbsp;<a href=\"http://www.qrz.com/db/".htmlspecialchars($listElem[2], ENT_QUOTES, 'UTF-8')."\" target=\"_blank\"><b>".htmlspecialchars($listElem[2], ENT_QUOTES, 'UTF-8')."</b></a></td>";
+			    echo "<td>&nbsp;<a href=\"http://www.qrz.com/db/".htmlspecialchars($listElem[2], ENT_QUOTES, 'UTF-8')."\" target=\"_blank\"><b>".htmlspecialchars($listElem[2], ENT_QUOTES, 'UTF-8')."</b></a></td>";
 			}
 		    }
 			if (strlen($listElem[4]) == 1) { $listElem[4] = str_pad($listElem[4], 8, " ", STR_PAD_LEFT); }
-			echo "<td align=\"left\"><span style=\"color:#b5651d;font-weight:bold;\">".htmlspecialchars($listElem[4], ENT_QUOTES, 'UTF-8')."</span></td>";
+			echo "<td><span style=\"color:#b5651d;font-weight:bold;\">".htmlspecialchars($listElem[4], ENT_QUOTES, 'UTF-8')."</span></td>";
 			if ($listElem[5] == "LNet"){
 				echo "<td style=\"background:#1d1;\">LNet</td>";
 			} else {
