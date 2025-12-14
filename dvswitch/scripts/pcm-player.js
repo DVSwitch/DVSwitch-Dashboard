@@ -158,7 +158,8 @@ PCMPlayer.prototype.flush = function() {
             this.startTime = this.audioCtx.currentTime;
         }
         
-        console.log("start vs current " + this.startTime + " vs " + this.audioCtx.currentTime + " duration: " + audioBuffer.duration);
+        // Debug logging removed for production - uncomment if needed for debugging
+        // console.log("start vs current " + this.startTime + " vs " + this.audioCtx.currentTime + " duration: " + audioBuffer.duration);
         
         source.buffer = audioBuffer;
         source.connect(this.gainNode);

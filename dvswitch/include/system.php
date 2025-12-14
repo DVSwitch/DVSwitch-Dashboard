@@ -15,13 +15,31 @@ if (!is_array($mmdvmconfigs)) {
     $mmdvmconfigs = [];
 }
 
-$rawuptime = shell_exec('cat /proc/uptime');
-$uptime = $rawuptime ? format_uptime((float)substr($rawuptime,0,strpos($rawuptime," "))) : "Unknown";
+// Safe file reading function for system files
+function safeReadSystemFile(string $filePath): string|false {
+    // Validate path - only allow specific system paths
+    $allowedPaths = ['/proc/uptime', '/sys/class/thermal/thermal_zone0/temp'];
+    $validatedPath = validateFilePath($filePath, $allowedPaths);
+    if ($validatedPath === false || !is_file($validatedPath)) {
+        return false;
+    }
+    return @file_get_contents($validatedPath);
+}
+
+// Get uptime with safe file reading
+$rawuptime = safeReadSystemFile('/proc/uptime');
+$uptime = "Unknown";
+if ($rawuptime !== false) {
+    $spacePos = strpos($rawuptime, " ");
+    if ($spacePos !== false) {
+        $uptime = format_uptime((float)substr($rawuptime, 0, $spacePos));
+    }
+}
 
 // Get memory usage using a simpler approach
 $free_output = shell_exec('free -m');
 $free_mem = "Unknown";
-if ($free_output) {
+if ($free_output !== null && $free_output !== false) {
     $lines = explode("\n", $free_output);
     if (isset($lines[1])) {
         $parts = preg_split('/\s+/', trim($lines[1]));
@@ -32,29 +50,47 @@ if ($free_output) {
 }
 
 // Get disk usage using a simpler approach
-$df_output = shell_exec('df -h /');
+$df_output = shell_exec('df -h ' . escapeshellarg('/'));
 $disk_used = "Unknown";
-if ($df_output) {
+if ($df_output !== null && $df_output !== false) {
     $lines = explode("\n", $df_output);
     if (isset($lines[1])) {
         $parts = preg_split('/\s+/', trim($lines[1]));
         if (isset($parts[4])) {
-            $disk_used = $parts[4];
+            $disk_used = htmlspecialchars($parts[4], ENT_QUOTES, 'UTF-8');
         }
     }
 }
 
 $cpuLoad = sys_getloadavg() ?: [0, 0, 0];
-if (file_exists('/sys/class/thermal/thermal_zone0/temp')) {
-$cpuTempCRaw = exec('cat /sys/class/thermal/thermal_zone0/temp');
-if ($cpuTempCRaw !="") {
- if ($cpuTempCRaw > 1000) { $cpuTempC = round($cpuTempCRaw / 1000); } else { $cpuTempC = round($cpuTempCRaw); }
- $cpuTempF = round(+$cpuTempC * 9 / 5 + 32);
- if ($cpuTempC < 55) { $cpuTempHTML = "<td style=\"background: #1d1\">".$cpuTempC."&deg;C / ".$cpuTempF."&deg;F</td>\n"; }
- if ($cpuTempC >= 55) { $cpuTempHTML = "<td style=\"background: #fa0\">".$cpuTempC."&deg;C / ".$cpuTempF."&deg;F</td>\n"; }
- if ($cpuTempC >= 70) { $cpuTempHTML = "<td style=\"background: #f00\">".$cpuTempC."&deg;C / ".$cpuTempF."&deg;F</td>\n"; }
- } else { $cpuTempHTML = "<td style=\"background: #white\">---</td>\n"; }
-} else { $cpuTempHTML = "<td style=\"background: #white\">---</td>\n"; }
+$cpuTempHTML = "<td style=\"background: #white\">---</td>\n";
+
+$tempFilePath = '/sys/class/thermal/thermal_zone0/temp';
+if (file_exists($tempFilePath)) {
+    $cpuTempCRaw = safeReadSystemFile($tempFilePath);
+    if ($cpuTempCRaw !== false && $cpuTempCRaw !== "") {
+        $cpuTempCRaw = trim($cpuTempCRaw);
+        if (is_numeric($cpuTempCRaw)) {
+            $cpuTempCRaw = (int)$cpuTempCRaw;
+            if ($cpuTempCRaw > 1000) { 
+                $cpuTempC = round($cpuTempCRaw / 1000); 
+            } else { 
+                $cpuTempC = round($cpuTempCRaw); 
+            }
+            $cpuTempF = round($cpuTempC * 9 / 5 + 32);
+            $cpuTempC_escaped = htmlspecialchars((string)$cpuTempC, ENT_QUOTES, 'UTF-8');
+            $cpuTempF_escaped = htmlspecialchars((string)$cpuTempF, ENT_QUOTES, 'UTF-8');
+            
+            if ($cpuTempC < 55) { 
+                $cpuTempHTML = "<td style=\"background: #1d1\">{$cpuTempC_escaped}&deg;C / {$cpuTempF_escaped}&deg;F</td>\n"; 
+            } elseif ($cpuTempC >= 55 && $cpuTempC < 70) { 
+                $cpuTempHTML = "<td style=\"background: #fa0\">{$cpuTempC_escaped}&deg;C / {$cpuTempF_escaped}&deg;F</td>\n"; 
+            } else { 
+                $cpuTempHTML = "<td style=\"background: #f00\">{$cpuTempC_escaped}&deg;C / {$cpuTempF_escaped}&deg;F</td>\n"; 
+            }
+        }
+    }
+}
 ?>
 <fieldset style="box-shadow:0 0 10px #999;background-color:#e8e8e8e8;width:855px;margin-top:8px;;margin-bottom:8px;margin-left:6px;margin-right:0px;font-size:12px;border-top-left-radius: 10px; border-top-right-radius: 10px;border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
 <table style="margin-top:2px;">
@@ -86,7 +122,14 @@ if ($cpuTempCRaw !="") {
   <tr height="24px">
     <td class="sys-hostname"><?php echo htmlspecialchars(php_uname('n'), ENT_QUOTES, 'UTF-8');?></td>
     <td class="sys-kernel"><?php echo htmlspecialchars(php_uname('r'), ENT_QUOTES, 'UTF-8');?></td>
-    <td class="sys-platform" colspan="2"><?php echo htmlspecialchars(exec('/usr/local/sbin/platformDetect.sh'), ENT_QUOTES, 'UTF-8');?></td>
+    <td class="sys-platform" colspan="2"><?php 
+        $platformScript = '/usr/local/sbin/platformDetect.sh';
+        $platformOutput = '';
+        if (file_exists($platformScript) && is_executable($platformScript)) {
+            $platformOutput = exec(escapeshellarg($platformScript));
+        }
+        echo htmlspecialchars($platformOutput ?: 'Unknown', ENT_QUOTES, 'UTF-8');
+    ?></td>
     <td class="sys-disk"><?php echo htmlspecialchars($disk_used, ENT_QUOTES, 'UTF-8');?></td>
     <td class="sys-memory"><?php echo htmlspecialchars($free_mem, ENT_QUOTES, 'UTF-8');?></td>
     <td class="sys-cpu"><?php echo htmlspecialchars((string)round($cpuLoad[0],1), ENT_QUOTES, 'UTF-8');?> / <?php echo htmlspecialchars((string)round($cpuLoad[1],1), ENT_QUOTES, 'UTF-8');?> / <?php echo htmlspecialchars((string)round($cpuLoad[2],1), ENT_QUOTES, 'UTF-8');?></td>
@@ -99,8 +142,15 @@ if ($cpuTempCRaw !="") {
 <?php
 // System utility functions
 function getSystemUptime(): string {
-    $rawuptime = shell_exec('cat /proc/uptime');
-    return format_uptime(substr($rawuptime, 0, strpos($rawuptime, " ")));
+    $rawuptime = safeReadSystemFile('/proc/uptime');
+    if ($rawuptime === false) {
+        return "Unknown";
+    }
+    $spacePos = strpos($rawuptime, " ");
+    if ($spacePos === false) {
+        return "Unknown";
+    }
+    return format_uptime((float)substr($rawuptime, 0, $spacePos));
 }
 
 function getMemoryUsage(): string {
@@ -132,15 +182,20 @@ function getDiskUsage(): string {
 }
 
 function getCpuTemp(): string {
-    if (file_exists('/sys/class/thermal/thermal_zone0/temp')) {
-        $cpuTempCRaw = exec('cat /sys/class/thermal/thermal_zone0/temp');
-        if ($cpuTempCRaw != "") {
-            if ($cpuTempCRaw > 1000) { 
-                $cpuTempC = round($cpuTempCRaw / 1000); 
-            } else { 
-                $cpuTempC = round($cpuTempCRaw); 
+    $tempFilePath = '/sys/class/thermal/thermal_zone0/temp';
+    if (file_exists($tempFilePath)) {
+        $cpuTempCRaw = safeReadSystemFile($tempFilePath);
+        if ($cpuTempCRaw !== false && $cpuTempCRaw !== "") {
+            $cpuTempCRaw = trim($cpuTempCRaw);
+            if (is_numeric($cpuTempCRaw)) {
+                $cpuTempCRaw = (int)$cpuTempCRaw;
+                if ($cpuTempCRaw > 1000) { 
+                    $cpuTempC = round($cpuTempCRaw / 1000); 
+                } else { 
+                    $cpuTempC = round($cpuTempCRaw); 
+                }
+                return $cpuTempC . "°C";
             }
-            return $cpuTempC . "°C";
         }
     }
     return "---";

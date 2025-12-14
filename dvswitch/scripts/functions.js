@@ -60,17 +60,27 @@ const checkPass = () => {
  */
 
 /**
- * Reload mode information via AJAX
+ * Reload mode information via AJAX with error backoff
  */
-const reloadModeInfo = () => {
-  try {
-    const modeInfo = document.getElementById('modeInfo');
-    if (modeInfo) {
+const reloadModeInfo = (() => {
+  let errorCount = 0;
+  const maxErrors = 5;
+  const baseDelay = 1000;
+  const maxDelay = 30000;
+  
+  return () => {
+    try {
+      const modeInfo = document.getElementById('modeInfo');
+      if (!modeInfo) {
+        return;
+      }
+      
       fetch('include/status.php')
         .then(response => {
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
+          errorCount = 0; // Reset error count on success
           return response.text();
         })
         .then(html => {
@@ -78,28 +88,52 @@ const reloadModeInfo = () => {
         })
         .catch(error => {
           console.error('Error reloading mode info:', error);
+          errorCount++;
+          if (errorCount >= maxErrors) {
+            console.warn('Too many errors, stopping auto-reload for mode info');
+            return; // Stop reloading after too many errors
+          }
         })
         .finally(() => {
-          setTimeout(reloadModeInfo, 1000);
+          if (errorCount < maxErrors) {
+            // Exponential backoff: delay increases with error count
+            const delay = Math.min(baseDelay * Math.pow(2, errorCount), maxDelay);
+            setTimeout(reloadModeInfo, delay);
+          }
         });
+    } catch (error) {
+      console.error('Error in reloadModeInfo:', error);
+      errorCount++;
+      if (errorCount < maxErrors) {
+        const delay = Math.min(baseDelay * Math.pow(2, errorCount), maxDelay);
+        setTimeout(reloadModeInfo, delay);
+      }
     }
-  } catch (error) {
-    console.error('Error in reloadModeInfo:', error);
-  }
-};
+  };
+})();
 
 /**
- * Reload local transmissions via AJAX
+ * Reload local transmissions via AJAX with error backoff
  */
-const reloadLocalTx = () => {
-  try {
-    const localTxs = document.getElementById('localTxs');
-    if (localTxs) {
+const reloadLocalTx = (() => {
+  let errorCount = 0;
+  const maxErrors = 5;
+  const baseDelay = 1500;
+  const maxDelay = 30000;
+  
+  return () => {
+    try {
+      const localTxs = document.getElementById('localTxs');
+      if (!localTxs) {
+        return;
+      }
+      
       fetch('include/localtx.php')
         .then(response => {
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
+          errorCount = 0;
           return response.text();
         })
         .then(html => {
@@ -107,28 +141,51 @@ const reloadLocalTx = () => {
         })
         .catch(error => {
           console.error('Error reloading local transmissions:', error);
+          errorCount++;
+          if (errorCount >= maxErrors) {
+            console.warn('Too many errors, stopping auto-reload for local transmissions');
+            return;
+          }
         })
         .finally(() => {
-          setTimeout(reloadLocalTx, 1500);
+          if (errorCount < maxErrors) {
+            const delay = Math.min(baseDelay * Math.pow(2, errorCount), maxDelay);
+            setTimeout(reloadLocalTx, delay);
+          }
         });
+    } catch (error) {
+      console.error('Error in reloadLocalTx:', error);
+      errorCount++;
+      if (errorCount < maxErrors) {
+        const delay = Math.min(baseDelay * Math.pow(2, errorCount), maxDelay);
+        setTimeout(reloadLocalTx, delay);
+      }
     }
-  } catch (error) {
-    console.error('Error in reloadLocalTx:', error);
-  }
-};
+  };
+})();
 
 /**
- * Reload last heard information via AJAX
+ * Reload last heard information via AJAX with error backoff
  */
-const reloadLastHeard = () => {
-  try {
-    const lastHeard = document.getElementById('lastHerd');
-    if (lastHeard) {
+const reloadLastHeard = (() => {
+  let errorCount = 0;
+  const maxErrors = 5;
+  const baseDelay = 1500;
+  const maxDelay = 30000;
+  
+  return () => {
+    try {
+      const lastHeard = document.getElementById('lastHerd');
+      if (!lastHeard) {
+        return;
+      }
+      
       fetch('include/lh.php')
         .then(response => {
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
+          errorCount = 0;
           return response.text();
         })
         .then(html => {
@@ -136,28 +193,51 @@ const reloadLastHeard = () => {
         })
         .catch(error => {
           console.error('Error reloading last heard:', error);
+          errorCount++;
+          if (errorCount >= maxErrors) {
+            console.warn('Too many errors, stopping auto-reload for last heard');
+            return;
+          }
         })
         .finally(() => {
-          setTimeout(reloadLastHeard, 1500);
+          if (errorCount < maxErrors) {
+            const delay = Math.min(baseDelay * Math.pow(2, errorCount), maxDelay);
+            setTimeout(reloadLastHeard, delay);
+          }
         });
+    } catch (error) {
+      console.error('Error in reloadLastHeard:', error);
+      errorCount++;
+      if (errorCount < maxErrors) {
+        const delay = Math.min(baseDelay * Math.pow(2, errorCount), maxDelay);
+        setTimeout(reloadLastHeard, delay);
+      }
     }
-  } catch (error) {
-    console.error('Error in reloadLastHeard:', error);
-  }
-};
+  };
+})();
 
 /**
- * Reload system information via AJAX
+ * Reload system information via AJAX with error backoff
  */
-const reloadSysInfo = () => {
-  try {
-    const sysInfo = document.getElementById('sysInfo');
-    if (sysInfo) {
+const reloadSysInfo = (() => {
+  let errorCount = 0;
+  const maxErrors = 3;
+  const baseDelay = 15000;
+  const maxDelay = 60000;
+  
+  return () => {
+    try {
+      const sysInfo = document.getElementById('sysInfo');
+      if (!sysInfo) {
+        return;
+      }
+      
       fetch('include/system.php')
         .then(response => {
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
+          errorCount = 0;
           return response.text();
         })
         .then(html => {
@@ -165,15 +245,28 @@ const reloadSysInfo = () => {
         })
         .catch(error => {
           console.error('Error reloading system info:', error);
+          errorCount++;
+          if (errorCount >= maxErrors) {
+            console.warn('Too many errors, stopping auto-reload for system info');
+            return;
+          }
         })
         .finally(() => {
-          setTimeout(reloadSysInfo, 15000);
+          if (errorCount < maxErrors) {
+            const delay = Math.min(baseDelay * Math.pow(2, errorCount), maxDelay);
+            setTimeout(reloadSysInfo, delay);
+          }
         });
+    } catch (error) {
+      console.error('Error in reloadSysInfo:', error);
+      errorCount++;
+      if (errorCount < maxErrors) {
+        const delay = Math.min(baseDelay * Math.pow(2, errorCount), maxDelay);
+        setTimeout(reloadSysInfo, delay);
+      }
     }
-  } catch (error) {
-    console.error('Error in reloadSysInfo:', error);
-  }
-};
+  };
+})();
 
 // Initialize auto-reload functions when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
